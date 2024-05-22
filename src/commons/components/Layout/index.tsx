@@ -17,7 +17,7 @@ const Layout = ({ children }: LayoutProps) => {
 				<div className="wrap">
 					<div className="container">
 						<Header />
-						{children}
+						<div id="contents">{children}</div>
 					</div>
 				</div>
 			</ThemeProvider>
