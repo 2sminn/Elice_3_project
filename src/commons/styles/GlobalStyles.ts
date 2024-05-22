@@ -85,6 +85,22 @@ const GlobalStyle = createGlobalStyle`
       scroll-behavior: auto !important;
     }
   }
+
+  .wrap {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 95vw;
+    height: 95vh;
+    background-color: #eee;
+    border-radius: 20px;
+    overflow-y: auto;
+  }
 `;
 
 export default GlobalStyle;

@@ -1,5 +1,7 @@
+import { Container } from './styles/style';
+
 const MainPage = () => {
-	return <div></div>;
+	return <Container></Container>;
 };
 
 export default MainPage;

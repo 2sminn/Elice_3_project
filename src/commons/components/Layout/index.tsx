@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import GlobalStyle from '../../styles/GlobalStyles';
 import ReactQueryProvider from '../ReactQueryProvider';
+import { ThemeProvider } from 'styled-components';
+import theme from '../../styles/theme';
 
 interface LayoutProps {
 	children: ReactNode;
@@ -9,8 +11,12 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
 	return (
 		<ReactQueryProvider>
-			<GlobalStyle />
-			{children}
+			<ThemeProvider theme={theme}>
+				<GlobalStyle />
+				<div className="wrap">
+					<div className="container">{children}</div>
+				</div>
+			</ThemeProvider>
 		</ReactQueryProvider>
 	);
 };
