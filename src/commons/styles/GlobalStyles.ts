@@ -30,6 +30,7 @@ const GlobalStyle = createGlobalStyle`
   dl,
   dd {
     margin: 0;
+    box-sizing: border-box;
   }
 
   /* Set core body defaults */
@@ -70,6 +71,17 @@ const GlobalStyle = createGlobalStyle`
     font: inherit;
   }
 
+  button {
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
   /* Remove all animations and transitions for people that prefer not to see them */
   @media (prefers-reduced-motion: reduce) {
     html:focus-within {
@@ -100,6 +112,9 @@ const GlobalStyle = createGlobalStyle`
     background-color: #eee;
     border-radius: 20px;
     overflow-y: auto;
+    display: flex;
+    align-items: center;
+    padding: 5px;
   }
 `;
 

@@ -1,4 +1,4 @@
-import { Container } from './styles/style';
+import { Container } from './style';
 
 const MainPage = () => {
 	return <Container></Container>;
