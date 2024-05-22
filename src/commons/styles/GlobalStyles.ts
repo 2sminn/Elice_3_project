@@ -20,6 +20,8 @@ const GlobalStyle = createGlobalStyle`
   h2,
   h3,
   h4,
+  h5,
+  h6,
   p,
   ul[class],
   ol[class],
@@ -113,8 +115,13 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 20px;
     overflow-y: auto;
     display: flex;
-    align-items: center;
     padding: 5px;
+  }
+
+  #contents {
+    flex : 1;
+    height: 100%;
+    overflow-y: auto;
   }
 `;
 
