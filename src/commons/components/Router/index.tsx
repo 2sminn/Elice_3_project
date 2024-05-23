@@ -7,14 +7,10 @@ const RouterComponent = () => {
 	return (
 		<Router>
 			<Routes>
-				<Route
-					path="/"
-					element={
-						<Layout>
-							<MainPage />
-						</Layout>
-					}
-				/>
+				레이아웃
+				<Route element={<Layout />}>
+					<Route path="/" element={<MainPage />} />
+				</Route>
 				<Route path="login" element={<Login />} />
 			</Routes>
 		</Router>
