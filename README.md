@@ -14,3 +14,7 @@ Develop rule
 영수증 = bill<br/>
 수납 = get_cost<br/>
 청구서발송 = claim_send<br/>
+
+<br/>
+dev 브랜치 클론하여 작업 </br>
+작업할때 각 폴더 안에 있는 dummy.txt 삭제하기
