@@ -1,27 +1,20 @@
-import { ReactNode } from 'react';
 import GlobalStyle from '../../styles/GlobalStyles';
-import ReactQueryProvider from '../ReactQueryProvider';
-import { ThemeProvider } from 'styled-components';
-import theme from '../../styles/theme';
 import Header from '../Header';
+import { Outlet } from 'react-router-dom';
 
-interface LayoutProps {
-	children: ReactNode;
-}
-
-const Layout = ({ children }: LayoutProps) => {
+const Layout = () => {
 	return (
-		<ReactQueryProvider>
-			<ThemeProvider theme={theme}>
-				<GlobalStyle />
-				<div className="wrap">
-					<div className="container">
-						<Header />
-						<div id="contents">{children}</div>
+		<>
+			<GlobalStyle />
+			<div className="wrap">
+				<div className="container">
+					<Header />
+					<div id="contents">
+						<Outlet />
 					</div>
 				</div>
-			</ThemeProvider>
-		</ReactQueryProvider>
+			</div>
+		</>
 	);
 };
 

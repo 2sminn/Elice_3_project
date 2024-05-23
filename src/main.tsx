@@ -1,4 +1,4 @@
 import ReactDOM from 'react-dom/client';
-import RouterComponent from './commons/components/Router/index.tsx';
+import RootLayoutProvider from './commons/components/RootLayoutProvider/index.tsx';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<RouterComponent />);
+ReactDOM.createRoot(document.getElementById('root')!).render(<RootLayoutProvider />);
