@@ -1,0 +1,35 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.6'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.eliceteam8'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'mysql:mysql-connector-java'
+
+
+	// swagger
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
