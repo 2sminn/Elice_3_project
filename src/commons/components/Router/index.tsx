@@ -7,8 +7,8 @@ const RouterComponent = () => {
 	return (
 		<Router>
 			<Routes>
-				레이아웃
 				<Route element={<Layout />}>
+					{/* 레이아웃이 들어가는 페이지 */}
 					<Route path="/" element={<MainPage />} />
 				</Route>
 				<Route path="login" element={<Login />} />
