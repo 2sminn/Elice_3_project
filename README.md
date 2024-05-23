@@ -7,7 +7,7 @@ Develop rule
 6. 브랜치 생성 후 dev 브랜치에 pull request<br/>
 <br/>
 
-도메인 별 작업 패키지 명
+도메인 별 작업 패키지 명<br/>
 멤버 = user<br/>
 결제 = payment<br/>
 학원관리 = academy_management<br/>
