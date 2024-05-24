@@ -20,6 +20,8 @@ const GlobalStyle = createGlobalStyle`
   h2,
   h3,
   h4,
+  h5,
+  h6,
   p,
   ul[class],
   ol[class],
@@ -30,6 +32,7 @@ const GlobalStyle = createGlobalStyle`
   dl,
   dd {
     margin: 0;
+    box-sizing: border-box;
   }
 
   /* Set core body defaults */
@@ -70,6 +73,17 @@ const GlobalStyle = createGlobalStyle`
     font: inherit;
   }
 
+  button {
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
   /* Remove all animations and transitions for people that prefer not to see them */
   @media (prefers-reduced-motion: reduce) {
     html:focus-within {
@@ -84,6 +98,30 @@ const GlobalStyle = createGlobalStyle`
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  .wrap {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 95vw;
+    height: 95vh;
+    background-color: #eee;
+    border-radius: 20px;
+    overflow-y: auto;
+    display: flex;
+    padding: 5px;
+  }
+
+  #contents {
+    flex : 1;
+    height: 100%;
+    overflow-y: auto;
   }
 `;
 
