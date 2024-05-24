@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../Layout';
-import MainPage from '../../pages/main';
-import Login from '../../pages/login';
+import { LAYOUT_ROUTE_ARR, ROUTE_ARR } from '../../constants/routeList';
 
 const RouterComponent = () => {
 	return (
@@ -9,9 +8,13 @@ const RouterComponent = () => {
 			<Routes>
 				<Route element={<Layout />}>
 					{/* 레이아웃이 들어가는 페이지 */}
-					<Route path="/" element={<MainPage />} />
+					{LAYOUT_ROUTE_ARR.map((route) => (
+						<Route key={route.id} path={route.path} element={route.element} />
+					))}
 				</Route>
-				<Route path="login" element={<Login />} />
+				{ROUTE_ARR.map((route) => (
+					<Route key={route.id} path={route.path} element={route.element} />
+				))}
 			</Routes>
 		</Router>
 	);

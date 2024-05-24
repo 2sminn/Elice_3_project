@@ -50,7 +50,6 @@ const AddBillCountPopup = () => {
 	const handleClickBtn = (edu: eduDataType) => () => {
 		setEduData(edu);
 	};
-	console.log(eduData);
 
 	return (
 		<S.Container>
