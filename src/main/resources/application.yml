@@ -2,10 +2,10 @@ spring:
   application:
     name: edupay
 
+  profiles:
+    include: rds
+
   datasource:
-    url: jdbc:mysql://database-2.cf48wq8e4ow8.ap-northeast-2.rds.amazonaws.com:3306/database-2
-    username: admin
-    password: edupay123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
