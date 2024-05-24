@@ -3,8 +3,12 @@ import logo from './assets/logo.jpeg';
 import settingImg from './assets/setting.svg';
 import logout from './assets/logout.svg';
 import { Link } from 'react-router-dom';
+import usePopup from '../../hooks/usePopup';
+import AddBillCountPopup from './components/AddBillCountPopup';
 
 const Header = () => {
+	const { openPopup } = usePopup();
+
 	return (
 		<S.Container>
 			<S.HeaderTop>
@@ -24,7 +28,7 @@ const Header = () => {
 							<span>1,000</span> 건
 						</p>
 					</S.PointContainer>
-					<S.AddPointBtn>충전하기</S.AddPointBtn>
+					<S.AddPointBtn onClick={() => openPopup(<AddBillCountPopup />)}>충전하기</S.AddPointBtn>
 				</S.PointBox>
 				<S.MenuContainer>
 					<S.Menu>
@@ -44,7 +48,6 @@ const Header = () => {
 				</S.MenuContainer>
 			</S.HeaderTop>
 			<S.LogoutBtn>
-				{' '}
 				<img src={logout} alt="로그아웃 버튼" />
 			</S.LogoutBtn>
 		</S.Container>

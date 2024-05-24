@@ -1,4 +1,4 @@
-import { formatNumber } from '../../../../commons/utils/formatNumber';
+import { formatNumber } from '../../../../utils/formatNumber';
 import * as S from './style';
 
 interface BillBoxProps {
