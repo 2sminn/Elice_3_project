@@ -1,11 +1,22 @@
 const theme = {
 	colors: {
-		primary: '#19ED7B',
-		secondary: '#6c757d',
+		primary: '#2DB400',
+		accent: '#009874',
 		success: '#28a745',
-		danger: '#dc3545',
-		warning: '#ffc107',
-		background: '#ffffff',
+		text: '#333',
+		btnText: '#fff',
+	},
+
+	textSize: {
+		large: '22px',
+		medium: '18px',
+		small: '12px',
+	},
+
+	radius: {
+		big: '30px',
+		middle: '12px',
+		small: '6px',
 	},
 };
 

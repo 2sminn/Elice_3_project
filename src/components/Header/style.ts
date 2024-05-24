@@ -78,10 +78,15 @@ export const AddPointBtn = styled.button`
 	width: 100%;
 	padding: 12px 0;
 	border-radius: 6px;
-	background-color: #000;
+	background-color: ${({ theme }) => theme.colors.primary};
 	font-size: 18px;
 	font-weight: 500;
 	color: #fff;
+
+	&:hover {
+		opacity: 0.85;
+		transition: 0.3s;
+	}
 `;
 
 export const MenuContainer = styled.nav`

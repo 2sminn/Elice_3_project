@@ -62,13 +62,13 @@ const AddBillCountPopup = () => {
 				</S.SubTitle>
 				<S.SubTitle>
 					<span>충전 후 잔여수량</span>
-					<p>{eduData ? 100 + eduData?.edu : 100}건</p>
+					<p className="active">{eduData ? 100 + eduData?.edu : 100}건</p>
 				</S.SubTitle>
 			</S.SubTitleBox>
 			<S.AddBillBox>
 				{EduDatas.map((edu) => (
-					<S.AddCountBtn onClick={handleClickBtn(edu)} key={edu.id} isActive={edu.id === eduData?.id}>
-						<span>{edu.edu}건</span>
+					<S.AddCountBtn onClick={handleClickBtn(edu)} key={edu.id} $isActive={edu.id === eduData?.id}>
+						<span>{formatNumber(edu.edu)}건</span>
 						{formatNumber(edu.price)}원
 					</S.AddCountBtn>
 				))}

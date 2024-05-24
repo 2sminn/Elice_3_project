@@ -29,12 +29,16 @@ export const SubTitle = styled.h4`
 		font-size: 20px;
 		font-weight: 400;
 		color: #000;
+
+		&.active {
+			font-weight: 700;
+		}
 	}
 
 	span {
 		display: inline-block;
 		padding: 6px 10px;
-		background-color: #000;
+		background-color: ${({ theme }) => theme.colors.primary};
 		font-size: 14px;
 		font-weight: 500;
 		color: #fff;
@@ -50,7 +54,7 @@ export const AddBillBox = styled.div`
 `;
 
 type AddCountBtnType = {
-	isActive: boolean;
+	$isActive: boolean;
 };
 
 export const AddCountBtn = styled.button<AddCountBtnType>`
@@ -58,7 +62,7 @@ export const AddCountBtn = styled.button<AddCountBtnType>`
 	width: 32%;
 	height: 65px;
 	padding: 5px 0;
-	border: ${({ isActive }) => (isActive ? '2px solid green' : '1px solid #000')};
+	border: ${({ $isActive, theme }) => ($isActive ? `2px solid ${theme.colors.accent}` : '1px solid #000')};
 	font-size: 18px;
 	font-weight: 700;
 	color: #000;
@@ -66,8 +70,8 @@ export const AddCountBtn = styled.button<AddCountBtnType>`
 
 	span {
 		font-size: 16px;
-		font-weight: 400;
-		color: #333;
+		font-weight: ${({ $isActive }) => ($isActive ? '700' : '400')};
+		color: ${({ $isActive, theme }) => ($isActive ? theme.colors.accent : '#333')};
 		display: block;
 	}
 `;

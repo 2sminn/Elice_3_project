@@ -54,9 +54,14 @@ export const BillDetailLinkBtn = styled(Link)`
 	align-items: center;
 	width: 150px;
 	height: 40px;
-	background-color: #000;
+	background-color: ${({ theme }) => theme.colors.primary};
 	border-radius: 6px;
 	font-size: 15px;
 	font-weight: 400;
 	color: #fff;
+
+	&:hover {
+		opacity: 0.85;
+		transition: 0.3s;
+	}
 `;
