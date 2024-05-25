@@ -24,9 +24,3 @@ export const SignUpTitle = styled.div`
 		font-weight: 400;
 	}
 `;
-
-export const SocialLoginTitle = styled.div`
-	font-size: 15px;
-	font-weight: 500;
-	margin: 30px 20px 10px;
-`;

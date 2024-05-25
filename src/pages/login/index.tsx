@@ -1,12 +1,9 @@
 import React, { FC, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '/logo.jpeg';
-import Button from '../login/components/Button/index';
-import { Input } from '../login/components/Input/index';
-import { Container, LogoImage, SignUpTitle, SocialLoginTitle } from './style';
-
-const RedirectUri = `${import.meta.env.VITE_REDIRECT_URI}`;
-const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${import.meta.env.VITE_KAKAO_CLIENT_ID}&redirect_uri=${RedirectUri}&response_type=code`;
+import Button from '../../commons/components/buttons/Primarybutton/index';
+import { Input } from '../../commons/components/inputs/Textinput/index';
+import { Container, LogoImage, SignUpTitle } from './style';
 
 const Login: FC = () => {
 	const [form, setForm] = useState({
@@ -20,10 +17,6 @@ const Login: FC = () => {
 			...prev,
 			[name]: value,
 		}));
-	};
-
-	const kakaohandleLogin = () => {
-		window.location.href = kakaoURL;
 	};
 
 	return (
@@ -43,8 +36,6 @@ const Login: FC = () => {
 			<Link to="/signup">
 				<SignUpTitle>회원가입</SignUpTitle>
 			</Link>
-			<SocialLoginTitle>SNS 계정으로 로그인</SocialLoginTitle>
-			<Button type="button" text="카카오 로그인" backcolor="#FEE500" textcolor="#000000" onClick={kakaohandleLogin} />
 		</Container>
 	);
 };
