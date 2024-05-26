@@ -16,7 +16,8 @@ export const HeaderTop = styled.div`
 `;
 
 export const LogoBox = styled.div`
-	width: 70px;
+	width: 150px;
+	margin-bottom: 20px;
 
 	img {
 		width: 100%;
