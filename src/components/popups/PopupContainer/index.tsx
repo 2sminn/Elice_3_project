@@ -9,7 +9,7 @@ const PopupContainer = () => {
 
 	const popupVisible = !!popup;
 
-	if (!popupVisible) return <></>;
+	if (!popupVisible) return null;
 
 	const handleClick: MouseEventHandler<HTMLDivElement> = ({ target, currentTarget }) => {
 		if (target === currentTarget) closePopup();
