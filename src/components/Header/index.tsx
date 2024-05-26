@@ -1,5 +1,5 @@
 import * as S from './style';
-import logo from './assets/logo.jpeg';
+import logo from '/assets/images/logo.svg';
 import settingImg from './assets/setting.svg';
 import logout from './assets/logout.svg';
 import { Link } from 'react-router-dom';
