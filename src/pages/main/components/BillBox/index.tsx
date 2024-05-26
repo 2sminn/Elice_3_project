@@ -27,7 +27,7 @@ const BillBox = ({ title, content1, content2, price, count }: BillBoxProps) => {
 				</S.BillContentBox>
 			</S.BillContentContainer>
 			<S.BillDetailLinkBtn to="/">
-				<PrimaryButton text="자세히 보러 가기" fill textSize="15px" />
+				<PrimaryButton text="자세히 보러 가기" isFill textSize="15px" />
 			</S.BillDetailLinkBtn>
 		</S.Container>
 	);

@@ -5,16 +5,18 @@ interface StyledButtonProps {
 	width?: string;
 	height?: string;
 	borderRadius?: string;
-	fill?: boolean;
+	isFill?: boolean;
 	textSize?: string;
 }
 
-export const StyledButton = styled.button<StyledButtonProps>`
+export const StyledButton = styled.button.withConfig({
+	shouldForwardProp: (prop) => prop !== 'textSize' && prop !== 'isFill',
+})<StyledButtonProps>`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: ${({ fill, theme }) => (fill ? theme.colors.primary : 'none')};
-	color: ${({ textColor, fill, theme }) => (fill ? '#fff' : textColor || theme.colors.primary)};
+	background-color: ${({ isFill, theme }) => (isFill ? theme.colors.primary : 'none')};
+	color: ${({ textColor, isFill, theme }) => (isFill ? '#fff' : textColor || theme.colors.primary)};
 	border-radius: ${({ borderRadius }) => borderRadius || '6px'};
 	padding: 10px;
 	width: ${({ width }) => width || '100%'};
@@ -24,7 +26,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
 	pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
 	position: relative;
 	overflow: hidden;
-	border: ${({ fill, theme }) => (fill ? 'none' : `1px solid ${theme.colors.primary}`)};
+	border: ${({ isFill, theme }) => (isFill ? 'none' : `1px solid ${theme.colors.primary}`)};
 	font-size: ${({ textSize, theme }) => (textSize ? textSize : theme.textSize.medium)};
 
 	&:hover {

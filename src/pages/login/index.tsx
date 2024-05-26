@@ -32,7 +32,7 @@ const Login: FC = () => {
 					value={form.password}
 					onChange={handleFormChange}
 				/>
-				<PrimaryButton type="submit" text="로그인" fill />
+				<PrimaryButton type="submit" text="로그인" isFill />
 				<SignUpBtn to="/signup">
 					<PrimaryButton type="submit" text="회원가입" />
 				</SignUpBtn>

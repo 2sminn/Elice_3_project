@@ -30,7 +30,7 @@ const Header = () => {
 							<span>1,000</span> 건
 						</p>
 					</S.PointContainer>
-					<PrimaryButton text="충전하기" fill onClick={() => openPopup(<AddBillCountPopup />)} />
+					<PrimaryButton text="충전하기" isFill onClick={() => openPopup(<AddBillCountPopup />)} />
 					<PrimaryButton text="청구서 발급" onClick={() => openPopup(<BillPopup />)} />
 				</S.PointBox>
 				<S.MenuContainer>

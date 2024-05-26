@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { usePopupStore } from '../stores/\bpopupStore';
+import { usePopupStore } from '../stores/popupStore';
 
 const usePopup = () => {
 	const { setPopup } = usePopupStore();

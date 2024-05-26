@@ -8,17 +8,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	width?: string;
 	height?: string;
 	borderRadius?: string;
-	fill?: boolean;
+	isFill?: boolean;
 }
 
-const PrimaryButton = ({ text, textColor, width, height, borderRadius, fill, textSize, ...props }: ButtonProps) => {
+const PrimaryButton = ({ text, textColor, width, height, borderRadius, isFill, textSize, ...props }: ButtonProps) => {
 	return (
 		<StyledButton
 			textColor={textColor}
 			width={width}
 			height={height}
 			borderRadius={borderRadius}
-			fill={fill}
+			isFill={isFill}
 			textSize={textSize}
 			{...props}
 		>
