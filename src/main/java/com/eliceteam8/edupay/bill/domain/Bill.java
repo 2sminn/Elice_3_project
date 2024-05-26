@@ -2,6 +2,7 @@ package com.eliceteam8.edupay.bill.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class Bill {
     private long totalPrice;
 
     @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    private LocalDateTime dueDate; // 청구서 마감 기한
 
     @CreationTimestamp
     // INSERT 쿼리 발생 시 현재 시간 값 적용
@@ -33,11 +35,15 @@ public class Bill {
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status; // 청구서 상태
 
+    //TODO: 연관관계 매핑
     @Column(name = "academy_id")
     private long academyId;
 
     @Column(name = "student_id")
     private long studentId;
+
+    @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
+    private BillLog billLog;
 }
