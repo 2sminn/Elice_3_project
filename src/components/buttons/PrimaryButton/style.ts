@@ -6,6 +6,7 @@ interface StyledButtonProps {
 	height?: string;
 	borderRadius?: string;
 	fill?: boolean;
+	textSize?: string;
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
@@ -24,4 +25,10 @@ export const StyledButton = styled.button<StyledButtonProps>`
 	position: relative;
 	overflow: hidden;
 	border: ${({ fill, theme }) => (fill ? 'none' : `1px solid ${theme.colors.primary}`)};
+	font-size: ${({ textSize, theme }) => (textSize ? textSize : theme.textSize.medium)};
+
+	&:hover {
+		opacity: 0.85;
+		transition: 0.3s;
+	}
 `;

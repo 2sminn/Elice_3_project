@@ -49,16 +49,8 @@ export const BillContentBox = styled.div`
 `;
 
 export const BillDetailLinkBtn = styled(Link)`
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	display: block;
 	width: 150px;
-	height: 40px;
-	background-color: ${({ theme }) => theme.colors.primary};
-	border-radius: 6px;
-	font-size: 15px;
-	font-weight: 400;
-	color: #fff;
 
 	&:hover {
 		opacity: 0.85;

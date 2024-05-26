@@ -3,6 +3,7 @@ import { StyledButton } from './style';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	text: string;
+	textSize?: string;
 	textColor?: string;
 	width?: string;
 	height?: string;
@@ -10,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	fill?: boolean;
 }
 
-const PrimaryButton = ({ text, textColor, width, height, borderRadius, fill, ...props }: ButtonProps) => {
+const PrimaryButton = ({ text, textColor, width, height, borderRadius, fill, textSize, ...props }: ButtonProps) => {
 	return (
 		<StyledButton
 			textColor={textColor}
@@ -18,6 +19,7 @@ const PrimaryButton = ({ text, textColor, width, height, borderRadius, fill, ...
 			height={height}
 			borderRadius={borderRadius}
 			fill={fill}
+			textSize={textSize}
 			{...props}
 		>
 			{text}
