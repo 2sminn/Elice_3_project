@@ -35,19 +35,10 @@ export const Section = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-	font-size: 18px;
+	font-size: ${({ theme }) => theme.textSize.medium};
 	font-weight: 500;
 	color: #333;
 	margin-bottom: 10px;
-`;
-
-export const FormItemWrapper = styled.div`
-	display: flex;
-	flex-direction: column; /* Changed to column to stack input and error message */
-	gap: 5px;
-	width: 100%;
-	margin-bottom: 20px; /* Increased to accommodate error message height */
-	position: relative;
 `;
 
 export const StyledTextarea = styled.textarea`
@@ -97,24 +88,15 @@ export const Divider = styled.hr`
 	margin: 20px 0;
 `;
 
-export const InputWithIcon = styled.div`
+export const BetweenBox = styled.div`
+	width: 100%;
 	display: flex;
 	align-items: center;
-	background-color: #f9f9f9;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	padding: 10px;
-	width: 100%;
+	justify-content: space-between;
+`;
 
-	svg {
-		margin-right: 10px;
-		color: #666;
-	}
-
-	input {
-		width: 100%;
-		border: none;
-		outline: none;
-		background: none;
-	}
+export const ColumnGapBox = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 `;

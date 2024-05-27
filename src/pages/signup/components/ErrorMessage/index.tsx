@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 
 interface ErrorMessageProps {
-	message: string;
+	message?: string;
 }
 
 const ErrorText = styled.div`

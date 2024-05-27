@@ -34,7 +34,7 @@ const AddressSearch: FC<AddressSearchProps> = ({ onComplete }) => {
 		}).open();
 	};
 
-	return <PrimaryButton type="button" text="주소검색" onClick={handleClick} />;
+	return <PrimaryButton type="button" text="주소검색" onClick={handleClick} width="15%" />;
 };
 
 export default AddressSearch;
