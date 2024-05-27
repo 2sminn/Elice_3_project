@@ -4,6 +4,7 @@ import Logo from '/assets/images/logo.svg';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import TextInput from '../../components/inputs/TextInput';
 import AddressSearch from './components/AddressSearch/addresssearch';
+import { termsOfService, privacyPolicy } from './termsofService';
 
 import {
 	Container,
@@ -237,10 +238,7 @@ const Signup: FC = () => {
 
 				<Section>
 					<SectionTitle>이용약관</SectionTitle>
-					<StyledTextarea
-						readOnly
-						value="Lorem Ipsum is simply dummy text of the printing and typesetting industry..."
-					/>
+					<StyledTextarea readOnly value={termsOfService} />
 					<CheckboxWrapper>
 						<input type="checkbox" name="agreement1" checked={form.agreement1} onChange={handleFormChange} />
 						<label htmlFor="agreement1">이용약관에 동의합니다.</label>
@@ -249,10 +247,7 @@ const Signup: FC = () => {
 
 				<Section>
 					<SectionTitle>개인정보 수집 및 이용</SectionTitle>
-					<StyledTextarea
-						readOnly
-						value="Lorem Ipsum is simply dummy text of the printing and typesetting industry..."
-					/>
+					<StyledTextarea readOnly value={privacyPolicy} />
 					<CheckboxWrapper>
 						<input type="checkbox" name="agreement2" checked={form.agreement2} onChange={handleFormChange} />
 						<label htmlFor="agreement2">개인정보 수집 및 이용에 동의합니다.</label>
