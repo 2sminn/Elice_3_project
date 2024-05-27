@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Logo from '/assets/images/logo.svg';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import TextInput from '../../components/inputs/TextInput';
+import AddressSearch from './components/AddressSearch/addresssearch';
 
 import {
 	Container,
@@ -66,10 +67,18 @@ const Signup: FC = () => {
 		}));
 	};
 
+	const handleAddressComplete = (data: { address: string; zonecode: string }) => {
+		setForm((prev) => ({
+			...prev,
+			address: data.address,
+			zipCode: data.zonecode,
+		}));
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// 회원가입 로직 추가
-		//console.log('Form submitted', form);
+		console.log('Form submitted', form);
 	};
 
 	return (
@@ -185,7 +194,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
-						<PrimaryButton type="button" text="주소검색" />
+						<AddressSearch onComplete={handleAddressComplete} /> {/* 주소 검색 컴포넌트 사용 */}
 					</FormItemWrapper>
 					<FormItemWrapper>
 						<InputWithIcon>
