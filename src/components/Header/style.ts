@@ -16,7 +16,8 @@ export const HeaderTop = styled.div`
 `;
 
 export const LogoBox = styled.div`
-	width: 70px;
+	width: 150px;
+	margin-bottom: 20px;
 
 	img {
 		width: 100%;
@@ -47,7 +48,7 @@ export const PointBox = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 10px;
 `;
 
 export const PointContainer = styled.div`
@@ -74,24 +75,9 @@ export const PointContainer = styled.div`
 	}
 `;
 
-export const AddPointBtn = styled.button`
-	width: 100%;
-	padding: 12px 0;
-	border-radius: 6px;
-	background-color: ${({ theme }) => theme.colors.primary};
-	font-size: 18px;
-	font-weight: 500;
-	color: #fff;
-
-	&:hover {
-		opacity: 0.85;
-		transition: 0.3s;
-	}
-`;
-
 export const MenuContainer = styled.nav`
 	width: 100%;
-	margin-top: 70px;
+	margin-top: 40px;
 `;
 
 export const Menu = styled.ul`
@@ -102,7 +88,7 @@ export const Menu = styled.ul`
 
 	li {
 		a {
-			font-size: 20px;
+			font-size: ${({ theme }) => theme.textSize.large};
 			font-weight: 500;
 			color: #000;
 		}

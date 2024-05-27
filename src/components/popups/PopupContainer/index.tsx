@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react';
 import usePopup from '../../../hooks/usePopup';
-import { usePopupStore } from '../../../stores/\bpopupStore';
+import { usePopupStore } from '../../../stores/popupStore';
 import Backdrop from '../../Backdrop';
 
 const PopupContainer = () => {
@@ -9,7 +9,7 @@ const PopupContainer = () => {
 
 	const popupVisible = !!popup;
 
-	if (!popupVisible) return <></>;
+	if (!popupVisible) return null;
 
 	const handleClick: MouseEventHandler<HTMLDivElement> = ({ target, currentTarget }) => {
 		if (target === currentTarget) closePopup();

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -10,23 +11,10 @@ export const Container = styled.div`
 
 export const LogoImage = styled.img`
 	width: 250px;
-	height: 70px;
 	margin-bottom: 40px;
 `;
 
-export const SignUpTitle = styled.div`
-	font-size: 16px;
-	font-weight: 400;
-	color: #616161;
-	margin: 2rem;
-	&:hover {
-		color: #575757;
-		font-weight: 400;
-	}
-`;
-
-export const SocialLoginTitle = styled.div`
-	font-size: 15px;
-	font-weight: 500;
-	margin: 30px 20px 10px;
+export const SignUpBtn = styled(Link)`
+	display: block;
+	margin-top: 10px;
 `;
