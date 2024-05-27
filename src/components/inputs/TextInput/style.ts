@@ -5,7 +5,6 @@ export const StyledInput = styled.input`
 	height: 50px;
 	background-color: white;
 	padding: 10px;
-	margin-bottom: 10px;
 	border: 1px solid #ccc;
 	border-radius: 8px;
 
@@ -14,7 +13,7 @@ export const StyledInput = styled.input`
 	}
 
 	&:focus {
-		border-color: #f0c14b;
+		border-color: ${({ theme }) => theme.colors.primary};
 		outline: none;
 	}
 `;

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import MainPage from '../pages/main';
 import Login from '../pages/login';
-
+import Signup from '../pages/signup';
 interface Route {
 	id: number;
 	title: string;
@@ -27,6 +27,13 @@ export const routeList: { [key: string]: Route } = {
 		path: '/login',
 		link: '/login',
 		element: <Login />,
+	},
+	SIGNUP: {
+		id: 2,
+		title: '회원가입',
+		path: '/signup',
+		link: '/signup',
+		element: <Signup />,
 	},
 };
 
