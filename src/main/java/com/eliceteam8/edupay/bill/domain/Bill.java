@@ -37,6 +37,8 @@ public class Bill {
     @Enumerated(EnumType.STRING)
     private Status status; // 청구서 상태
 
+    private String message;
+
     //TODO: 연관관계 매핑
     @Column(name = "academy_id")
     private long academyId;
@@ -46,4 +48,9 @@ public class Bill {
 
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
     private BillLog billLog;
+
+    public Bill(LocalDateTime dueDate, String message) {
+        this.dueDate = dueDate;
+        this.message = message;
+    }
 }
