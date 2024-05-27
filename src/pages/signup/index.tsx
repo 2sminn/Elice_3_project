@@ -5,6 +5,8 @@ import PrimaryButton from '../../components/buttons/PrimaryButton';
 import TextInput from '../../components/inputs/TextInput';
 import AddressSearch from './components/AddressSearch/addresssearch';
 import { termsOfService, privacyPolicy } from './termsofService';
+import { validateForm, isFormValid, Errors } from '../../utils/validation';
+import ErrorMessage from './components/ErrorMessage';
 
 import {
 	Container,
@@ -40,6 +42,22 @@ const Signup: FC = () => {
 		agreement1: false,
 		agreement2: false,
 		agreementAll: false,
+	});
+
+	const [errors, setErrors] = useState<Errors>({
+		username: '',
+		password: '',
+		confirmPassword: '',
+		academyName: '',
+		fullName: '',
+		businessNumber: '',
+		email: '',
+		businessEmail: '',
+		phoneNumber: '',
+		mobileNumber: '',
+		zipCode: '',
+		address: '',
+		detailedAddress: '',
 	});
 
 	const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -78,8 +96,14 @@ const Signup: FC = () => {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		// 회원가입 로직 추가
-		console.log('Form submitted', form);
+		const validationErrors = validateForm(form);
+		setErrors(validationErrors);
+		if (isFormValid(validationErrors)) {
+			// 회원가입 로직 추가
+			console.log('Form submitted', form);
+		} else {
+			console.log('유효성 검사 실패');
+		}
 	};
 
 	return (
@@ -99,6 +123,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.email && <ErrorMessage message={errors.email} />}
 						<PrimaryButton type="button" text="중복확인" />
 					</FormItemWrapper>
 					<FormItemWrapper>
@@ -112,6 +137,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.password && <ErrorMessage message={errors.password} />}
 						<InputWithIcon>
 							<FaLock />
 							<TextInput
@@ -122,8 +148,8 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.confirmPassword && <ErrorMessage message={errors.confirmPassword} />}
 					</FormItemWrapper>
-					<p>* 비밀번호는 영문자, 숫자, 특수문자 중 2가지 이상 포함이어야 합니다.</p>
 				</Section>
 
 				<Divider />
@@ -141,6 +167,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.academyName && <ErrorMessage message={errors.academyName} />}
 						<InputWithIcon>
 							<FaUser />
 							<TextInput
@@ -151,6 +178,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.fullName && <ErrorMessage message={errors.fullName} />}
 						<InputWithIcon>
 							<FaBuilding />
 							<TextInput
@@ -161,6 +189,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.businessNumber && <ErrorMessage message={errors.businessNumber} />}
 					</FormItemWrapper>
 					<FormItemWrapper>
 						<InputWithIcon>
@@ -173,6 +202,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.businessEmail && <ErrorMessage message={errors.businessEmail} />}
 						<InputWithIcon>
 							<FaPhone />
 							<TextInput
@@ -183,6 +213,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.phoneNumber && <ErrorMessage message={errors.phoneNumber} />}
 					</FormItemWrapper>
 					<FormItemWrapper>
 						<InputWithIcon>
@@ -195,6 +226,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.zipCode && <ErrorMessage message={errors.zipCode} />}
 						<AddressSearch onComplete={handleAddressComplete} /> {/* 주소 검색 컴포넌트 사용 */}
 					</FormItemWrapper>
 					<FormItemWrapper>
@@ -208,6 +240,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.address && <ErrorMessage message={errors.address} />}
 						<InputWithIcon>
 							<FaMapMarkedAlt />
 							<TextInput
@@ -218,6 +251,7 @@ const Signup: FC = () => {
 								onChange={handleFormChange}
 							/>
 						</InputWithIcon>
+						{errors.detailedAddress && <ErrorMessage message={errors.detailedAddress} />}
 					</FormItemWrapper>
 				</Section>
 

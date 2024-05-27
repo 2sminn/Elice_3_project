@@ -43,16 +43,11 @@ export const SectionTitle = styled.h2`
 
 export const FormItemWrapper = styled.div`
 	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
+	flex-direction: column; /* Changed to column to stack input and error message */
+	gap: 5px;
 	width: 100%;
-	margin-bottom: 10px;
-
-	& > div,
-	& > button {
-		flex: 1;
-		min-width: calc(50% - 10px);
-	}
+	margin-bottom: 20px; /* Increased to accommodate error message height */
+	position: relative;
 `;
 
 export const StyledTextarea = styled.textarea`
