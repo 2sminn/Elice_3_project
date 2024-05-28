@@ -50,9 +50,14 @@ const BillPopup = () => {
 		reset();
 	};
 
-	useEffect(() => {
+	const handleClickUserChoice = () => {
 		setValue('studentName', '조정택');
-	});
+		setValue('grade', '고등학교 3학년');
+		setValue('tel', '010-9774-3591');
+		setValue('subject', '수학, 과학');
+		setValue('tuition', '10,000,000');
+		setValue('deadline', '~2024.07.10');
+	};
 
 	useEffect(() => {
 		if (errors.studentName) {
@@ -83,37 +88,79 @@ const BillPopup = () => {
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 						<li>
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 						<li>
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 						<li>
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 						<li>
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 						<li>
 							<S.UserInfo>
 								<span>조정택</span> / 1997.07.08 / 010-9774-3591
 							</S.UserInfo>
-							<PrimaryButton type="button" text="선택" isFill width="45px" textSize="12px" />
+							<PrimaryButton
+								type="button"
+								text="선택"
+								isFill
+								width="45px"
+								textSize="12px"
+								onClick={handleClickUserChoice}
+							/>
 						</li>
 					</S.UserList>
 				</S.UserListBox>
@@ -123,6 +170,7 @@ const BillPopup = () => {
 						<Controller
 							name="studentName"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="studentName" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -131,6 +179,7 @@ const BillPopup = () => {
 						<Controller
 							name="grade"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="grade" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -139,6 +188,7 @@ const BillPopup = () => {
 						<Controller
 							name="tel"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="tel" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -150,6 +200,7 @@ const BillPopup = () => {
 						<Controller
 							name="subject"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="subject" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -158,6 +209,7 @@ const BillPopup = () => {
 						<Controller
 							name="tuition"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="tuition" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -166,6 +218,7 @@ const BillPopup = () => {
 						<Controller
 							name="deadline"
 							control={control}
+							defaultValue=""
 							render={({ field }) => <TextInput id="deadline" disabled {...field} />}
 						/>
 					</S.InputContainer>
@@ -175,6 +228,7 @@ const BillPopup = () => {
 					<Controller
 						name="message"
 						control={control}
+						defaultValue=""
 						render={({ field }) => <Textarea placeholder="안내메세지를 입력하세요." {...field} />}
 					/>
 				</S.MessageContainer>
