@@ -36,3 +36,6 @@ src/main/resources/application-rds.yml
 
 ### VS Code ###
 .vscode/
+
+application-prod.yml
+application-dev.yml
