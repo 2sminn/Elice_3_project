@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
                 user.getPassword(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRoleList().stream().map(userRole -> userRole.name()).toList());
+                user.getRoles().stream().map(userRole -> userRole.name()).toList());
 
         return userDto;
     }
@@ -50,13 +50,18 @@ public class AuthService implements UserDetailsService {
         signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         User user = User.createUser(signUpDto);
         user.addRole(UserRole.USER);
+
+        userRepository.save(user);
+
         Academy academy = Academy.builder()
                 .academyName(signUpDto.getAcademyName())
                 .postCode(signUpDto.getPostCode())
                 .address(signUpDto.getAddress())
+                .addressDetail(signUpDto.getAddressDetail())
                 .landlineNumber(signUpDto.getLandlineNumber())
+                .user(user)
                 .build();
-        userRepository.save(user);
+
         academyRepository.save(academy);
     }
 }

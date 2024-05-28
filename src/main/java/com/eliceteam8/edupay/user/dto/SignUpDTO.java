@@ -15,5 +15,6 @@ public class SignUpDTO {
     private String academyName;
     private int postCode;
     private String address;
+    private String addressDetail;
     private String landlineNumber;
 }
