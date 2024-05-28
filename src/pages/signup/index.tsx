@@ -29,7 +29,7 @@ const schema = Yup.object().shape({
 	email: Yup.string().required('이메일은 필수 입력 사항입니다.'),
 	password: Yup.string().required('비밀번호는 필수 입력 사항입니다.'),
 	confirmPassword: Yup.string()
-		.oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+		.oneOf([Yup.ref('password')], '비밀번호가 일치하지 않습니다.')
 		.required('비밀번호 확인은 필수 입력 사항입니다.'),
 	academyName: Yup.string().required('사업자명은 필수 입력 사항입니다.'),
 	fullName: Yup.string().required('대표자명은 필수 입력 사항입니다.'),
