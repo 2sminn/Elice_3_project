@@ -14,19 +14,19 @@ import org.springframework.security.core.userdetails.User;
 @Getter
 public class UserDTO extends User {
 
-
-
     private String email;
     private String phoneNumber;
-
     private String loginId;
-
     private String academyName;
+    private Long academyId;
+    private Long userId;
+
 
     private List<String> roleNames = new ArrayList<>();
 
 
-    public UserDTO(String loginId, String password, String email, String phoneNumber, List<String> roleNames) {
+    public UserDTO(String loginId, String password, String email, String phoneNumber,
+                   List<String> roleNames, Long academyId, Long userId) {
         super(
                 loginId,
                 password,
@@ -36,6 +36,8 @@ public class UserDTO extends User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.roleNames = roleNames;
+        this.academyId=academyId;
+        this.userId=userId;
     }
 
 
@@ -44,7 +46,9 @@ public class UserDTO extends User {
         dataMap.put("email", email);
         dataMap.put("phoneNumber", phoneNumber);
         dataMap.put("loginId", loginId);
-        dataMap.put("roleNames", roleNames);
+        dataMap.put("roles", roleNames);
+        dataMap.put("academyId", academyId);
+        dataMap.put("userId", userId);
         return dataMap;
     }
 

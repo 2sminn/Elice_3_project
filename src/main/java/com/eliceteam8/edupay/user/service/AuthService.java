@@ -39,7 +39,10 @@ public class AuthService implements UserDetailsService {
                 user.getPassword(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRoles().stream().map(userRole -> userRole.name()).toList());
+                user.getRoles().stream().map(userRole -> userRole.name()).toList(),
+                user.getAcademy().getId(),
+                user.getId()
+        );
 
         return userDto;
     }

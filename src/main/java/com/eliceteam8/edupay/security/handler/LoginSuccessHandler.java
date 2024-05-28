@@ -22,17 +22,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        log.info("LoginSuccessHandler ---");
+        log.info("--- LoginSuccessHandler ---");
         UserDTO userDTO =  (UserDTO)authentication.getPrincipal();
 
         response.setContentType("application/json;charset=UTF-8");
 
         // 응답에 포함할 데이터 생성
-        Map<String, Object> userDTOClaims = userDTO.getClaims();
+        Map<String, Object> userClaims = userDTO.getClaims();
+
 
 
         // JSON 응답 작성
-        response.getWriter().write(objectMapper.writeValueAsString(userDTOClaims));
+        response.getWriter().write(objectMapper.writeValueAsString(userClaims));
         response.getWriter().flush();
     }
 }

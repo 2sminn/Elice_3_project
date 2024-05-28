@@ -17,7 +17,7 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
 
-        log.info("LoginFailHandler --- ");
+        log.info("--- LoginFailHandler --- ");
         response.setContentType("application/json;charset=utf-8");
 
     }

@@ -37,7 +37,7 @@ public class User {
     @Builder.Default
     private List<UserRole> roles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Academy academy;
 
 
