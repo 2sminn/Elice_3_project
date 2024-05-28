@@ -1,37 +1,4 @@
 
-
 spring:
   application:
     name: edupay
-
-
-
-
-
-#---
-#spring:
-#  config:
-#    activate:
-#      on-profile: dev
-#
-#
-#
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/edupay
-#    username: root
-#    password: 1234
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#
-#jwt:
-#  secretKey: 034509324804235843098432144543676546435
-#
-#---
-#spring:
-#  config:
-#    activate:
-#      on-profile: prod
