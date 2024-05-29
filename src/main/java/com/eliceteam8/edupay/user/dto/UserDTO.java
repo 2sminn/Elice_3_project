@@ -15,9 +15,9 @@ import org.springframework.security.core.userdetails.User;
 public class UserDTO extends User {
 
     private String email;
-    private String phoneNumber;
-    private String loginId;
-    private String academyName;
+
+    private String password;
+
     private Long academyId;
     private Long userId;
 
@@ -25,30 +25,28 @@ public class UserDTO extends User {
     private List<String> roleNames = new ArrayList<>();
 
 
-    public UserDTO(String loginId, String password, String email, String phoneNumber,
+    public UserDTO(String email, String password,
                    List<String> roleNames, Long academyId, Long userId) {
         super(
-                loginId,
+                email,
                 password,
                 roleNames.stream().map(str -> new SimpleGrantedAuthority("ROLE_"+str)).collect(Collectors.toList()));
 
-        this.loginId = loginId;
         this.email = email;
-        this.phoneNumber = phoneNumber;
         this.roleNames = roleNames;
         this.academyId=academyId;
         this.userId=userId;
+        this.password=password;
     }
 
 
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("email", email);
-        dataMap.put("phoneNumber", phoneNumber);
-        dataMap.put("loginId", loginId);
         dataMap.put("roles", roleNames);
         dataMap.put("academyId", academyId);
         dataMap.put("userId", userId);
+        dataMap.put("password", password);
         return dataMap;
     }
 

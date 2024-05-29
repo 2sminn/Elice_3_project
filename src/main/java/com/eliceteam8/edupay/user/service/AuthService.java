@@ -25,20 +25,17 @@ public class AuthService implements UserDetailsService {
     private final AcademyRepository academyRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     //로그인
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("username: " + username);
 
-        User user = userRepository.findByLoginId(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Not Found User"));
 
         UserDTO userDto = new UserDTO(
-                user.getLoginId(),
-                user.getPassword(),
                 user.getEmail(),
-                user.getPhoneNumber(),
+                user.getPassword(),
                 user.getRoles().stream().map(userRole -> userRole.name()).toList(),
                 user.getAcademy().getId(),
                 user.getId()
@@ -49,8 +46,9 @@ public class AuthService implements UserDetailsService {
 
     //회원가입
     @Transactional
-    public void signUp(SignUpDTO signUpDto) {
-        signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+    public Long signUp(SignUpDTO signUpDto) {
+        String pw = passwordEncoder.encode(signUpDto.getPassword());
+        signUpDto.setPassword(pw);
         User user = User.createUser(signUpDto);
         user.addRole(UserRole.USER);
 
@@ -62,9 +60,13 @@ public class AuthService implements UserDetailsService {
                 .address(signUpDto.getAddress())
                 .addressDetail(signUpDto.getAddressDetail())
                 .landlineNumber(signUpDto.getLandlineNumber())
+                .academyEmail(signUpDto.getAcademyEmail())
                 .user(user)
                 .build();
 
         academyRepository.save(academy);
+
+        return user.getId();
+
     }
 }

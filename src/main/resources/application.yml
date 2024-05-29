@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: edupay
@@ -21,3 +22,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+
+jwt:
+  secretKey: 034509324804235843098432144543676546435
