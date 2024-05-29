@@ -78,6 +78,7 @@ const GlobalStyle = createGlobalStyle`
     background: none;
     outline: none;
     cursor: pointer;
+    padding: 0;
   }
 
   a {
@@ -113,7 +114,6 @@ const GlobalStyle = createGlobalStyle`
     height: 95vh;
     background-color: #eee;
     border-radius: 20px;
-    overflow-y: auto;
     display: flex;
     padding: 5px;
   }

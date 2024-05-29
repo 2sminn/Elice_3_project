@@ -1,12 +1,18 @@
 import styled from 'styled-components';
 
-export const StyledInput = styled.input`
-	width: ${(props) => props.width || '100%'};
-	height: 50px;
+interface StyledTextareaProps {
+	width?: string;
+	height?: string;
+}
+
+export const StyledTextarea = styled.textarea<StyledTextareaProps>`
+	width: ${({ width }) => width || '100%'};
+	height: ${({ height }) => height || '250px'};
 	background-color: white;
 	padding: 10px;
 	border: 1px solid #ccc;
 	border-radius: 8px;
+	resize: none;
 
 	&::placeholder {
 		color: #888;
@@ -15,9 +21,5 @@ export const StyledInput = styled.input`
 	&:focus {
 		border-color: ${({ theme }) => theme.colors.primary};
 		outline: none;
-	}
-
-	&:disabled {
-		background-color: #eee;
 	}
 `;

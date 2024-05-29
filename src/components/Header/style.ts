@@ -77,7 +77,7 @@ export const PointContainer = styled.div`
 
 export const MenuContainer = styled.nav`
 	width: 100%;
-	margin-top: 40px;
+	margin-top: 25px;
 `;
 
 export const Menu = styled.ul`
@@ -102,7 +102,7 @@ export const Menu = styled.ul`
 `;
 
 export const LogoutBtn = styled.button`
-	width: 40px;
+	width: 25px;
 	position: absolute;
 	right: 5%;
 	bottom: 20px;

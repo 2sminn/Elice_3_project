@@ -50,7 +50,7 @@ export const AddBillBox = styled.div`
 	display: flex;
 	gap: 15px 2%;
 	flex-wrap: wrap;
-	margin-bottom: 25px;
+	margin-bottom: 35px;
 `;
 
 type AddCountBtnType = {
