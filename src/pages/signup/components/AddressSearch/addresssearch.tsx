@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PrimaryButton from '../../../../components/buttons/PrimaryButton';
 
 interface AddressSearchProps {
 	onComplete: (data: { address: string; zonecode: string }) => void;
 }
 
-const AddressSearch: FC<AddressSearchProps> = ({ onComplete }) => {
+const AddressSearch = ({ onComplete }: AddressSearchProps) => {
 	const [isLoaded, setIsLoaded] = useState(false);
 
 	useEffect(() => {
