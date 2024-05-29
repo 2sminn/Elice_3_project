@@ -1,4 +1,3 @@
-import React, { FC } from 'react';
 import styled from 'styled-components';
 
 interface ErrorMessageProps {
@@ -11,7 +10,7 @@ const ErrorText = styled.div`
 	margin-top: 4px; /* Space between input and error message */
 `;
 
-const ErrorMessage: FC<ErrorMessageProps> = ({ message }) => {
+const ErrorMessage = ({ message }: ErrorMessageProps) => {
 	return <ErrorText>{message}</ErrorText>;
 };
 
