@@ -2,6 +2,7 @@ import { useState } from 'react';
 import usePopup from '../../../../hooks/usePopup';
 import { formatNumber } from '../../../../utils/formatNumber';
 import * as S from './style';
+import PrimaryButton from '../../../buttons/PrimaryButton';
 
 const EduDatas = [
 	{
@@ -73,8 +74,8 @@ const AddBillCountPopup = () => {
 				))}
 			</S.AddBillBox>
 			<S.BtnContainer>
-				<button>충전</button>
-				<button onClick={closePopup}>취소</button>
+				<PrimaryButton text="충전" width="49%" isFill />
+				<PrimaryButton text="취소" width="49%" onClick={closePopup} />
 			</S.BtnContainer>
 		</S.Container>
 	);
