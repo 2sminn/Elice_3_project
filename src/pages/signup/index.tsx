@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '/assets/images/logo.svg';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -61,11 +61,45 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 ) => void | Promise<void>;
 
 const Signup: FC = () => {
-	const { control, handleSubmit, errors, reset } = useCustomForm<FormValues>(schema, 'onChange');
+	const { control, handleSubmit, errors, reset, setValue } = useCustomForm<FormValues>(schema, 'onChange');
+
+	// 체크박스 상태 관리
+	const [agreementAll, setAgreementAll] = useState(false);
+	const [agreement1, setAgreement1] = useState(false);
+	const [agreement2, setAgreement2] = useState(false);
 
 	const onSubmit: SubmitHandler<FormValues> = (data) => {
 		console.log(data);
 		reset();
+	};
+
+	// 모든 약관 동의 체크박스 핸들러
+	const handleAgreementAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const checked = e.target.checked;
+		setAgreementAll(checked);
+		setAgreement1(checked);
+		setAgreement2(checked);
+	};
+
+	// 개별 약관 동의 체크박스 핸들러
+	const handleAgreement1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setAgreement1(e.target.checked);
+		if (!e.target.checked) {
+			setAgreementAll(false);
+		}
+	};
+
+	const handleAgreement2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setAgreement2(e.target.checked);
+		if (!e.target.checked) {
+			setAgreementAll(false);
+		}
+	};
+
+	// 주소 검색 완료 핸들러
+	const handleAddressComplete = (data: { address: string; zonecode: string }) => {
+		setValue('zipCode', data.zonecode);
+		setValue('address', data.address);
 	};
 
 	return (
@@ -145,7 +179,7 @@ const Signup: FC = () => {
 								render={({ field }) => <TextInput type="text" placeholder="우편번호" width="84%" {...field} />}
 							/>
 
-							<AddressSearch onComplete={() => {}} />
+							<AddressSearch onComplete={handleAddressComplete} />
 						</BetweenBox>
 						{errors.zipCode && <ErrorMessage message={errors.zipCode.message} />}
 						<Controller
@@ -166,7 +200,7 @@ const Signup: FC = () => {
 				<Section>
 					<SectionTitle>약관 동의</SectionTitle>
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreementAll" />
+						<input type="checkbox" name="agreementAll" checked={agreementAll} onChange={handleAgreementAllChange} />
 						<label htmlFor="agreementAll">모든 약관에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
@@ -175,7 +209,7 @@ const Signup: FC = () => {
 					<SectionTitle>이용약관</SectionTitle>
 					<StyledTextarea readOnly value={termsOfService} />
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreement1" />
+						<input type="checkbox" name="agreement1" checked={agreement1} onChange={handleAgreement1Change} />
 						<label htmlFor="agreement1">이용약관에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
@@ -184,7 +218,7 @@ const Signup: FC = () => {
 					<SectionTitle>개인정보 수집 및 이용</SectionTitle>
 					<StyledTextarea readOnly value={privacyPolicy} />
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreement2" />
+						<input type="checkbox" name="agreement2" checked={agreement2} onChange={handleAgreement2Change} />
 						<label htmlFor="agreement2">개인정보 수집 및 이용에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
