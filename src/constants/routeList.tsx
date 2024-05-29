@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import MainPage from '../pages/main';
 import Login from '../pages/login';
 import Signup from '../pages/signup';
+import StudentMgrPage from '../pages/studentMgrPage';
+
 interface Route {
 	id: number;
 	title: string;
@@ -17,6 +19,13 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/',
 		link: '/',
 		element: <MainPage />,
+	},
+	STUDENT_MGR: {
+		id: 2,
+		title: '원생 관리',
+		path: '/student-mgr',
+		link: '/student-mgr',
+		element: <StudentMgrPage />,
 	},
 };
 
