@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.security.handler;
 
+import com.eliceteam8.edupay.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -29,9 +30,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
+        // JWT 토큰 생성
+        String accessToken = JwtProvider.generateToken(userClaims, 720);
+        userClaims.put("accessToken", accessToken);
 
-
-
+        userClaims.remove("password");
         // JSON 응답 작성
         response.getWriter().write(objectMapper.writeValueAsString(userClaims));
         response.getWriter().flush();

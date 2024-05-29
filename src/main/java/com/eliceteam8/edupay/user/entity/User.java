@@ -22,14 +22,18 @@ public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
-    private String loginId;
+
+    @Column(nullable = false,unique = true)
+    private String email;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String username;
-    @Column(nullable = false)
-    private String email;
+
+
+
     @Column(nullable = false)
     private String phoneNumber;
 
@@ -53,7 +57,6 @@ public class User {
     //createUser
     public static User createUser(SignUpDTO signUpDto) {
         return User.builder()
-                .loginId(signUpDto.getLoginId())
                 .password(signUpDto.getPassword())
                 .username(signUpDto.getUsername())
                 .email(signUpDto.getEmail())

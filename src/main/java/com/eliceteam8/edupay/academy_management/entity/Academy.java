@@ -23,12 +23,18 @@ public class Academy {
 
     @Column(nullable = false)
     private String academyName;
+
+    private String academyEmail;
+
     @Column(nullable = false)
     private int postCode;
+
     @Column(nullable = false)
     private String address;
+
     @Column(nullable = false)
     private String addressDetail;
+
     @Column(nullable = false)
     private String landlineNumber;
 

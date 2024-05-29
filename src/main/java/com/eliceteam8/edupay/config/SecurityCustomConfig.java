@@ -1,15 +1,18 @@
 package com.eliceteam8.edupay.config;
 
 
+import com.eliceteam8.edupay.security.filter.JWTCheckFilter;
 import com.eliceteam8.edupay.security.handler.LoginFailHandler;
 import com.eliceteam8.edupay.security.handler.LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,22 +39,25 @@ public class SecurityCustomConfig {
             config.disable();
         });
 
-
-        http
-                .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests
-                                .requestMatchers("/auth/**").permitAll()
-                );
+//
+//        http
+//                .authorizeHttpRequests((authorizeRequests) ->
+//                        authorizeRequests
+//                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+//                                .requestMatchers("/auth/**").permitAll()
+//                );
 
 
         http
                 .formLogin(formLogin ->
                         formLogin
+                                .usernameParameter("email")
                                 .loginPage("/auth/login")
                                 .successHandler(new LoginSuccessHandler())
                                 .failureHandler(new LoginFailHandler())
                 );
 
+        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

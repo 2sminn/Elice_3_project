@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.security.handler;
 
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 public class LoginFailHandler implements AuthenticationFailureHandler {
@@ -20,5 +22,10 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
         log.info("--- LoginFailHandler --- ");
         response.setContentType("application/json;charset=utf-8");
 
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(Map.of("error", "ERROR_LOGIN"));
+
+        response.getWriter().println(jsonStr);
+        response.getWriter().flush();
     }
 }
