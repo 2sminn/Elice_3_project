@@ -24,6 +24,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.modelmapper:modelmapper:2.3.8'
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 

@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.bill.domain;
 
+import com.eliceteam8.edupay.academy_management.entity.Academy;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,11 +43,12 @@ public class Bill {
 
     private String message;
 
-    //TODO: 연관관계 매핑
-    @Column(name = "academy_id")
-    private long academyId;
 
-    @Column(name = "student_id")
+    @ManyToOne
+    @JoinColumn(name = "academy_id")
+    private Academy academy;
+
+    //TODO: 연관관계 매핑
     private long studentId;
 
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
