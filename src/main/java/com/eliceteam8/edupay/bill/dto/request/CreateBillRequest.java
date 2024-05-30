@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 public class CreateBillRequest {
     //private StudentInfo studentInfo;
-    private List<LectureDetail> lectureDetails;
+    //private List<LectureDetail> lectureDetails;
     private LocalDateTime dueDate;
     private String message;
 }

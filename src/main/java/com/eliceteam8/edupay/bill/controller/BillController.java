@@ -5,8 +5,11 @@ import com.eliceteam8.edupay.bill.service.BillService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping("/bill")
 public class BillController {
     private final BillService billService;
 
@@ -14,7 +17,7 @@ public class BillController {
         this.billService = billService;
     }
 
-    @PostMapping("/bill/create")
+    @PostMapping("/create")
     public void createBill(@RequestBody CreateBillRequest request) {
         billService.createBill(request);
     }
