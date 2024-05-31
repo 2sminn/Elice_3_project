@@ -1,6 +1,5 @@
 package com.eliceteam8.edupay.security.config.jwt;
 
-import com.eliceteam8.edupay.global.enums.ErrorCode;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import io.jsonwebtoken.*;
@@ -10,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
 

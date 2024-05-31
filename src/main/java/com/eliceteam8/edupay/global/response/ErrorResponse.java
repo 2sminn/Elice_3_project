@@ -1,16 +1,8 @@
 package com.eliceteam8.edupay.global.response;
 
-import com.eliceteam8.edupay.global.enums.ErrorCode;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.validation.BindingResult;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class ErrorResponse {

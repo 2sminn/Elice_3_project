@@ -2,6 +2,8 @@ package com.eliceteam8.edupay.user.service;
 
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
+import com.eliceteam8.edupay.global.enums.ExceptionCode;
+import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
@@ -25,6 +27,7 @@ public class AuthService implements UserDetailsService {
     private final AcademyRepository academyRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
     //로그인
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -47,6 +50,11 @@ public class AuthService implements UserDetailsService {
     //회원가입
     @Transactional
     public Long signUp(SignUpDTO signUpDto) {
+
+        if(userRepository.existsByEmail(signUpDto.getEmail())){
+            throw new AlreadyExistUserException(ExceptionCode.ALREADY_EXIST_EMAIL);
+        }
+
         String pw = passwordEncoder.encode(signUpDto.getPassword());
         signUpDto.setPassword(pw);
         User user = User.createUser(signUpDto);

@@ -1,10 +1,8 @@
 package com.eliceteam8.edupay.global.advice;
 
-import com.eliceteam8.edupay.global.enums.ErrorCode;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
-import com.eliceteam8.edupay.global.exception.CustomJWTException;
+import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,13 @@ public class GlobalExceptionHandler {
             stringBuilder.append(", ");
         }
         final ErrorResponse response = ErrorResponse.of(ExceptionCode.INVALID_INPUT_VALUE, String.valueOf(stringBuilder));
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @ExceptionHandler(AlreadyExistUserException.class)
+    protected ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
+        log.error("---handleAlreadyExistUserException---");
+        final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
