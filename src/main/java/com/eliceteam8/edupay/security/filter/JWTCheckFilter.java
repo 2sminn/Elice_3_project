@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.security.filter;
 
-import com.eliceteam8.edupay.config.jwt.JwtProvider;
+import com.eliceteam8.edupay.global.exception.CustomJWTException;
+import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
@@ -44,23 +45,16 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         try {
             String accessToken = authHeaderStr.substring(7);
 
-            log.info("accessToken : {}", accessToken);
+            Map<String, Object> claims = JwtProvider.validateToken(accessToken);
 
-            Map<String,Object> claims = JwtProvider.validateToken(accessToken);
+            String email = (String) claims.get("email");
+            String password = (String) claims.get("password");
+            List<String> roles = (List<String>) claims.get("roles");
+            Long academyId = ((Integer) claims.get("academyId")).longValue();
+            Long userId = ((Integer) claims.get("userId")).longValue();
 
-            String email = (String)claims.get("email");
-            String password = (String)claims.get("password");
-            List<String> roles = (List<String>)claims.get("roles");
-            Long academyId =   ((Integer)claims.get("academyId")).longValue();
-            Long userId =  ((Integer)claims.get("userId")).longValue();
 
-            log.info("academyId : {}", academyId);
-            log.info("userId : {}", userId);
-            log.info("roles : {}", roles);
-            log.info("email : {}", email);
-            log.info("password : {}", password);
-
-            UserDTO userDTO = new UserDTO(email,password,roles,academyId,userId);
+            UserDTO userDTO = new UserDTO(email, password, roles, academyId, userId);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                     new UsernamePasswordAuthenticationToken(userDTO, password, userDTO.getAuthorities());
@@ -68,8 +62,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
             filterChain.doFilter(request, response);
+
+        }catch (CustomJWTException e){
+            log.error("JWTCheckFilter error : {}");
+            Gson gson = new Gson();
+            String msg = gson.toJson(Map.of("status",e.getExceptionCode().getStatus(),
+                    "message",e.getExceptionCode().getMessage(),
+                    "code",e.getExceptionCode().getCode()));
+
+            response.setContentType("application/json;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println(msg);
+
+
         }catch (Exception e){
-            log.error("JWTCheckFilter error : {}", e.getMessage());
+            log.error("JWTCheckFilter Exception : {}", e.getMessage());
 
             Gson gson = new Gson();
             String msg = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
@@ -77,7 +84,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             response.setContentType("application/json;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(msg);
-            response.getWriter().flush();
         }
     }
 }

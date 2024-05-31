@@ -21,10 +21,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpDTO signUpDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpDTO signUpDto ) {
+
         Long newUserId = authService.signUp(signUpDto);
         return ResponseEntity.status(201).body(newUserId);
     }

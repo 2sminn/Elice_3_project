@@ -1,4 +1,4 @@
-package com.eliceteam8.edupay.config;
+package com.eliceteam8.edupay.security.config;
 
 
 import com.eliceteam8.edupay.security.filter.JWTCheckFilter;
@@ -39,13 +39,6 @@ public class SecurityCustomConfig {
             config.disable();
         });
 
-//
-//        http
-//                .authorizeHttpRequests((authorizeRequests) ->
-//                        authorizeRequests
-//                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-//                                .requestMatchers("/auth/**").permitAll()
-//                );
 
 
         http
@@ -57,8 +50,9 @@ public class SecurityCustomConfig {
                                 .failureHandler(new LoginFailHandler())
                 );
 
-        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+      //  http.addFilterAfter(new JWTAuthHandlerFilter(), JWTCheckFilter.class);
         return http.build();
     }
 
