@@ -23,6 +23,7 @@ public class BillService {
     @Transactional
     public void createBill(CreateBillRequest request) {
         Bill bill = new Bill(request.getDueDate(), request.getMessage());
+        bill.setStatusToCompleted();
         billRepository.save(bill);
     }
 
