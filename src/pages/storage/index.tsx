@@ -12,7 +12,7 @@ const StoragePage = () => {
 			<S.StorageContainer>
 				<PageTitle>수납관리</PageTitle>
 				<S.TabBox>
-					<S.TabMenu active>전체</S.TabMenu>
+					<S.TabMenu $active={true}>전체</S.TabMenu>
 					<S.TabMenu>수납내역</S.TabMenu>
 					<S.TabMenu>미수납내역</S.TabMenu>
 				</S.TabBox>
@@ -23,9 +23,9 @@ const StoragePage = () => {
 					</S.SearchTitle>
 					<S.SearchBox>
 						<S.SelectTopBox>
-							<Select options={storageYearOption} />
-							<Select options={storageMonthOption} />
-							<Select options={storageOXOption} />
+							<Select title="year-select" options={storageYearOption} />
+							<Select title="month-select" options={storageMonthOption} />
+							<Select title="ox-select" options={storageOXOption} />
 							<TextInput placeholder="원생이름" />
 						</S.SelectTopBox>
 						<PrimaryButton type="button" text="검색" />
@@ -33,22 +33,22 @@ const StoragePage = () => {
 				</S.SearchContainer>
 				<S.StorageTable>
 					<S.TableTitleBox>
-						<TableList title width="15%">
+						<TableList $isTitle width="15%">
 							이름
 						</TableList>
-						<TableList title width="15%">
+						<TableList $isTitle width="15%">
 							생년월일
 						</TableList>
-						<TableList title width="30%">
+						<TableList $isTitle width="30%">
 							수강과목
 						</TableList>
-						<TableList title width="10%">
+						<TableList $isTitle width="10%">
 							수납여부
 						</TableList>
-						<TableList title width="15%">
+						<TableList $isTitle width="15%">
 							수납일
 						</TableList>
-						<TableList title width="15%"></TableList>
+						<TableList $isTitle width="15%"></TableList>
 					</S.TableTitleBox>
 					<S.TableContentContainer>
 						<S.TableContentBox>

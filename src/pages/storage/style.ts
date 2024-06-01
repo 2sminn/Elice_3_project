@@ -13,19 +13,19 @@ export const TabBox = styled.ul`
 `;
 
 interface TabMenuProps {
-	active?: boolean;
+	$active?: boolean;
 }
 
 export const TabMenu = styled.li<TabMenuProps>`
 	width: 150px;
 	border-top-left-radius: ${({ theme }) => theme.radius.small};
 	border-top-right-radius: ${({ theme }) => theme.radius.small};
-	background-color: ${({ active, theme }) => (active ? theme.colors.primary : '#fff')};
+	background-color: ${({ $active, theme }) => ($active ? theme.colors.primary : '#fff')};
 	padding: 5px 10px;
 	font-size: ${({ theme }) => theme.textSize.little};
-	font-weight: ${({ active }) => (active ? '700' : '400')};
-	color: ${({ active }) => (active ? '#fff' : '#000')};
-	border-bottom: ${({ active, theme }) => (active ? `1px solid ${theme.colors.primary}` : '1px solid #fff')};
+	font-weight: ${({ $active }) => ($active ? '700' : '400')};
+	color: ${({ $active }) => ($active ? '#fff' : '#000')};
+	border-bottom: ${({ $active, theme }) => ($active ? `1px solid ${theme.colors.primary}` : '1px solid #fff')};
 	cursor: pointer;
 
 	&:hover {

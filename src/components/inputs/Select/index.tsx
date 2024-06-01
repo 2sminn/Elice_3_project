@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { StyledSelect } from './style';
 
-export interface optionType {
+export interface OptionType {
 	id: number;
 	name: string;
 	value: string;
@@ -10,21 +10,20 @@ export interface optionType {
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLSelectElement> {
 	width?: string;
 	height?: string;
-	options: optionType[];
+	options: OptionType[];
+	active?: boolean;
 }
 
-const Select = forwardRef<HTMLSelectElement, InputFieldProps>(({ width, height, options, ...props }, ref) => {
+const Select = ({ width, height, options, ...props }: InputFieldProps) => {
 	return (
-		<StyledSelect ref={ref} width={width} height={height} {...props}>
+		<StyledSelect width={width} height={height} {...props}>
 			{options.map((option) => (
-				<option key={option.id} value={option.value}>
+				<option key={option.id + option.name} value={option.value}>
 					{option.name}
 				</option>
 			))}
 		</StyledSelect>
 	);
-});
-
-Select.displayName = 'Select';
+};
 
 export default Select;
