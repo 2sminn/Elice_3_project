@@ -7,6 +7,7 @@ public enum ExceptionCode {
 
     //global
     INVALID_INPUT_VALUE(400, "G-001","올바른 입력값이 아닙니다."),
+    ACCESS_DENIED(403,"G-002","접근 권한이 없습니다."),
 
 
     //token
@@ -15,14 +16,16 @@ public enum ExceptionCode {
     MALFORM_TOKEN(401,"TOKEN-003","토큰의 형식이 잘못되었습니다."),
     INVALID_SIGNATURE(401,"TOKEN-004","토큰의 서명이 유효하지 않습니다."),
     ERROR_TOKEN(401,"TOKEN-005","토큰이 잘못되었습니다."),
-
-    //db
-    DUPLICATION_EMAIL(400,"DUPLICATION-001","이미 사용중인 이메일입니다."),
+    //토큰생성 오류
+    TOKEN_CREATION_ERROR(500,"TOKEN-006","토큰 생성 오류"),
 
 
     //user
     //이미 사용중인 이메일
-    ALREADY_EXIST_EMAIL(400,"USER-001","이미 사용중인 이메일입니다.");
+    ALREADY_EXIST_EMAIL(400,"USER-001","이미 사용중인 이메일입니다."),
+    NOT_FOUND_USER(404,"USER-002","사용자를 찾을 수 없습니다."),
+    //로그인 실패
+    LOGIN_FAILED(400,"USER-003","로그인에 실패하였습니다.");
 
 
     private final int status;

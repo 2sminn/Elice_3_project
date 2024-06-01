@@ -2,10 +2,12 @@ package com.eliceteam8.edupay.global.advice;
 
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
+import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,7 +20,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error("---handleMethodArgumentNotValidException---");
         BindingResult bindingResult = ex.getBindingResult();
         StringBuilder stringBuilder = new StringBuilder();
@@ -32,11 +34,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AlreadyExistUserException.class)
-    protected ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
+    public ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
         log.error("---handleAlreadyExistUserException---");
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        log.error("---handleUsernameNotFoundException---");
+        final ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER, ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @ExceptionHandler(CustomJWTException.class)
+    public ResponseEntity<ErrorResponse> handleCustomJWTException(CustomJWTException ex) {
+        log.error("---handleCustomJWTException---");
+        final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
 
 
 }

@@ -19,25 +19,27 @@ public class JwtProvider {
 
     public static String generateToken(Map<String,Object> valueMap, int min){
         SecretKey key = null;
+        String jwtStr = null;
 
         try {
             //hmaShaKeyFor : HMAC-SHA key를 생성하는 메소드 jjwt 라이브러리에서 제공
             key = Keys.hmacShaKeyFor(JWTProperties.getSecretKey().getBytes("UTF-8"));
+            Date now = new Date();
+            jwtStr= Jwts.builder()
+                    .setHeaderParam("typ","JWT")
+                    //.setIssuer()
+                    .setClaims(valueMap)
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(min).toMillis()))
+                    // .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
+                    // .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant()))
+                    .signWith(key)
+                    .compact();
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            throw new CustomJWTException(ExceptionCode.TOKEN_CREATION_ERROR);
         }
 
-        Date now = new Date();
-        String jwtStr = Jwts.builder()
-                .setHeaderParam("typ","JWT")
-                //.setIssuer()
-                .setClaims(valueMap)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(min).toMillis()))
-               // .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
-               // .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant()))
-                .signWith(key)
-                .compact();
+
 
         return jwtStr;
     }

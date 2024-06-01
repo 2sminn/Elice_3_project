@@ -2,11 +2,14 @@ package com.eliceteam8.edupay.security.config;
 
 
 import com.eliceteam8.edupay.security.filter.JWTCheckFilter;
+import com.eliceteam8.edupay.security.handler.CustomAccessDeniedHandler;
 import com.eliceteam8.edupay.security.handler.LoginFailHandler;
 import com.eliceteam8.edupay.security.handler.LoginSuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +23,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityCustomConfig {
+
+
+
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     @Bean
@@ -46,13 +55,16 @@ public class SecurityCustomConfig {
                         formLogin
                                 .usernameParameter("email")
                                 .loginPage("/auth/login")
-                                .successHandler(new LoginSuccessHandler())
+                                .successHandler(new LoginSuccessHandler(redisTemplate))
                                 .failureHandler(new LoginFailHandler())
                 );
 
 
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
       //  http.addFilterAfter(new JWTAuthHandlerFilter(), JWTCheckFilter.class);
+        http.exceptionHandling(config->{
+            config.accessDeniedHandler(new CustomAccessDeniedHandler());
+        });
         return http.build();
     }
 
@@ -73,4 +85,7 @@ public class SecurityCustomConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+
+
 }
