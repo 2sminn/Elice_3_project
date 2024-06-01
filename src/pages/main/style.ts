@@ -18,7 +18,7 @@ export const Introduce = styled.p`
 `;
 
 export const MiddleContent = styled.div`
-	width: 80%;
+	width: 100%;
 	min-width: 800px;
 	display: flex;
 	flex-wrap: wrap;

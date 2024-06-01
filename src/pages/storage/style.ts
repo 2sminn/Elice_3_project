@@ -64,7 +64,7 @@ export const SearchTitle = styled.div`
 	}
 `;
 
-export const SearchBox = styled.div`
+export const SearchBox = styled.form`
 	width: 100%;
 	padding: 30px 10px;
 	background-color: #fff;
@@ -100,4 +100,18 @@ export const TableContentBox = styled.ul`
 	&:not(:last-child) {
 		border-bottom: 1px solid #ddd;
 	}
+`;
+
+export const SelectTopBox = styled.div`
+	width: 100%;
+	display: flex;
+	gap: 15px;
+
+	& > select {
+		flex: 1;
+	}
+	& > input {
+		flex: 2;
+	}
+	margin-bottom: 10px;
 `;
