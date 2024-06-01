@@ -1,8 +1,8 @@
+import { Container } from '../../styles/commonStyle';
 import Aside from './components/Aside';
 import BillBox from './components/BillBox';
 import LineChart from './components/SalesLineChart';
 import * as S from './style';
-import { Container } from './style';
 
 const MainPage = () => {
 	return (
