@@ -1,5 +1,8 @@
 import PrimaryButton from '../../components/buttons/PrimaryButton';
+import Select from '../../components/inputs/Select';
+import TextInput from '../../components/inputs/TextInput';
 import { Container, PageTitle, TableList } from '../../styles/commonStyle';
+import { storageYearOption, storageMonthOption, storageOXOption } from './constants/options';
 import * as S from './style';
 import { IoSearchOutline } from 'react-icons/io5';
 
@@ -18,7 +21,15 @@ const StoragePage = () => {
 						<IoSearchOutline color="#fff" size={25} />
 						<h3>검색필터</h3>
 					</S.SearchTitle>
-					<S.SearchBox></S.SearchBox>
+					<S.SearchBox>
+						<S.SelectTopBox>
+							<Select options={storageYearOption} />
+							<Select options={storageMonthOption} />
+							<Select options={storageOXOption} />
+							<TextInput placeholder="원생이름" />
+						</S.SelectTopBox>
+						<PrimaryButton type="button" text="검색" />
+					</S.SearchBox>
 				</S.SearchContainer>
 				<S.StorageTable>
 					<S.TableTitleBox>
