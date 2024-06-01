@@ -10,6 +10,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, InputFieldProps>(({ width, heig
 	return <StyledTextarea ref={ref} width={width} height={height} {...props} />;
 });
 
-Textarea.displayName = 'TextInput';
+Textarea.displayName = 'Textarea';
 
 export default Textarea;

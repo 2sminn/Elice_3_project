@@ -14,12 +14,12 @@ export const PageTitle = styled.h2`
 
 interface TableTitleListProps {
 	width: string;
-	title?: boolean;
+	$isTitle?: boolean;
 }
 
 export const TableList = styled.li<TableTitleListProps>`
 	width: ${({ width }) => width};
 	font-size: ${({ theme }) => theme.textSize.little};
-	font-weight: ${({ title }) => (title ? '700' : '500')};
+	font-weight: ${({ $isTitle }) => ($isTitle ? '700' : '500')};
 	color: #000;
 `;

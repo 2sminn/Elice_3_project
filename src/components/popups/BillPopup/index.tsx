@@ -9,6 +9,7 @@ import useCustomForm from '../../../hooks/useCustomForm';
 import * as Yup from 'yup';
 import { Controller } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useBillSendMutation } from './hooks/useBillSendMutation';
 
 const billFormSchema = Yup.object().shape({
 	studentName: Yup.string().required('원생을 검색 후 선택하세요.'),
@@ -38,15 +39,10 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 const BillPopup = () => {
 	const { closePopup } = usePopup();
 	const { control, errors, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
+	const { mutate: sendBillMutate } = useBillSendMutation();
 
 	const handleSubmitBill: SubmitHandler<FormValues> = (data) => {
-		console.log(data);
-		if (errors.studentName) {
-			alert(errors.studentName.message);
-		} else if (errors.message) {
-			alert(errors.message.message);
-		}
-
+		sendBillMutate(data);
 		reset();
 	};
 
