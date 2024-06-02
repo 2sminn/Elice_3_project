@@ -9,6 +9,7 @@ import useCustomForm from '../../../hooks/useCustomForm';
 import * as Yup from 'yup';
 import { Controller, SubmitErrorHandler } from 'react-hook-form';
 import { useBillSendMutation } from './hooks/useBillSendMutation';
+import { errorAlert } from '../../../utils/alert';
 
 const billFormSchema = Yup.object().shape({
 	studentName: Yup.string().required('원생을 검색 후 선택하세요.'),
@@ -47,9 +48,9 @@ const BillPopup = () => {
 
 	const handleSubmitError: SubmitErrorHandler<FormValues> = (errors) => {
 		if (errors.studentName) {
-			alert(errors.studentName.message);
+			errorAlert(errors.studentName.message);
 		} else if (errors.message) {
-			alert(errors.message.message);
+			errorAlert(errors.message.message);
 		}
 	};
 
