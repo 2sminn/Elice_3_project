@@ -47,11 +47,15 @@ public class AcademyStudent {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academy_id")
-    private Academy academy;
+    //@OneToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "academy_id")
+    //private Academy academy;
 
     @OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Lecture> lectures;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "academy_id")
+    private Academy academy;
 
 }

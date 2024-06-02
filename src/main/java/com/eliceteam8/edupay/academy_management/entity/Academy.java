@@ -61,6 +61,9 @@ public class Academy {
     @OneToMany(mappedBy = "academy")
     private List<Bill> bill = new ArrayList<>();
 
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AcademyStudent> students;
+
     //createAcademy
 
 }
