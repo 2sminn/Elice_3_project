@@ -7,8 +7,7 @@ import { IoMdClose } from 'react-icons/io';
 import usePopup from '../../../hooks/usePopup';
 import useCustomForm from '../../../hooks/useCustomForm';
 import * as Yup from 'yup';
-import { Controller } from 'react-hook-form';
-import { useEffect } from 'react';
+import { Controller, SubmitErrorHandler } from 'react-hook-form';
 import { useBillSendMutation } from './hooks/useBillSendMutation';
 
 const billFormSchema = Yup.object().shape({
@@ -38,12 +37,20 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 
 const BillPopup = () => {
 	const { closePopup } = usePopup();
-	const { control, errors, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
+	const { control, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
 	const { mutate: sendBillMutate } = useBillSendMutation();
 
 	const handleSubmitBill: SubmitHandler<FormValues> = (data) => {
 		sendBillMutate(data);
 		reset();
+	};
+
+	const handleSubmitError: SubmitErrorHandler<FormValues> = (errors) => {
+		if (errors.studentName) {
+			alert(errors.studentName.message);
+		} else if (errors.message) {
+			alert(errors.message.message);
+		}
 	};
 
 	const handleClickUserChoice = () => {
@@ -55,14 +62,6 @@ const BillPopup = () => {
 		setValue('deadline', '~2024.07.10');
 	};
 
-	useEffect(() => {
-		if (errors.studentName) {
-			alert(errors.studentName.message);
-		} else if (errors.message) {
-			alert(errors.message.message);
-		}
-	}, [errors]);
-
 	return (
 		<S.Container>
 			<S.Title>
@@ -71,7 +70,7 @@ const BillPopup = () => {
 					<IoMdClose size={30} />
 				</button>
 			</S.Title>
-			<S.BillForm onSubmit={handleSubmit(handleSubmitBill)}>
+			<S.BillForm onSubmit={handleSubmit(handleSubmitBill, handleSubmitError)}>
 				<S.UserSearchBox>
 					<TextInput placeholder="원생명을 입력해주세요." />
 					<S.SearchBtn type="button">

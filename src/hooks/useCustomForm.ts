@@ -1,4 +1,12 @@
-import { useForm, Control, FieldErrors, UseFormHandleSubmit, FieldValues, UseFormSetValue } from 'react-hook-form';
+import {
+	useForm,
+	Control,
+	FieldErrors,
+	UseFormHandleSubmit,
+	FieldValues,
+	UseFormSetValue,
+	Resolver,
+} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
@@ -14,6 +22,8 @@ function useCustomForm<T extends FieldValues>(
 	validationSchema: Yup.ObjectSchema<T>,
 	mode: 'onSubmit' | 'onChange',
 ): UseCustomFormReturn<T> {
+	const resolver: Resolver<T> = yupResolver(validationSchema) as unknown as Resolver<T>;
+
 	const {
 		control,
 		handleSubmit,
@@ -21,7 +31,7 @@ function useCustomForm<T extends FieldValues>(
 		reset,
 		setValue,
 	} = useForm<T>({
-		resolver: yupResolver(validationSchema) as any,
+		resolver: resolver,
 		mode,
 	});
 
