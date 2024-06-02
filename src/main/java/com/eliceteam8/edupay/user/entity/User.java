@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Getter
@@ -42,6 +43,10 @@ public class User {
     private Academy academy;
 
 
+
+    private String passwordCheckToken;
+//    private LocalDateTime passwordCheckTokenCreatedAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
@@ -66,4 +71,9 @@ public class User {
         roles.add(userRole);
     }
 
+
+    public void generateToken() {
+        this.passwordCheckToken = UUID.randomUUID().toString();
+      //  this.passwordCheckTokenCreatedAt = LocalDateTime.now();
+    }
 }

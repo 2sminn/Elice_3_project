@@ -30,3 +30,7 @@ spring:
 
 jwt:
   secretKey: 034509324804235843098432144543676546435
+
+jasypt:
+  encryptor:
+    password: test-secret-key

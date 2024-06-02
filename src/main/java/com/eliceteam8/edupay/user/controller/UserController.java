@@ -23,10 +23,22 @@ public class UserController {
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam String email) {
         boolean isDuplicate = userService.isEmailDuplicate(email);
-
-
         return ResponseEntity.ok(isDuplicate);
     }
+
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<Boolean> sendPasswordResetEmail(@RequestParam String email) {
+        userService.sendPasswordResetEmail(email);
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/check-reset-password")
+    public ResponseEntity<Boolean> checkResetEmail(@RequestParam String email) {
+        userService.sendPasswordResetEmail(email);
+        return ResponseEntity.ok(true);
+    }
+
 
 
     @GetMapping("/test")

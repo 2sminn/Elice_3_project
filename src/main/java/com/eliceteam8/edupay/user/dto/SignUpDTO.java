@@ -8,8 +8,6 @@ import lombok.Setter;
 @Getter @Setter
 public class SignUpDTO {
 
-
-
     @Email(message = ErrorMessage.INVALID_EMAIL)
     @NotBlank
     private String email;
@@ -44,5 +42,6 @@ public class SignUpDTO {
     private String addressDetail;
 
     @NotEmpty
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$",message = ErrorMessage.INVALID_PHONE_NUMBER)
     private String landlineNumber;
 }
