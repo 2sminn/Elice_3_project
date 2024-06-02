@@ -1,8 +1,7 @@
-import Aside from './components/Aside';
+import { Container } from '../../styles/commonStyle';
 import BillBox from './components/BillBox';
 import LineChart from './components/SalesLineChart';
 import * as S from './style';
-import { Container } from './style';
 
 const MainPage = () => {
 	return (
@@ -23,7 +22,6 @@ const MainPage = () => {
 						<BillBox title="청구서 수납" content1="수납건" content2="수납금액" count={195} price={214000000} />
 					</S.BillContainer>
 				</S.MiddleContent>
-				<Aside />
 			</S.ContentContainer>
 		</Container>
 	);

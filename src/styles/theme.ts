@@ -10,6 +10,7 @@ const theme = {
 	textSize: {
 		large: '22px',
 		medium: '18px',
+		little: '14px',
 		small: '12px',
 	},
 

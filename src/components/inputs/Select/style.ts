@@ -1,8 +1,13 @@
 import styled from 'styled-components';
 
-export const StyledInput = styled.input`
-	width: ${(props) => props.width || '100%'};
-	height: 50px;
+interface StyledSelectProps {
+	width?: string;
+	height?: string;
+}
+
+export const StyledSelect = styled.select<StyledSelectProps>`
+	width: ${({ width }) => width || '100%'};
+	height: ${({ height }) => height || '50px'};
 	background-color: white;
 	padding: 10px;
 	border: 1px solid #ccc;

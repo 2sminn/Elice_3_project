@@ -20,7 +20,6 @@ export const StyledButton = styled.button.withConfig({
 	border-radius: ${({ borderRadius }) => borderRadius || '6px'};
 	padding: 10px;
 	width: ${({ width }) => width || '100%'};
-	height: ${({ height }) => height || '45px'};
 	font-weight: 500;
 	cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
 	pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
