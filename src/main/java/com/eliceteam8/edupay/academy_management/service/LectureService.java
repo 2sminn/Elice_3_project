@@ -5,6 +5,7 @@ import com.eliceteam8.edupay.academy_management.entity.Lecture;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateLectureRequestDTO;
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.academy_management.repository.LectureRepository;
+import com.eliceteam8.edupay.academy_management.response.LectureDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,16 +47,12 @@ public class LectureService {
     }
 
     @Transactional
-    public Lecture updateLecture(Long id, CreateLectureRequestDTO lectureDTO) {
+    public Lecture updateLecture(Long id, LectureDTO lectureDTO) {
         Lecture lecture = lectureRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("수정할 강의를 찾을 수 없습니다."));
 
-        Academy academy = academyRepository.findById(lectureDTO.getAcademyId())
-                .orElseThrow(() -> new RuntimeException("학원을 찾을 수 없습니다."));
-
         lecture.setLectureName(lectureDTO.getLectureName());
         lecture.setPrice(lectureDTO.getPrice());
-        lecture.setAcademy(academy);
 
         return lectureRepository.save(lecture);
     }
