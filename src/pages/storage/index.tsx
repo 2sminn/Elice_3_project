@@ -7,9 +7,10 @@ import { storageYearOption, storageMonthOption, storageOXOption } from './consta
 import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
 import * as S from './style';
 import { IoSearchOutline } from 'react-icons/io5';
+import { formatDate } from '../../utils/formatDate';
 
 const StoragePage = () => {
-	const { data, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery();
+	const { data: storageDatas, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery();
 
 	const observerRef = useRef(null);
 
@@ -85,7 +86,7 @@ const StoragePage = () => {
 						<TableList $isTitle width="15%"></TableList>
 					</S.TableTitleBox>
 					<S.TableContentContainer>
-						{data?.pages.map((page, index) => (
+						{storageDatas?.pages.map((page, index) => (
 							<React.Fragment key={index}>
 								{page.invoices.map((storage) => (
 									<S.TableContentBox key={storage.order_id}>
@@ -93,7 +94,7 @@ const StoragePage = () => {
 										<TableList width="15%">1997.07.08</TableList>
 										<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
 										<TableList width="10%">O</TableList>
-										<TableList width="15%">{storage.due_date}</TableList>
+										<TableList width="15%">{formatDate(storage.due_date)}</TableList>
 										<TableList width="15%">
 											<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
 										</TableList>
