@@ -2,6 +2,7 @@ package com.eliceteam8.edupay.academy_management.controller;
 
 import com.eliceteam8.edupay.academy_management.entity.Lecture;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateLectureRequestDTO;
+import com.eliceteam8.edupay.academy_management.response.LectureDTO;
 import com.eliceteam8.edupay.academy_management.service.LectureService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class LectureController {
     @Autowired
     private LectureService lectureService;
 
-    @PostMapping("/create")
+    @PostMapping("")
     public Lecture createLecture(@Valid @RequestBody CreateLectureRequestDTO lectureDTO) {
         return lectureService.createLecture(lectureDTO);
     }
@@ -34,7 +35,7 @@ public class LectureController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Lecture> updateLecture(@PathVariable Long id, @Valid @RequestBody CreateLectureRequestDTO lectureDTO) {
+    public ResponseEntity<Lecture> updateLecture(@PathVariable Long id, @Valid @RequestBody LectureDTO lectureDTO) {
         Lecture updatedLecture = lectureService.updateLecture(id, lectureDTO);
         return ResponseEntity.ok(updatedLecture);
     }
