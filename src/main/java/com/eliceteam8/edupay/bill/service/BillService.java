@@ -32,10 +32,17 @@ public class BillService {
         Bill bill = billRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bill not found"));
 
-        GetBillResponse response = modelMapper.map(bill, GetBillResponse.class);
-        //response.setAcademyId(bill.getAcademy().getId());
-        response.setStudentId(bill.getStudentId());
+        GetBillResponse response = new GetBillResponse();
+        response.setId(bill.getId());
+        response.setTotalPrice(bill.getTotalPrice());
+        //response.setLectureDetails(bill.getLectureDetails());
+        response.setDueDate(bill.getDueDate());
+        response.setCreatedAt(bill.getCreatedAt());
+        response.setUpdatedAt(bill.getUpdatedAt());
         response.setStatus(bill.getStatus().name());
+        response.setMessage(bill.getMessage());
+        response.setAcademyId(bill.getAcademy().getId());
+        response.setStudentId(bill.getStudentId());
 
         return response;
     }
