@@ -20,8 +20,8 @@ public class BillController {
         billService.createBill(request);
     }
 
-    @GetMapping("")
-    public GetBillResponse getBill(@RequestParam long id) {
-        return billService.getBill(id);
+    @GetMapping("/{billId}")
+    public GetBillResponse getBill(@PathVariable long billId) {
+        return billService.getBill(billId);
     }
 }
