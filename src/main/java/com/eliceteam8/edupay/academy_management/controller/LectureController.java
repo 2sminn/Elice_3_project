@@ -17,7 +17,7 @@ public class LectureController {
     @Autowired
     private LectureService lectureService;
 
-    @PostMapping("/create")
+    @PostMapping("")
     public Lecture createLecture(@Valid @RequestBody CreateLectureRequestDTO lectureDTO) {
         return lectureService.createLecture(lectureDTO);
     }
@@ -34,13 +34,13 @@ public class LectureController {
         return ResponseEntity.ok().body(lecture);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Lecture> updateLecture(@PathVariable Long id, @Valid @RequestBody LectureDTO lectureDTO) {
         Lecture updatedLecture = lectureService.updateLecture(id, lectureDTO);
         return ResponseEntity.ok(updatedLecture);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLecture(@PathVariable Long id) {
         lectureService.deleteLecture(id);
         return ResponseEntity.noContent().build();

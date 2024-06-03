@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/academyStudents")
+@RequestMapping("/academy-students")
 public class AcademyStudentController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class AcademyStudentController {
         return ResponseEntity.ok(academyStudent);
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<AcademyStudent> createStudent(@RequestBody AcademyStudent academyStudent) {
         AcademyStudent createdStudent = academyStudentService.createStudent(academyStudent);
         return ResponseEntity.ok(createdStudent);
