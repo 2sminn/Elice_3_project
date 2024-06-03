@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.user.dto;
 
+import com.eliceteam8.edupay.global.enums.ErrorCode;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,32 +9,38 @@ import lombok.Setter;
 public class SignUpDTO {
 
 
-    @Email @NotEmpty
+
+    @Email(message = ErrorCode.INVALID_EMAIL)
+    @NotBlank
     private String email;
 
     @NotEmpty
     @Size(min = 4, max = 40)
     private String password;
 
-    @NotEmpty
+    @NotBlank
+    @Size(min = 2, max = 20)
     private String username;
 
-    @Pattern(regexp = "^010-(\\d{3}|\\d{4})-(\\d{4})$")
+    @Pattern(regexp = "^010-(\\d{3}|\\d{4})-(\\d{4})$",message = ErrorCode.INVALID_PHONE_NUMBER)
     private String phoneNumber;
 
-    @NotEmpty
+    @NotBlank
     private String academyName;
 
-    @Email
+    @NotBlank
+    private String businessNumber;
+
+    @Email(message = ErrorCode.INVALID_EMAIL)
     private String academyEmail;
 
     @NotNull
-    private int postCode;
+    private int zipCode;
 
-    @NotEmpty
+    @NotBlank
     private String address;
 
-    @NotEmpty
+    @NotBlank
     private String addressDetail;
 
     @NotEmpty

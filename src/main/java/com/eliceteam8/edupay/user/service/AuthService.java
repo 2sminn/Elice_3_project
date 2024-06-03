@@ -56,11 +56,12 @@ public class AuthService implements UserDetailsService {
 
         Academy academy = Academy.builder()
                 .academyName(signUpDto.getAcademyName())
-                .postCode(signUpDto.getPostCode())
+                .zipCode(signUpDto.getZipCode())
                 .address(signUpDto.getAddress())
                 .addressDetail(signUpDto.getAddressDetail())
                 .landlineNumber(signUpDto.getLandlineNumber())
                 .academyEmail(signUpDto.getAcademyEmail())
+                .businessNumber(signUpDto.getBusinessNumber())
                 .user(user)
                 .build();
 

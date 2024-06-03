@@ -3,6 +3,7 @@ spring:
   application:
     name: edupay
 
+
     #profiles:
     # include: rds
 

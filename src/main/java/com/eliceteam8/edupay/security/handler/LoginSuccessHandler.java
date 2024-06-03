@@ -1,6 +1,6 @@
 package com.eliceteam8.edupay.security.handler;
 
-import com.eliceteam8.edupay.config.jwt.JwtProvider;
+import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -9,10 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -37,6 +35,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         userClaims.remove("password");
         // JSON 응답 작성
         response.getWriter().write(objectMapper.writeValueAsString(userClaims));
-        response.getWriter().flush();
+
     }
 }

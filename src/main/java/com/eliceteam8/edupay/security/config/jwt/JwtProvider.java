@@ -1,15 +1,18 @@
-package com.eliceteam8.edupay.config.jwt;
+package com.eliceteam8.edupay.security.config.jwt;
 
+import com.eliceteam8.edupay.global.enums.ErrorCode;
+import com.eliceteam8.edupay.global.enums.ExceptionCode;
+import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 
 import javax.crypto.SecretKey;
-import java.sql.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Map;
 
 @Slf4j
@@ -27,12 +30,15 @@ public class JwtProvider {
             throw new RuntimeException(e.getMessage());
         }
 
+        Date now = new Date();
         String jwtStr = Jwts.builder()
                 .setHeaderParam("typ","JWT")
                 //.setIssuer()
                 .setClaims(valueMap)
-                .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant()))
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(min).toMillis()))
+               // .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
+               // .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant()))
                 .signWith(key)
                 .compact();
 
@@ -49,15 +55,15 @@ public class JwtProvider {
                     .parseClaimsJws(token)
                     .getBody();
         }catch(MalformedJwtException malformedJwtException){
-            log.error("MalFormed");
+            throw new CustomJWTException(ExceptionCode.MALFORM_TOKEN);
         }catch(ExpiredJwtException expiredJwtException){
-            log.error("Expired");
+            throw new CustomJWTException(ExceptionCode.EXPIRED_TOKEN);
         }catch(InvalidClaimException invalidClaimException){
-            log.error("Invalid");
+            throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
         }catch(JwtException jwtException){
-            log.error("JWTError");
+            throw new CustomJWTException(ExceptionCode.INVALID_SIGNATURE);
         }catch(Exception e){
-            log.error("Error");
+            throw new CustomJWTException(ExceptionCode.ERROR_TOKEN);
         }
         return claims;
     }
