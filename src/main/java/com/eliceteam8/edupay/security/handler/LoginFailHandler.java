@@ -23,6 +23,8 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
         log.info("--- LoginFailHandler --- ");
         response.setContentType("application/json;charset=utf-8");
 
+
+
         Gson gson = new Gson();
         String jsonStr = gson.toJson(Map.of("status", ExceptionCode.LOGIN_FAILED.getStatus(),
                 "message", ExceptionCode.LOGIN_FAILED.getMessage(),

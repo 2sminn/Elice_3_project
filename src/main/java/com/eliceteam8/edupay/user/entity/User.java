@@ -43,7 +43,6 @@ public class User {
     private Academy academy;
 
 
-
     private String passwordCheckToken;
 //    private LocalDateTime passwordCheckTokenCreatedAt;
 

@@ -39,10 +39,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
-        refreshTokenSave(refreshToken, userDTO);
-
-
-
+       // refreshTokenSave(refreshToken, userDTO);
 
         userClaims.put("accessToken", accessToken);
         userClaims.remove("password");
@@ -54,6 +51,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private boolean refreshTokenSave( String refreshToken, UserDTO userDTO){
 
         try {
+            //redis 키값이 존재하면 저장하지 않음
+            if(redisTemplate.hasKey(userDTO.getEmail())){
+                return false;
+            }
+
+
             boolean result = redisTemplate.opsForValue().setIfAbsent(
                     userDTO.getEmail(),
                     refreshToken,

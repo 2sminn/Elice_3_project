@@ -2,10 +2,11 @@ package com.eliceteam8.edupay.user.dto;
 
 import com.eliceteam8.edupay.global.enums.ErrorMessage;
 import jakarta.validation.constraints.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Data
 public class SignUpDTO {
 
     @Email(message = ErrorMessage.INVALID_EMAIL)
@@ -30,6 +31,7 @@ public class SignUpDTO {
     private String businessNumber;
 
     @Email(message = ErrorMessage.INVALID_EMAIL)
+    @NotBlank
     private String academyEmail;
 
     @NotNull

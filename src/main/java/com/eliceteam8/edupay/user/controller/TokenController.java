@@ -39,6 +39,8 @@ public class TokenController {
             throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
         }
 
+
+
         String redisRefreshToken = redisTemplate.opsForValue().get(email);
 
         Map<String, Object> claims = JwtProvider.validateToken(redisRefreshToken);
