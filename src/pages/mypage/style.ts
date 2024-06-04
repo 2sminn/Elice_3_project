@@ -5,6 +5,7 @@ export const MypageContainer = styled.div`
 	padding: 20px;
 	background-color: #fff;
 	border-radius: ${({ theme }) => theme.radius.small};
+	margin-bottom: 20px;
 `;
 
 export const ProfileContainer = styled.div`
@@ -56,6 +57,6 @@ export const ProfileInfoBox = styled.div`
 export const ProfileBtnContainer = styled.div`
 	display: flex;
 	justify-content: center;
-	margin: 30px 0;
+	margin-top: 30px;
 	gap: 10px;
 `;

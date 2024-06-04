@@ -37,11 +37,12 @@ const Mypage = () => {
 					<PrimaryButton text="정산 요청" width="200px" />
 					<PrimaryButton text="회원정보수정" width="200px" onClick={goToProfileEdit} />
 				</S.ProfileBtnContainer>
-				<TabBox>
-					<TabMenu $active={true}>충전내역</TabMenu>
-					<TabMenu>사용내역</TabMenu>
-				</TabBox>
 			</S.MypageContainer>
+			<TabBox>
+				<TabMenu $active={true}>충전내역</TabMenu>
+				<TabMenu>사용내역</TabMenu>
+			</TabBox>
+			<S.MypageContainer></S.MypageContainer>
 		</Container>
 	);
 };
