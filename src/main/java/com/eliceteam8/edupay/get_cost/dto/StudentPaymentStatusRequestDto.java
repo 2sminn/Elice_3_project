@@ -1,15 +1,14 @@
 package com.eliceteam8.edupay.get_cost.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-
-@Data
+@Getter
+@Setter
 @Builder
 public class StudentPaymentStatusRequestDto {
     private Long studentId;
     private Long orderId;
     private String paymentStatus;
-    private LocalDateTime updatedAt;
 }
