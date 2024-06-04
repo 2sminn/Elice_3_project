@@ -3,6 +3,8 @@ import MainPage from '../pages/main';
 import Login from '../pages/login';
 import Signup from '../pages/signup';
 import StoragePage from '../pages/storage';
+import StudentMgrPage from '../pages/studentMgrPage';
+
 interface Route {
 	id: number;
 	title: string;
@@ -24,7 +26,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		title: '원생관리',
 		path: '/student',
 		link: '/student',
-		element: <StoragePage />,
+		element: <StudentMgrPage />,
 	},
 	STORAGE: {
 		id: 3,
@@ -43,8 +45,8 @@ export const LayoutRouteList: { [key: string]: Route } = {
 	MYPAGE: {
 		id: 5,
 		title: '마이페이지',
-		path: '/storage',
-		link: '/storage',
+		path: '/mypage',
+		link: '/mypage',
 		element: <StoragePage />,
 	},
 };
