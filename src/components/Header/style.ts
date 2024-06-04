@@ -84,7 +84,7 @@ export const Menu = styled.ul`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 35px;
+	gap: 28px;
 
 	li {
 		a {

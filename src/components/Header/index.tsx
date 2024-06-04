@@ -7,6 +7,7 @@ import usePopup from '../../hooks/usePopup';
 import AddBillCountPopup from './components/AddBillCountPopup';
 import BillPopup from '../popups/BillPopup';
 import PrimaryButton from '../buttons/PrimaryButton';
+import { LAYOUT_ROUTE_ARR } from '../../constants/routeList';
 
 const Header = () => {
 	const { openPopup } = usePopup();
@@ -35,21 +36,11 @@ const Header = () => {
 				</S.PointBox>
 				<S.MenuContainer>
 					<S.Menu>
-						<li>
-							<Link to="/">홈</Link>
-						</li>
-						<li>
-							<Link to="/">원생관리</Link>
-						</li>
-						<li>
-							<Link to="/">수납관리</Link>
-						</li>
-						<li>
-							<Link to="/">강의관리</Link>
-						</li>
-						<li>
-							<Link to="/">마이페이지</Link>
-						</li>
+						{LAYOUT_ROUTE_ARR.map((route) => (
+							<li key={route.id}>
+								<Link to={route.link}>{route.title}</Link>
+							</li>
+						))}
 					</S.Menu>
 				</S.MenuContainer>
 			</S.HeaderTop>
