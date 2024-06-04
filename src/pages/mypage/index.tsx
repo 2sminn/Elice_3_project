@@ -10,6 +10,9 @@ import {
 } from '../../styles/commonStyle';
 import * as S from './style';
 import { TabBox, TabMenu } from '../storage/style';
+import { Fragment, useEffect, useRef } from 'react';
+import { useGetChargeHistoryQuery } from './hooks/useGetChargeHistoryQuery';
+import { formatNumber } from '../../utils/formatNumber';
 
 const Mypage = () => {
 	const navigate = useNavigate();
@@ -18,6 +21,39 @@ const Mypage = () => {
 		navigate('/edit-profile');
 	};
 
+	const { data: chargeHistoryDatas, fetchNextPage, hasNextPage, isFetching } = useGetChargeHistoryQuery();
+
+	const observerRef = useRef(null);
+
+	useEffect(() => {
+		const observerOptions: IntersectionObserverInit = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0.8,
+		};
+
+		const handleIntersection: IntersectionObserverCallback = (entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting && hasNextPage && !isFetching) {
+					fetchNextPage();
+				}
+			});
+		};
+
+		const observer = new IntersectionObserver(handleIntersection, observerOptions);
+
+		if (observerRef.current) {
+			observer.observe(observerRef.current);
+		}
+
+		return () => {
+			if (observerRef.current) {
+				observer.unobserve(observerRef.current);
+			}
+		};
+	}, [fetchNextPage, hasNextPage, isFetching]);
+
+	console.log(chargeHistoryDatas);
 	return (
 		<Container>
 			<PageTitle>마이페이지</PageTitle>
@@ -63,14 +99,22 @@ const Mypage = () => {
 					<TableList $isTitle width="20%"></TableList>
 				</TableTitleBox>
 				<TableContentContainer>
-					<TableContentBox>
-						<TableList width="15%">2024.01.01</TableList>
-						<TableList width="20%">350,000,000</TableList>
-						<TableList width="40%">가능</TableList>
-						<TableList width="20%">
-							<PrimaryButton text="환불신청" width="90%" textSize="10px" isFill />
-						</TableList>
-					</TableContentBox>
+					{chargeHistoryDatas?.pages.map((page, index) => (
+						<Fragment key={index}>
+							{page?.chargeHistory?.map((data) => (
+								<TableContentBox key={data.chargeId}>
+									<TableList width="15%">{data.createdAt}</TableList>
+									<TableList width="20%">{formatNumber(data.cashAmount)}</TableList>
+									<TableList width="40%">{data.isRefund ? '가능' : '불가능'}</TableList>
+									<TableList width="20%">
+										<PrimaryButton text="환불신청" width="90%" textSize="10px" isFill />
+									</TableList>
+								</TableContentBox>
+							))}
+						</Fragment>
+					))}
+					{isFetching && <div>Loading...</div>}
+					<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
 				</TableContentContainer>
 			</S.MypageContainer>
 		</Container>
