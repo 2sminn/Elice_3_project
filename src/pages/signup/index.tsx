@@ -5,7 +5,6 @@ import PrimaryButton from '../../components/buttons/PrimaryButton';
 import TextInput from '../../components/inputs/TextInput';
 import AddressSearch from './components/AddressSearch/addresssearch';
 import { termsOfService, privacyPolicy } from './termsofService';
-import ErrorMessage from './components/ErrorMessage';
 import { Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 
@@ -24,6 +23,7 @@ import {
 	ColumnGapBox,
 } from './style';
 import useCustomForm from '../../hooks/useCustomForm';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const schema = Yup.object().shape({
 	email: Yup.string().required('이메일은 필수 입력 사항입니다.'),
