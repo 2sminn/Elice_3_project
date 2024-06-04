@@ -8,11 +8,6 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* Remove default padding */
-  ul[class],
-  ol[class] {
-    padding: 0;
-  }
 
   /* Remove default margin */
   body,
@@ -23,8 +18,8 @@ const GlobalStyle = createGlobalStyle`
   h5,
   h6,
   p,
-  ul[class],
-  ol[class],
+  ul,
+  ol,
   li,
   figure,
   figcaption,
@@ -32,6 +27,7 @@ const GlobalStyle = createGlobalStyle`
   dl,
   dd {
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
   }
 

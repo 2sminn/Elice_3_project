@@ -2,8 +2,7 @@ import { ReactNode } from 'react';
 import MainPage from '../pages/main';
 import Login from '../pages/login';
 import Signup from '../pages/signup';
-import StudentMgrPage from '../pages/studentMgrPage';
-
+import StoragePage from '../pages/storage';
 interface Route {
 	id: number;
 	title: string;
@@ -15,17 +14,38 @@ interface Route {
 export const LayoutRouteList: { [key: string]: Route } = {
 	HOME: {
 		id: 1,
-		title: '메인',
+		title: '홈',
 		path: '/',
 		link: '/',
 		element: <MainPage />,
 	},
-	STUDENT_MGR: {
+	STUDENT: {
 		id: 2,
-		title: '원생 관리',
-		path: '/student-mgr',
-		link: '/student-mgr',
-		element: <StudentMgrPage />,
+		title: '원생관리',
+		path: '/student',
+		link: '/student',
+		element: <StoragePage />,
+	},
+	STORAGE: {
+		id: 3,
+		title: '수납관리',
+		path: '/storage',
+		link: '/storage',
+		element: <StoragePage />,
+	},
+	LECTURE: {
+		id: 4,
+		title: '강의관리',
+		path: '/lecture',
+		link: '/lecture',
+		element: <StoragePage />,
+	},
+	MYPAGE: {
+		id: 5,
+		title: '마이페이지',
+		path: '/storage',
+		link: '/storage',
+		element: <StoragePage />,
 	},
 };
 

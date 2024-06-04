@@ -1,10 +1,5 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
-	flex: 1;
-	padding: 20px;
-`;
-
 export const ContentContainer = styled.div`
 	width: 100%;
 	display: flex;
@@ -23,7 +18,7 @@ export const Introduce = styled.p`
 `;
 
 export const MiddleContent = styled.div`
-	width: 80%;
+	width: 100%;
 	min-width: 800px;
 	display: flex;
 	flex-wrap: wrap;
