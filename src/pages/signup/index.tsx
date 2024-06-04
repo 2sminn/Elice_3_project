@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '/assets/images/logo.svg';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -24,6 +24,9 @@ import {
 } from './style';
 import useCustomForm from '../../hooks/useCustomForm';
 import ErrorMessage from '../../components/ErrorMessage';
+import { FormValues } from './type';
+import { useSignUpMutation } from './hooks/useSignUpMutation';
+import { errorAlert } from '../../utils/alert';
 
 const schema = Yup.object().shape({
 	email: Yup.string().required('이메일은 필수 입력 사항입니다.'),
@@ -41,65 +44,55 @@ const schema = Yup.object().shape({
 	detailedAddress: Yup.string().required('상세주소는 필수 입력 사항입니다.'),
 });
 
-interface FormValues {
-	email: string;
-	password: string;
-	confirmPassword: string;
-	academyName: string;
-	fullName: string;
-	businessNumber: string;
-	businessEmail: string;
-	phoneNumber: string;
-	zipCode: string;
-	address: string;
-	detailedAddress: string;
-}
-
 type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 	data: TSubmitFieldValues,
 	e?: React.BaseSyntheticEvent,
 ) => void | Promise<void>;
 
-const Signup: FC = () => {
+const Signup = () => {
+	const [agreements, setAgreements] = useState({
+		agreementAll: false,
+		agreement1: false,
+		agreement2: false,
+	});
+
 	const { control, handleSubmit, errors, reset, setValue } = useCustomForm<FormValues>(schema, 'onChange');
+	const { mutate: signUpMutate } = useSignUpMutation();
 
-	// 체크박스 상태 관리
-	const [agreementAll, setAgreementAll] = useState(false);
-	const [agreement1, setAgreement1] = useState(false);
-	const [agreement2, setAgreement2] = useState(false);
+	const handleCheckboxChange = (name: string, checked: boolean) => {
+		setAgreements((prev) => {
+			const newAgreements = { ...prev, [name]: checked };
 
-	const onSubmit: SubmitHandler<FormValues> = (data) => {
-		console.log(data);
-		reset();
-	};
-
-	// 모든 약관 동의 체크박스 핸들러
-	const handleAgreementAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const checked = e.target.checked;
-		setAgreementAll(checked);
-		setAgreement1(checked);
-		setAgreement2(checked);
-	};
-
-	// 개별 약관 동의 체크박스 핸들러
-	const handleAgreement1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setAgreement1(e.target.checked);
-		if (!e.target.checked) {
-			setAgreementAll(false);
-		}
-	};
-
-	const handleAgreement2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setAgreement2(e.target.checked);
-		if (!e.target.checked) {
-			setAgreementAll(false);
-		}
+			// 모든 개별 체크박스가 선택되면 'agreementAll'도 선택
+			if (name === 'agreementAll') {
+				return {
+					agreementAll: checked,
+					agreement1: checked,
+					agreement2: checked,
+				};
+			} else {
+				const allChecked = newAgreements.agreement1 && newAgreements.agreement2;
+				return {
+					...newAgreements,
+					agreementAll: allChecked,
+				};
+			}
+		});
 	};
 
 	// 주소 검색 완료 핸들러
 	const handleAddressComplete = (data: { address: string; zonecode: string }) => {
 		setValue('zipCode', data.zonecode);
 		setValue('address', data.address);
+	};
+
+	const onSubmit: SubmitHandler<FormValues> = (data) => {
+		if (!agreements.agreementAll) {
+			errorAlert('개인정보 활용 동의 및 이용약관에 동의해주세요.');
+			return;
+		}
+		signUpMutate(data);
+		reset();
 	};
 
 	return (
@@ -200,7 +193,12 @@ const Signup: FC = () => {
 				<Section>
 					<SectionTitle>약관 동의</SectionTitle>
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreementAll" checked={agreementAll} onChange={handleAgreementAllChange} />
+						<input
+							type="checkbox"
+							name="agreementAll"
+							checked={agreements.agreementAll}
+							onChange={(e) => handleCheckboxChange('agreementAll', e.target.checked)}
+						/>
 						<label htmlFor="agreementAll">모든 약관에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
@@ -209,7 +207,12 @@ const Signup: FC = () => {
 					<SectionTitle>이용약관</SectionTitle>
 					<StyledTextarea readOnly value={termsOfService} />
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreement1" checked={agreement1} onChange={handleAgreement1Change} />
+						<input
+							type="checkbox"
+							name="agreement1"
+							checked={agreements.agreement1}
+							onChange={(e) => handleCheckboxChange('agreement1', e.target.checked)}
+						/>
 						<label htmlFor="agreement1">이용약관에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
@@ -218,7 +221,12 @@ const Signup: FC = () => {
 					<SectionTitle>개인정보 수집 및 이용</SectionTitle>
 					<StyledTextarea readOnly value={privacyPolicy} />
 					<CheckboxWrapper>
-						<input type="checkbox" name="agreement2" checked={agreement2} onChange={handleAgreement2Change} />
+						<input
+							type="checkbox"
+							name="agreement2"
+							checked={agreements.agreement2}
+							onChange={(e) => handleCheckboxChange('agreement2', e.target.checked)}
+						/>
 						<label htmlFor="agreement2">개인정보 수집 및 이용에 동의합니다.</label>
 					</CheckboxWrapper>
 				</Section>
