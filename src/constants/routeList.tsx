@@ -3,6 +3,7 @@ import MainPage from '../pages/main';
 import Login from '../pages/login';
 import Signup from '../pages/signup';
 import StoragePage from '../pages/storage';
+import Mypage from '../pages/mypage';
 interface Route {
 	id: number;
 	title: string;
@@ -43,9 +44,9 @@ export const LayoutRouteList: { [key: string]: Route } = {
 	MYPAGE: {
 		id: 5,
 		title: '마이페이지',
-		path: '/storage',
-		link: '/storage',
-		element: <StoragePage />,
+		path: '/mypage',
+		link: '/mypage',
+		element: <Mypage />,
 	},
 };
 
