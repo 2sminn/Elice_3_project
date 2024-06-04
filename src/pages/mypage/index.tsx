@@ -1,6 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
-import { Container, PageTitle } from '../../styles/commonStyle';
+import {
+	Container,
+	PageTitle,
+	TableContentBox,
+	TableContentContainer,
+	TableList,
+	TableTitleBox,
+} from '../../styles/commonStyle';
 import * as S from './style';
 import { TabBox, TabMenu } from '../storage/style';
 
@@ -42,7 +49,30 @@ const Mypage = () => {
 				<TabMenu $active={true}>충전내역</TabMenu>
 				<TabMenu>사용내역</TabMenu>
 			</TabBox>
-			<S.MypageContainer></S.MypageContainer>
+			<S.MypageContainer>
+				<TableTitleBox>
+					<TableList $isTitle width="15%">
+						날짜
+					</TableList>
+					<TableList $isTitle width="20%">
+						금액
+					</TableList>
+					<TableList $isTitle width="40%">
+						환불가능여부
+					</TableList>
+					<TableList $isTitle width="20%"></TableList>
+				</TableTitleBox>
+				<TableContentContainer>
+					<TableContentBox>
+						<TableList width="15%">2024.01.01</TableList>
+						<TableList width="20%">350,000,000</TableList>
+						<TableList width="40%">가능</TableList>
+						<TableList width="20%">
+							<PrimaryButton text="환불신청" width="90%" textSize="10px" isFill />
+						</TableList>
+					</TableContentBox>
+				</TableContentContainer>
+			</S.MypageContainer>
 		</Container>
 	);
 };

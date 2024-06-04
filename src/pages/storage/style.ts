@@ -78,30 +78,6 @@ export const StorageTable = styled.div`
 	border-radius: ${({ theme }) => theme.radius.small};
 `;
 
-export const TableTitleBox = styled.ul`
-	width: 100%;
-	display: flex;
-	text-align: center;
-	margin-bottom: 20px;
-`;
-
-export const TableContentContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-`;
-
-export const TableContentBox = styled.ul`
-	width: 100%;
-	display: flex;
-	align-items: center;
-	padding: 20px 0;
-	text-align: center;
-
-	&:not(:last-child) {
-		border-bottom: 1px solid #ddd;
-	}
-`;
-
 export const SelectTopBox = styled.div`
 	width: 100%;
 	display: flex;
