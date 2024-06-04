@@ -7,7 +7,7 @@ export const StorageContainer = styled.div`
 
 export const TabBox = styled.ul`
 	width: 100%;
-	border-bottom: 2px solid #fff;
+	border-bottom: ${({ theme }) => `2px solid ${theme.colors.primary}`};
 	display: flex;
 	gap: 2px;
 `;
