@@ -7,33 +7,40 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "student_payment_status")
-@Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Table(name = "student_payment_status")
 public class StudentPaymentStatus {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "payment_status_id")
     private Long paymentStatusId;
 
+    @Column(nullable = false, name = "student_id")
     private Long studentId;
+
+    @Column(nullable = false, name = "order_id")
     private Long orderId;
+
+    @Column(nullable = false, name = "payment_status")
     private String paymentStatus;
+
+    @Column(nullable = false, name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Convert DTO to Entity
-    public static StudentPaymentStatus fromDto(StudentPaymentStatusRequestDto dto) {
+    public static StudentPaymentStatus fromRequestDto(StudentPaymentStatusRequestDto dto) {
         return StudentPaymentStatus.builder()
                 .studentId(dto.getStudentId())
                 .orderId(dto.getOrderId())
                 .paymentStatus(dto.getPaymentStatus())
-                .updatedAt(dto.getUpdatedAt())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
-    // Convert Entity to DTO
     public StudentPaymentStatusResponseDto toResponseDto() {
         return StudentPaymentStatusResponseDto.builder()
                 .paymentStatusId(this.paymentStatusId)
@@ -42,5 +49,13 @@ public class StudentPaymentStatus {
                 .paymentStatus(this.paymentStatus)
                 .updatedAt(this.updatedAt)
                 .build();
+    }
+
+    @Builder
+    public StudentPaymentStatus(Long studentId, Long orderId, String paymentStatus, LocalDateTime updatedAt) {
+        this.studentId = studentId;
+        this.orderId = orderId;
+        this.paymentStatus = paymentStatus;
+        this.updatedAt = updatedAt;
     }
 }

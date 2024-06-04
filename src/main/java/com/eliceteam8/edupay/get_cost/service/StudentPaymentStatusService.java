@@ -1,11 +1,13 @@
 package com.eliceteam8.edupay.get_cost.service;
 
-import com.eliceteam8.edupay.get_cost.dto.*;
+import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusRequestDto;
+import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusResponseDto;
 import com.eliceteam8.edupay.get_cost.entity.StudentPaymentStatus;
 import com.eliceteam8.edupay.get_cost.repository.StudentPaymentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,24 +18,22 @@ public class StudentPaymentStatusService {
     private StudentPaymentStatusRepository repository;
 
     public StudentPaymentStatusResponseDto updatePaymentStatus(Long orderId, StudentPaymentStatusRequestDto requestDto) {
-        StudentPaymentStatus entity = repository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        entity.setPaymentStatus(requestDto.getPaymentStatus());
-        entity.setUpdatedAt(requestDto.getUpdatedAt());
-        repository.save(entity);
-        return entity.toResponseDto();
+        StudentPaymentStatus paymentStatus = repository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        paymentStatus.setPaymentStatus(requestDto.getPaymentStatus());
+        paymentStatus.setUpdatedAt(LocalDateTime.now());
+        repository.save(paymentStatus);
+        return paymentStatus.toResponseDto();
     }
 
     public List<StudentPaymentStatusResponseDto> getPaymentsByStudentId(Long studentId) {
-        List<StudentPaymentStatus> entities = repository.findByStudentId(studentId);
-        return entities.stream()
+        return repository.findAllByStudentId(studentId).stream()
                 .map(StudentPaymentStatus::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     public List<StudentPaymentStatusResponseDto> getUnpaidInvoices() {
-        List<StudentPaymentStatus> entities = repository.findByPaymentStatus("unpaid");
-        return entities.stream()
+        return repository.findAllByPaymentStatus("unpaid").stream()
                 .map(StudentPaymentStatus::toResponseDto)
                 .collect(Collectors.toList());
     }
