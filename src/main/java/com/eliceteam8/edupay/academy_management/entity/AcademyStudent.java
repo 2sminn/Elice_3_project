@@ -51,7 +51,7 @@ public class AcademyStudent {
     //@JoinColumn(name = "academy_id")
     //private Academy academy;
 
-    @OneToMany(mappedBy = "academy_student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Lecture> lectures;
 
     @ManyToOne(fetch = FetchType.LAZY)
