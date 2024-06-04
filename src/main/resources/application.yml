@@ -18,14 +18,15 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: validate
-      naming:
-        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#      naming:
+        #strategy: org.hibernate.cfg.ImprovedNamingStrategy
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     generate-ddl: true
     properties:
       hibernate:
         format_sql: true
-        enable_lazy_load_no_trans: true
+#        enable_lazy_load_no_trans: true
 
   data:
     redis:
