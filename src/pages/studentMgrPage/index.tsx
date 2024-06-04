@@ -1,138 +1,121 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import {
+	Container,
+	Title,
+	SearchSection,
+	SearchTitle,
+	SearchForm,
+	InputGroup,
+	Input,
+	Select,
+	Button,
+	ButtonGroup,
+	Table,
+	Th,
+	Td,
+} from './style';
 
-const Container = styled.div`
-	padding: 20px;
-`;
-
-const Title = styled.h1`
-	font-size: ${(props) => props.theme.textSize.large};
-	margin-bottom: 20px;
-	color: ${(props) => props.theme.colors.text};
-
-	@media (max-width: 768px) {
-		font-size: ${(props) => props.theme.textSize.medium};
-	}
-`;
-
-const SearchSection = styled.section`
-	margin-bottom: 20px;
-`;
-
-const SearchTitle = styled.h2`
-	font-size: ${(props) => props.theme.textSize.medium};
-	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.text};
-
-	@media (max-width: 768px) {
-		font-size: ${(props) => props.theme.textSize.little};
-	}
-`;
-
-const SearchForm = styled.form`
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-`;
-
-const InputGroup = styled.div`
-	display: flex;
-	gap: 10px;
-
-	@media (max-width: 768px) {
-		flex-direction: column;
-	}
-`;
-
-const Input = styled.input`
-	flex: 1;
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: ${(props) => props.theme.radius.small};
-	font-size: ${(props) => props.theme.textSize.little};
-`;
-
-const Select = styled.select`
-	flex: 1;
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: ${(props) => props.theme.radius.small};
-	font-size: ${(props) => props.theme.textSize.little};
-`;
-
-const Button = styled.button`
-	padding: 10px 20px;
-	background-color: ${(props) => props.theme.colors.primary};
-	color: ${(props) => props.theme.colors.btnText};
-	border: none;
-	border-radius: ${(props) => props.theme.radius.small};
-	cursor: pointer;
-	font-size: ${(props) => props.theme.textSize.little};
-
-	@media (max-width: 768px) {
-		width: 100%;
-	}
-`;
-
-const ButtonGroup = styled.div`
-	display: flex;
-	justify-content: flex-end;
-	gap: 10px;
-	margin-bottom: 20px;
-
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: stretch;
-	}
-`;
-
-const Table = styled.table`
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-	background-color: #fff;
-
-	@media (max-width: 768px) {
-		font-size: ${(props) => props.theme.textSize.small};
-	}
-`;
-
-const Th = styled.th`
-	padding: 10px;
-	border: 1px solid #ddd;
-	font-size: ${(props) => props.theme.textSize.little};
-	text-align: center;
-
-	@media (max-width: 768px) {
-		font-size: ${(props) => props.theme.textSize.small};
-	}
-`;
-
-const Td = styled.td`
-	padding: 10px;
-	border: 1px solid #ddd;
-	font-size: ${(props) => props.theme.textSize.little};
-	text-align: center;
-
-	@media (max-width: 768px) {
-		font-size: ${(props) => props.theme.textSize.small};
-	}
-`;
+const studentsData = [
+	{
+		name: '홍길동',
+		school: '학교1',
+		grade: '5학년',
+		group: '그룹1',
+		class: '초등 5반',
+		teacher: '선생님1',
+		paymentInfo: '미납 0건/예정 1건',
+		contact: '010-0000-0000',
+		selected: false,
+	},
+	{
+		name: '김철수',
+		school: '학교2',
+		grade: '4학년',
+		group: '그룹2',
+		class: '초등 4반',
+		teacher: '선생님2',
+		paymentInfo: '미납 1건/예정 0건',
+		contact: '010-1111-1111',
+		selected: false,
+	},
+];
 
 const StudentMgrPage = () => {
+	const [searchTerm, setSearchTerm] = useState('');
+	const [filters, setFilters] = useState({
+		name: '',
+		school: '',
+		grade: '',
+		group: '',
+		class: '',
+		teacher: '',
+	});
+	const [selectAll, setSelectAll] = useState(false);
+	const [students, setStudents] = useState(studentsData);
+
+	const handleSearchChange = (e) => setSearchTerm(e.target.value);
+
+	const handleFilterChange = (e) => {
+		const { name, value } = e.target;
+		setFilters((prevFilters) => ({
+			...prevFilters,
+			[name]: value,
+		}));
+	};
+
+	const filterStudents = (students, filters) => {
+		return students.filter((student) => {
+			return Object.keys(filters).every((key) => student[key].includes(filters[key]));
+		});
+	};
+
+	const handleSearchSubmit = (e) => {
+		e.preventDefault();
+		setStudents(filterStudents(studentsData, { name: searchTerm }));
+	};
+
+	const handleFilterSubmit = (e) => {
+		e.preventDefault();
+		setStudents(filterStudents(studentsData, filters));
+	};
+
+	const handleBillingClick = () => console.log('Billing Clicked');
+	const handleDeleteClick = () => console.log('Delete Clicked');
+	const handleAddNewClick = () => console.log('Add New Student Clicked');
+
+	const handleSelectAllChange = (e) => {
+		const { checked } = e.target;
+		setSelectAll(checked);
+		setStudents((prevStudents) => prevStudents.map((student) => ({ ...student, selected: checked })));
+	};
+
+	const handleSelectChange = (index) => (e) => {
+		const { checked } = e.target;
+		setStudents((prevStudents) => {
+			const newStudents = [...prevStudents];
+			newStudents[index].selected = checked;
+			if (!checked) {
+				setSelectAll(false);
+			} else if (newStudents.every((student) => student.selected)) {
+				setSelectAll(true);
+			}
+			return newStudents;
+		});
+	};
+
 	return (
 		<Container>
 			<Title>원생관리</Title>
 
 			<SearchSection>
 				<SearchTitle>통합검색</SearchTitle>
-				<SearchForm>
+				<SearchForm onSubmit={handleSearchSubmit}>
 					<InputGroup>
 						<Select>
 							<option>원생명</option>
 							{/* Other options */}
 						</Select>
-						<Input placeholder="검색어 입력" />
+						<Input placeholder="검색어 입력" value={searchTerm} onChange={handleSearchChange} />
 						<Button type="submit">검색</Button>
 					</InputGroup>
 				</SearchForm>
@@ -140,23 +123,29 @@ const StudentMgrPage = () => {
 
 			<SearchSection>
 				<SearchTitle>조건검색</SearchTitle>
-				<SearchForm>
+				<SearchForm onSubmit={handleFilterSubmit}>
 					<InputGroup>
-						<Input placeholder="원생명 입력" />
-						<Input placeholder="학교명 입력" />
-						<Input placeholder="학년명 입력" />
+						<Input name="name" placeholder="원생명 입력" value={filters.name} onChange={handleFilterChange} />
+						<Input name="school" placeholder="학교명 입력" value={filters.school} onChange={handleFilterChange} />
+						<Input name="grade" placeholder="학년명 입력" value={filters.grade} onChange={handleFilterChange} />
 					</InputGroup>
 					<InputGroup>
-						<Select>
-							<option>그룹선택</option>
+						<Select name="group" value={filters.group} onChange={handleFilterChange}>
+							<option value="">그룹선택</option>
+							<option value="그룹1">그룹1</option>
+							<option value="그룹2">그룹2</option>
 							{/* Other options */}
 						</Select>
-						<Select>
-							<option>반선택</option>
+						<Select name="class" value={filters.class} onChange={handleFilterChange}>
+							<option value="">반선택</option>
+							<option value="초등 5반">초등 5반</option>
+							<option value="초등 6반">초등 6반</option>
 							{/* Other options */}
 						</Select>
-						<Select>
-							<option>주담임선택</option>
+						<Select name="teacher" value={filters.teacher} onChange={handleFilterChange}>
+							<option value="">주담임선택</option>
+							<option value="선생님1">선생님1</option>
+							<option value="선생님2">선생님2</option>
 							{/* Other options */}
 						</Select>
 					</InputGroup>
@@ -165,37 +154,57 @@ const StudentMgrPage = () => {
 			</SearchSection>
 
 			<ButtonGroup>
-				<Button>청구서발송</Button>
-				<Button>삭제</Button>
-				<Button>신규원생등록</Button>
+				<Button onClick={handleBillingClick}>청구서발송</Button>
+				<Button onClick={handleDeleteClick}>삭제</Button>
+				<Button onClick={handleAddNewClick}>신규원생등록</Button>
 			</ButtonGroup>
 
-			<Table>
-				<thead>
-					<tr>
-						<Th>
-							<input type="checkbox" />
-						</Th>
-						<Th>원생명</Th>
-						<Th>수강반 정보</Th>
-						<Th>수납정보</Th>
-						<Th>연락처</Th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<Td>
-							<input type="checkbox" />
-						</Td>
-						<Td>홍길동</Td>
-						<Td>초등부 &gt; 초등 5반</Td>
-						<Td>미납 0건/예정 1건</Td>
-						<Td>010-0000-0000</Td>
-					</tr>
-					{/* Other rows */}
-				</tbody>
-			</Table>
+			<StudentTable
+				students={students}
+				selectAll={selectAll}
+				onSelectAllChange={handleSelectAllChange}
+				onSelectChange={handleSelectChange}
+			/>
 		</Container>
+	);
+};
+
+const StudentTable = ({ students, selectAll, onSelectAllChange, onSelectChange }) => {
+	return (
+		<Table>
+			<thead>
+				<tr>
+					<Th>
+						<input type="checkbox" checked={selectAll} onChange={onSelectAllChange} />
+					</Th>
+					<Th>원생명</Th>
+					<Th>학교명</Th>
+					<Th>학년명</Th>
+					<Th>그룹</Th>
+					<Th>수강반 정보</Th>
+					<Th>주담임</Th>
+					<Th>수납정보</Th>
+					<Th>연락처</Th>
+				</tr>
+			</thead>
+			<tbody>
+				{students.map((student, index) => (
+					<tr key={index}>
+						<Td>
+							<input type="checkbox" checked={student.selected} onChange={onSelectChange(index)} />
+						</Td>
+						<Td>{student.name}</Td>
+						<Td>{student.school}</Td>
+						<Td>{student.grade}</Td>
+						<Td>{student.group}</Td>
+						<Td>{student.class}</Td>
+						<Td>{student.teacher}</Td>
+						<Td>{student.paymentInfo}</Td>
+						<Td>{student.contact}</Td>
+					</tr>
+				))}
+			</tbody>
+		</Table>
 	);
 };
 
