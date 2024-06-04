@@ -3,11 +3,6 @@ import MainPage from '../pages/main';
 import Login from '../pages/login';
 import Signup from '../pages/signup';
 import StoragePage from '../pages/storage';
-<<<<<<< HEAD
-import StudentMgrPage from '../pages/studentMgrPage';
-
-=======
->>>>>>> 83d72004aea0692174a612cfdfcb16c1c0e96790
 interface Route {
 	id: number;
 	title: string;
@@ -24,16 +19,12 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		link: '/',
 		element: <MainPage />,
 	},
-<<<<<<< HEAD
-	STUDENT_MGR: {
-=======
 	STUDENT: {
->>>>>>> 83d72004aea0692174a612cfdfcb16c1c0e96790
 		id: 2,
-		title: '원생 관리',
-		path: '/student-mgr',
-		link: '/student-mgr',
-		element: <StudentMgrPage />,
+		title: '원생관리',
+		path: '/student',
+		link: '/student',
+		element: <StoragePage />,
 	},
 	STORAGE: {
 		id: 3,
@@ -56,7 +47,6 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		link: '/storage',
 		element: <StoragePage />,
 	},
-};
 };
 
 export const routeList: { [key: string]: Route } = {
