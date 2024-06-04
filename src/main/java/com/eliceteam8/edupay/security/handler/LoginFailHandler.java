@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.security.handler;
 
+import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,8 +23,12 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
         log.info("--- LoginFailHandler --- ");
         response.setContentType("application/json;charset=utf-8");
 
+
+
         Gson gson = new Gson();
-        String jsonStr = gson.toJson(Map.of("error", "ERROR_LOGIN"));
+        String jsonStr = gson.toJson(Map.of("status", ExceptionCode.LOGIN_FAILED.getStatus(),
+                "message", ExceptionCode.LOGIN_FAILED.getMessage(),
+                "code",ExceptionCode.LOGIN_FAILED.getCode()));
 
         response.getWriter().println(jsonStr);
 

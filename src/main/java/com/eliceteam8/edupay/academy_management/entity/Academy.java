@@ -30,6 +30,7 @@ public class Academy {
     @Column(nullable = false, unique = true)
     private String businessNumber;
 
+    @Column(nullable = false)
     private String academyEmail;
 
     @Column(nullable = false)

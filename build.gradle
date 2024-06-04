@@ -46,6 +46,10 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'com.google.code.gson:gson:2.10.1'
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	//jwt
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
