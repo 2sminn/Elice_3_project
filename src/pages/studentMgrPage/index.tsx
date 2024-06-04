@@ -14,6 +14,8 @@ import {
 	Th,
 	Td,
 } from './style';
+import { useBillSendMutation } from './hooks/useBillSendMutation'; // 경로는 실제 위치에 맞게 수정
+import { BillType } from './type'; // BillType의 실제 경로로 수정
 
 const studentsData = [
 	{
@@ -52,6 +54,7 @@ const StudentMgrPage = () => {
 	});
 	const [selectAll, setSelectAll] = useState(false);
 	const [students, setStudents] = useState(studentsData);
+	const { mutate: sendBill } = useBillSendMutation();
 
 	const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -79,7 +82,29 @@ const StudentMgrPage = () => {
 		setStudents(filterStudents(studentsData, filters));
 	};
 
-	const handleBillingClick = () => console.log('Billing Clicked');
+	const handleBillingClick = () => {
+		const selectedStudents = students.filter((student) => student.selected);
+		if (selectedStudents.length === 0) {
+			alert('청구서를 발송할 원생을 선택하세요.');
+			return;
+		}
+
+		selectedStudents.forEach((student) => {
+			const billData: BillType = {
+				// 필요한 데이터로 빌드
+				name: student.name,
+				school: student.school,
+				grade: student.grade,
+				group: student.group,
+				class: student.class,
+				teacher: student.teacher,
+				paymentInfo: student.paymentInfo,
+				contact: student.contact,
+			};
+			sendBill(billData);
+		});
+	};
+
 	const handleDeleteClick = () => console.log('Delete Clicked');
 	const handleAddNewClick = () => console.log('Add New Student Clicked');
 
