@@ -27,10 +27,13 @@ public class Academy {
     @Column(nullable = false)
     private String academyName;
 
+    @Column(nullable = false, unique = true)
+    private String businessNumber;
+
     private String academyEmail;
 
     @Column(nullable = false)
-    private int postCode;
+    private int zipCode;
 
     @Column(nullable = false)
     private String address;
@@ -57,6 +60,9 @@ public class Academy {
 
     @OneToMany(mappedBy = "academy")
     private List<Bill> bill = new ArrayList<>();
+
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AcademyStudent> students;
 
     //createAcademy
 

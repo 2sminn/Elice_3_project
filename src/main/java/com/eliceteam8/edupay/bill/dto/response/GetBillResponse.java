@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetBillResponse {
     private Long id;
-    private Integer totalPrice;
+    private long totalPrice;
     private List<LectureDetail> lectureDetails;
     private LocalDateTime dueDate;
     private LocalDateTime createdAt;
