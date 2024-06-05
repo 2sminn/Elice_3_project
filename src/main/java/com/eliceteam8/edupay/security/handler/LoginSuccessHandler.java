@@ -37,11 +37,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
         // JWT 토큰 생성
-        String accessToken = JwtProvider.generateToken(userClaims, 10);
+        String accessToken = JwtProvider.generateToken(userClaims, 60*12);
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
-        //refreshTokenSave(refreshToken, userDTO);
+       // refreshTokenSave(refreshToken, userDTO);
 
         userClaims.put("accessToken", accessToken);
         userClaims.remove("password");
