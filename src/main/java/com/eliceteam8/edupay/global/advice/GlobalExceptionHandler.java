@@ -32,14 +32,15 @@ public class GlobalExceptionHandler {
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         List<String> errors = fieldErrors.stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .map(fieldError ->  fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
         ErrorResponse response = ErrorResponse.builder()
                 .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
                 .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
                 .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .errors(errors)
+                .messageDetail(errors.get(0))
+                //.errors(errors)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -75,24 +76,38 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.error("---handleConstraintViolationException---");
-        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-        List<String> errors = constraintViolations.stream()
-                .map(constraintViolation ->
-                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
-                .collect(Collectors.toList());
-
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("---handleIllegalArgumentException---");
         ErrorResponse response = ErrorResponse.builder()
-                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .errors(errors)
+                .status(ExceptionCode.INVALID_REQUEST_VALUE.getStatus())
+                .code(ExceptionCode.INVALID_REQUEST_VALUE.getCode())
+                .message(ExceptionCode.INVALID_REQUEST_VALUE.getMessage())
+               // .errors(List.of(ex.getMessage()))
+                .messageDetail(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+//        log.error("---handleConstraintViolationException---");
+//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+//        List<String> errors = constraintViolations.stream()
+//                .map(constraintViolation ->
+//                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
+//                .collect(Collectors.toList());
+//
+//        ErrorResponse response = ErrorResponse.builder()
+//                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
+//                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
+//                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
+//              //  .errors(errors)
+//                .build();
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
 
     private String extractField(Path path){
         String[] splitArray = path.toString().split("[.]");

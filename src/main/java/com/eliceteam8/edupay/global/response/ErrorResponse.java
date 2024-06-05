@@ -17,8 +17,10 @@ public class ErrorResponse {
     private String code;
     private String message;
 
-    @Builder.Default
-    private List<String> errors;
+//    @Builder.Default
+//    private List<String> errors;
+
+    private String messageDetail;
 
     //private LocalDateTime time;
 

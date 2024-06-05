@@ -12,12 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -39,7 +41,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
-       // refreshTokenSave(refreshToken, userDTO);
+        //refreshTokenSave(refreshToken, userDTO);
 
         userClaims.put("accessToken", accessToken);
         userClaims.remove("password");
@@ -52,7 +54,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         try {
             //redis 키값이 존재하면 저장하지 않음
-            if(redisTemplate.hasKey(userDTO.getEmail())){
+            //만료 시간이 9분이하 체크
+
+            if(redisTemplate.getExpire(userDTO.getEmail()) > 540){
                 return false;
             }
 

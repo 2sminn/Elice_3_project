@@ -8,6 +8,8 @@ public enum ExceptionCode {
     //global
     INVALID_INPUT_VALUE(400, "G-001","올바른 입력값이 아닙니다."),
     ACCESS_DENIED(403,"G-002","접근 권한이 없습니다."),
+    //잘못된 요청값 오류
+    INVALID_REQUEST_VALUE(400,"G-003","요청값이 잘못되었습니다."),
 
 
     //token

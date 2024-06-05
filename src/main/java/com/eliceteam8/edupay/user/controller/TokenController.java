@@ -4,11 +4,15 @@ import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.entity.RefreshToken;
+import com.eliceteam8.edupay.user.entity.User;
+import com.eliceteam8.edupay.user.repository.UserRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -19,36 +23,63 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenController {
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
     @RequestMapping("/token/refresh")
-    public ResponseEntity<Map<String,Object>> refresh(@RequestHeader("Authorization")String authHeader ,
-                                                      @RequestBody RefreshToken refreshToken){
-        if(refreshToken.getEmail() == null){
-            throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
-        }
+    public Map<String,Object> refresh(@RequestHeader("Authorization")String authHeader, String email){
+
 
         if(authHeader == null || authHeader.length() < 7){
             throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
         }
+        if(email == null){
+            throw new IllegalArgumentException("email 값이 없습니다.");
+        }
 
         String accessToken = authHeader.substring(7);
 
-        Map<String, Object> accessTokenClaims = JwtProvider.validateToken(accessToken);
-        String email = (String) accessTokenClaims.get("email");
-        if(email.equals(refreshToken.getEmail()) == false){
-            throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
+        //accessToken 만료되지 않았다면
+        //accessToken 만료되어 호출한건데 체크를 또?  ,고의로 직접 /api/member/refresh 를 호출할 수도 있으니 체크
+        if(checkExpiredToken(accessToken) == false){
+            String result = "accessToken 만료되지 않았습니다.";
+            return Map.of("accessToken",accessToken,"result",result);
+        }
+
+
+//        Map<String, Object> accessTokenClaims = JwtProvider.validateToken(accessToken);
+//        String email = (String) accessTokenClaims.get("email");
+//        if(email.equals(refreshToken.getEmail()) == false){
+//            throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
+//        }
+//        User user = userRepository.findUserByEmail(email)
+//                .orElseThrow(() -> new UsernameNotFoundException("Not Found User"));
+
+
+        String redisRefreshToken = redisTemplate.opsForValue().get(email);
+        if(redisRefreshToken == null){
+            throw new UsernameNotFoundException("Not Found RefreshToken");
+        }
+
+
+        Map<String, Object> claims = JwtProvider.validateToken(redisRefreshToken);
+        if(email.equals(claims.get("email")) == false){
+            throw new UsernameNotFoundException("유저 정보가 토큰값이 일치하지 않습니다.");
+        }
+
+        String newAccessToken = JwtProvider.generateToken(claims,10);
+        //String newRefreshToken = checkTime((Integer)claims.get("exp")) == true? JwtProvider.generateToken(claims,60*12):redisRefreshToken;
+
+        String newReToken;
+        if(checkTime((Integer)claims.get("exp"))){
+            newReToken=  JwtProvider.generateToken(claims,60*12);
+            redisTemplate.opsForValue().set(email,newReToken);
+        }else {
+            newReToken = redisRefreshToken;
         }
 
 
 
-        String redisRefreshToken = redisTemplate.opsForValue().get(email);
-
-        Map<String, Object> claims = JwtProvider.validateToken(redisRefreshToken);
-        String newAccessToken = JwtProvider.generateToken(claims,10);
-        String newRefreshToken = checkTime((Integer)claims.get("exp")) == true? JwtProvider.generateToken(claims,60*12):redisRefreshToken;
-
-
-        return ResponseEntity.ok(Map.of("accessToken",newAccessToken,"refreshToken",newRefreshToken));
+        return Map.of("accessToken",newAccessToken,"refreshToken",newReToken);
     }
     private boolean checkTime(Integer exp) {
 
@@ -66,7 +97,10 @@ public class TokenController {
         try {
             JwtProvider.validateToken(accessToken);
         }catch (CustomJWTException e){
-            throw new CustomJWTException(e.getExceptionCode());
+            if(e.getExceptionCode().getCode().equals(ExceptionCode.EXPIRED_TOKEN.getCode())){
+                log.info("=============Expired Token=============");
+                return true;
+            }
         }
         return false;
     }

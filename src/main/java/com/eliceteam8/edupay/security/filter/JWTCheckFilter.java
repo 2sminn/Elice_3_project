@@ -28,6 +28,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/auth/")){
             return true;
         }
+        if(path.startsWith("/token/")){
+            return true;
+        }
 
 
         return false;

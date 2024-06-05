@@ -29,7 +29,7 @@ public class SecurityCustomConfig {
 
 
 
-    private final RedisTemplate<String, String> redisTemplate;
+   private final LoginSuccessHandler loginSuccessHandler;
 
 
     @Bean
@@ -55,7 +55,7 @@ public class SecurityCustomConfig {
                         formLogin
                                 .usernameParameter("email")
                                 .loginPage("/auth/login")
-                                .successHandler(new LoginSuccessHandler(redisTemplate))
+                                .successHandler(loginSuccessHandler)
                                 .failureHandler(new LoginFailHandler())
                 );
 
