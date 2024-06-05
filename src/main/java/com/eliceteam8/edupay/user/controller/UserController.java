@@ -7,9 +7,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Slf4j
@@ -22,29 +24,32 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
-
         userService.getUserById(userId);
-
         return null;
     }
 
-
+//유효하지
     @GetMapping("/check-email")
-    public ResponseEntity<Map<String,Boolean>> checkEmailDuplicate(@RequestParam String email) {
+    public ResponseEntity<Map<String,Object>> checkEmailDuplicate(@RequestParam String email) {
         boolean isDuplicate = userService.isEmailDuplicate(email);
         return ResponseEntity.ok(Map.of("result",isDuplicate));
     }
 
 
     @GetMapping("/reset-password")
-    public ResponseEntity<Boolean> sendPasswordResetEmail(@RequestParam String email) {
-        userService.sendPasswordResetEmail(email);
-        return ResponseEntity.ok(true);
+    public ResponseEntity<Map<String,Object>> sendPasswordResetEmail(@RequestParam String email,@RequestParam String username) {
+        boolean isSend =  userService.sendPasswordResetEmail(email,username);
+
+        String message =  "인증번호를 발송했습니다. " +
+                "인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.";
+        return ResponseEntity.ok(Map.of("result",isSend,"message",message));
     }
 
     @GetMapping("/check-reset-password")
-    public ResponseEntity<Boolean> checkResetEmail(@RequestParam String email) {
-        userService.sendPasswordResetEmail(email);
+    public ResponseEntity<Boolean> checkResetEmail(@RequestParam String token, Principal principal){
+        log.info("token : {}",token);
+        log.info("principal : {}",principal.getName());
+       // userService.checkPasswordResetEmail(token);
         return ResponseEntity.ok(true);
     }
 

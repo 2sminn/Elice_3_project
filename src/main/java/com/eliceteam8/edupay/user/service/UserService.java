@@ -31,7 +31,7 @@ public class UserService {
 
 
     public void getUserById(Long userId) {
-        userRepository.
+
 
     }
 
@@ -40,23 +40,22 @@ public class UserService {
     }
 
     @Transactional
-    public void sendPasswordResetEmail(String email) {
-
-        User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Not Found User"));
+    public boolean sendPasswordResetEmail(String email,String username) {
+        User user = userRepository.findUserByEmailAndUsername(email,username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
         user.generateToken();
 
-        passwordTokenSave(user.getId().toString(), user.getPasswordCheckToken());
+        boolean result = passwordTokenSave(user.getId().toString(), user.getPasswordCheckToken());
 
         sendEmail(email);
+        return result;
     }
 
     private boolean passwordTokenSave(String userId, String token){
-
-
-
         try {
-            redisTemplate.delete(userId);
+            if(redisTemplate.hasKey(userId)){
+                return true;
+            }
             boolean result =  redisTemplate.opsForValue().setIfAbsent(userId,
                     token,
                     Duration.ofMinutes(5));

@@ -32,14 +32,15 @@ public class GlobalExceptionHandler {
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         List<String> errors = fieldErrors.stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .map(fieldError ->  fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponse response = ErrorResponse.builder()
                 .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
                 .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
                 .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .errors(errors)
+                .messageDetail(errors.get(0))
+                //.errors(errors)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -55,14 +56,33 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         log.error("---handleUsernameNotFoundException---");
-        final ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER);
+         ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER);
+         response.setMessageDetail(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("---handleIllegalArgumentException---");
+        final ErrorResponse response = ErrorResponse.builder()
+
+                .status(ExceptionCode.INVALID_REQUEST_VALUE.getStatus())
+                .code(ExceptionCode.INVALID_REQUEST_VALUE.getCode())
+                .message(ExceptionCode.INVALID_REQUEST_VALUE.getMessage())
+                // .errors(List.of(ex.getMessage()))
+                .messageDetail(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(CustomJWTException.class)
     public ResponseEntity<ErrorResponse> handleCustomJWTException(CustomJWTException ex) {
         log.error("---handleCustomJWTException---");
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode());
+        response.setMessageDetail(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
@@ -70,35 +90,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
         log.error("---handleSQLIntegrityConstraintViolationException---");
 
-        ErrorResponse response = new ErrorResponse(ExceptionCode.UNIQUE_VIOLATION);
+        final ErrorResponse response = new ErrorResponse(ExceptionCode.UNIQUE_VIOLATION);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.error("---handleConstraintViolationException---");
-        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-        List<String> errors = constraintViolations.stream()
-                .map(constraintViolation ->
-                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
-                .collect(Collectors.toList());
-
-        ErrorResponse response = ErrorResponse.builder()
-                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .errors(errors)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    private String extractField(Path path){
-        String[] splitArray = path.toString().split("[.]");
-        int lastIndex = splitArray.length - 1;
-        return splitArray[lastIndex];
-    }
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+//        log.error("---handleConstraintViolationException---");
+//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+//        List<String> errors = constraintViolations.stream()
+//                .map(constraintViolation ->
+//                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
+//                .collect(Collectors.toList());
+//
+//        ErrorResponse response = ErrorResponse.builder()
+//                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
+//                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
+//                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
+//                .errors(errors)
+//                .build();
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+//
+//    private String extractField(Path path){
+//        String[] splitArray = path.toString().split("[.]");
+//        int lastIndex = splitArray.length - 1;
+//        return splitArray[lastIndex];
+//    }
 
 
 }

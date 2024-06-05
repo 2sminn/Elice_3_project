@@ -35,7 +35,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
         // JWT 토큰 생성
-        String accessToken = JwtProvider.generateToken(userClaims, 10);
+        String accessToken = JwtProvider.generateToken(userClaims, 600);
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
@@ -52,9 +52,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         try {
             //redis 키값이 존재하면 저장하지 않음
-            if(redisTemplate.hasKey(userDTO.getEmail())){
+            if(redisTemplate.getExpire(userDTO.getEmail()) > 600){
                 return false;
             }
+
 
 
             boolean result = redisTemplate.opsForValue().setIfAbsent(

@@ -1,13 +1,11 @@
 package com.eliceteam8.edupay.global.response;
 
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
@@ -17,8 +15,10 @@ public class ErrorResponse {
     private String code;
     private String message;
 
-    @Builder.Default
-    private List<String> errors;
+//    @Builder.Default
+//    private List<String> errors;
+
+    private String messageDetail;
 
     //private LocalDateTime time;
 
