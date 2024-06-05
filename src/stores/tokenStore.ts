@@ -18,3 +18,5 @@ export const useTokenStore = create<TokenStoreType>((set) => ({
 		set({ accessToken: null });
 	},
 }));
+
+export const accessToken = Cookies.get('accessToken') || null;

@@ -26,7 +26,7 @@ import useCustomForm from '../../hooks/useCustomForm';
 import ErrorMessage from '../../components/ErrorMessage';
 import { FormValues } from './type';
 import { useSignUpMutation } from './hooks/useSignUpMutation';
-import { errorAlert } from '../../utils/alert';
+import { errorAlert, successAlert } from '../../utils/alert';
 import axiosApi from '../../api/axios';
 
 const schema = Yup.object().shape({
@@ -64,8 +64,6 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 	});
 	const [isCheckEmail, setIsCheckEmail] = useState(true);
 
-	console.log(isCheckEmail);
-
 	const { control, handleSubmit, errors, setValue, getValues } = useCustomForm<FormValues>(schema, 'onChange');
 	const { mutate: signUpMutate } = useSignUpMutation();
 
@@ -73,7 +71,6 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 		setAgreements((prev) => {
 			const newAgreements = { ...prev, [name]: checked };
 
-			// 모든 개별 체크박스가 선택되면 'agreementAll'도 선택
 			if (name === 'agreementAll') {
 				return {
 					agreementAll: checked,
@@ -99,9 +96,14 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 	const checkEmail = async () => {
 		try {
 			const email = getValues('email');
-			const isCheck = await axiosApi.get(`/user/check-email/${email}`);
-			console.log(isCheck);
-			setIsCheckEmail(true);
+			const isCheck = await axiosApi.get(`/users/check-email?email=${email}`);
+			if (isCheck.data.result) {
+				errorAlert('이미 사용중인 이메일 입니다.');
+				setIsCheckEmail(true);
+			} else {
+				successAlert('사용 가능한 이메일입니다.');
+				setIsCheckEmail(false);
+			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -113,7 +115,7 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 			return;
 		}
 
-		if (!isCheckEmail) {
+		if (isCheckEmail) {
 			errorAlert('이메일 중복확인이 필요합니다.');
 			return;
 		}

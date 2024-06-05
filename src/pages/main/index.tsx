@@ -1,13 +1,9 @@
-import { useTokenStore } from '../../stores/tokenStore';
 import { Container } from '../../styles/commonStyle';
 import BillBox from './components/BillBox';
 import LineChart from './components/SalesLineChart';
 import * as S from './style';
 
 const MainPage = () => {
-	const { accessToken } = useTokenStore();
-	console.log(accessToken);
-
 	return (
 		<Container>
 			<S.Introduce>
