@@ -1,0 +1,20 @@
+package com.eliceteam8.edupay.bill.dto.request;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@Setter
+public class BillInfo {
+    private String academyName;
+    private String studentName;
+    private String grade;
+    private String contact;
+    private List<String> lectureNames;
+    private long totalPrice;
+    private LocalDateTime dueDate;
+    private String message;
+}
