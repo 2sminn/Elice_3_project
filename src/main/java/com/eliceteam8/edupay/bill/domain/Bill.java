@@ -1,9 +1,11 @@
 package com.eliceteam8.edupay.bill.domain;
 
 import com.eliceteam8.edupay.academy_management.entity.Academy;
+import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @DynamicInsert
 public class Bill {
@@ -48,8 +51,9 @@ public class Bill {
     @JoinColumn(name = "academy_id")
     private Academy academy;
 
-    //TODO: 연관관계 매핑
-    private long studentId;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private AcademyStudent student;
 
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
     private BillLog billLog;

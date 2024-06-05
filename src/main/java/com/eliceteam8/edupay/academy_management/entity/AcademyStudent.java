@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.academy_management.entity;
 
+import com.eliceteam8.edupay.bill.domain.Bill;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,10 +49,6 @@ public class AcademyStudent {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    //@OneToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "academy_id")
-    //private Academy academy;
-
     @OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Lecture> lectures;
 
@@ -58,4 +56,6 @@ public class AcademyStudent {
     @JoinColumn(name = "academy_id")
     private Academy academy;
 
+    @OneToMany(mappedBy = "student")
+    private List<Bill> bills = new ArrayList<>();
 }
