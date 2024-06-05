@@ -65,6 +65,8 @@ public class Academy {
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AcademyStudent> students;
 
+    @OneToMany(mappedBy = "academy")
+    private List<Lecture> lectures;
     //createAcademy
 
 }
