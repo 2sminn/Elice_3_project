@@ -5,14 +5,19 @@ import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
+import com.eliceteam8.edupay.payment.entity.PaymentHistory;
+import com.eliceteam8.edupay.payment.enumeration.PaymentHistoryType;
+import com.eliceteam8.edupay.payment.repository.PaymentHistoryRepository;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.Store;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -20,6 +25,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private final PaymentHistoryRepository paymentHistoryRepository;
     private final BillRepository billRepository;
     private final IamportClient iamportClient;
 
@@ -36,14 +42,19 @@ public class PaymentService {
         return paymentInfoDTO;
     }
 
-    public IamportResponse<Payment> validatePayment(CallbackRequestDTO callbackRequestDTO) {
+    public IamportResponse<Payment> validatePayment(CallbackRequestDTO request) {
+        PaymentHistory savedPaymentHistory = savePaymentHistory(request.getImpUid(), request.getBillId());
+
         try {
-            IamportResponse<Payment> iamportResponse = getIamportResponse(callbackRequestDTO);
-            Bill bill = billRepository.findByBillId(callbackRequestDTO.getBillId()).orElseThrow(NoSuchElementException::new);
+            IamportResponse<Payment> iamportResponse = getIamportResponse(request);
+            Bill bill = billRepository.findByBillId(request.getBillId()).orElseThrow(NoSuchElementException::new);
             validatePaymentStatusAndPay(iamportResponse, bill);
 
-            if (!Status.PAID.equals(bill.getStatus())) {
-                bill.setStatusToPaid(iamportResponse.getResponse().getImpUid());
+            if (Status.PAID.equals(bill.getStatus())) {
+                savedPaymentHistory.markHistoryType(PaymentHistoryType.CHECK);
+            } else {
+                savedPaymentHistory.markHistoryType(PaymentHistoryType.PAY);
+                bill.setStatusToPaid();
             }
 
             return iamportResponse;
@@ -71,5 +82,14 @@ public class PaymentService {
         if (!Objects.equals(portOnePrice, totalPrice)) {
             throw new RuntimeException("결제금액 불일치");
         }
+    }
+
+    public PaymentHistory savePaymentHistory(String paymentUid, Long billId) {
+        PaymentHistory paymentHistory = PaymentHistory.builder()
+                .paymentUid(paymentUid)
+                .billId(billId)
+                .createdAt(Instant.now())
+                .build();
+        return paymentHistoryRepository.save(paymentHistory);
     }
 }
