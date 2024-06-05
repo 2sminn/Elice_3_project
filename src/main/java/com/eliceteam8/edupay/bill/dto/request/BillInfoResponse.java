@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BillInfo {
+public class BillInfoResponse {
     private String academyName;
     private String studentName;
     private String grade;

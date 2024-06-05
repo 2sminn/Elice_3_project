@@ -3,6 +3,8 @@ package com.eliceteam8.edupay.global.advice;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
+import com.eliceteam8.edupay.global.exception.EntityNotFoundException;
+import com.eliceteam8.edupay.global.exception.MessageTooLongException;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -94,7 +96,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error("---handleEntityNotFoundException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .code("ENTITY_NOT_FOUND")
+                .message("Entity not found")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 
+    @ExceptionHandler(MessageTooLongException.class)
+    public ResponseEntity<ErrorResponse> handleMessageTooLongException(MessageTooLongException ex) {
+        log.error("---handleMessageTooLongException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code(ex.getCode())
+                .message("Message too long")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
