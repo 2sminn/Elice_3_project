@@ -38,7 +38,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, Object> userClaims = userDTO.getClaims();
         // JWT 토큰 생성
 
-        String accessToken = JwtProvider.generateToken(userClaims, 60*12);
+        String accessToken = JwtProvider.generateToken(userClaims, 10);
 
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 

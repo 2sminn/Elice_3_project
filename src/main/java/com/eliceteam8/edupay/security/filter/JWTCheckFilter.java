@@ -32,9 +32,10 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
-        if(path.startsWith("/token/")){
+        if(path.startsWith("/users/check-email")){
             return true;
         }
+
 
 
         return false;
