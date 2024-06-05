@@ -12,4 +12,10 @@ public class PaymentInfoDTO {
     private String billName;
 
     private Long amount;
+
+    private String buyerName;
+
+    private String buyerEmail;
+
+    private String buyerAddress;
 }

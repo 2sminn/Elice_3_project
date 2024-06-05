@@ -36,4 +36,14 @@ public class PaymentController {
 
         return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/success-payment")
+    public String successPaymentPage() {
+        return "success-payment";
+    }
+
+    @GetMapping("/fail-payment")
+    public String failPaymentPage() {
+        return "fail-payment";
+    }
 }

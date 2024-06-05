@@ -43,6 +43,8 @@ public class Bill {
 
     private String message;
 
+    private String impUid;
+
 
     @ManyToOne
     @JoinColumn(name = "academy_id")
@@ -65,7 +67,8 @@ public class Bill {
     }
 
     // 결제가 완료되었을 때 청구서 상태를 'PAID'로 바꾸는 메서드
-    public void setStatusToPaid() {
+    public void setStatusToPaid(String impUid) {
         this.status = Status.PAID;
+        this.impUid = impUid;
     }
 }

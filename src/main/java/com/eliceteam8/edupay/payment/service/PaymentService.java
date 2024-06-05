@@ -5,7 +5,6 @@ import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
-import com.eliceteam8.edupay.payment.entity.PaymentStatus;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -44,7 +43,7 @@ public class PaymentService {
             validatePaymentStatusAndPay(iamportResponse, bill);
 
             if (!Status.PAID.equals(bill.getStatus())) {
-                bill.setStatusToPaid();
+                bill.setStatusToPaid(iamportResponse.getResponse().getImpUid());
             }
 
             return iamportResponse;
