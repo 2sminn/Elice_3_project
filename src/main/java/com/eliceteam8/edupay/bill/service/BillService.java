@@ -7,13 +7,14 @@ import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.bill.domain.Status;
-import com.eliceteam8.edupay.bill.dto.request.BillInfo;
-import com.eliceteam8.edupay.bill.dto.request.CreateBillRequest;
+import com.eliceteam8.edupay.bill.dto.request.BillInfoResponse;
+import com.eliceteam8.edupay.bill.dto.request.CreateSingleBillRequest;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +30,9 @@ public class BillService {
     private AcademyStudentRepository academyStudentRepository;
 
     @Transactional
-    public BillInfo createBill(CreateBillRequest request) {
-        AcademyStudent student = academyStudentRepository.findByStudentName(request.getStudentName())
-                .orElseThrow(() -> new IllegalArgumentException("Student not found with name: " + request.getStudentName()));
+    public BillInfoResponse createBill(CreateSingleBillRequest request) {
+        AcademyStudent student = academyStudentRepository.findById(request.getStudentId())
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + request.getStudentId()));
 
         Academy academy = student.getAcademy();
         List<String> lectureNames = student.getLectures().stream()
@@ -42,8 +43,10 @@ public class BillService {
                 .mapToLong(Lecture::getPrice)
                 .sum();
 
+        LocalDateTime dueDate = LocalDateTime.now().plusWeeks(2);
+
         Bill bill = new Bill();
-        bill.setDueDate(request.getDueDate());
+        bill.setDueDate(dueDate);
         bill.setMessage(request.getMessage());
         bill.setStatus(Status.BEFORE);
         bill.setStudent(student);
@@ -51,16 +54,16 @@ public class BillService {
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
-        BillInfo billInfo = new BillInfo();
-        billInfo.setAcademyName(academy.getAcademyName());
-        billInfo.setStudentName(student.getStudentName());
-        billInfo.setGrade(student.getGrade());
-        billInfo.setContact(student.getPhoneNumber());
-        billInfo.setLectureNames(lectureNames);
-        billInfo.setTotalPrice(totalPrice);
-        billInfo.setDueDate(request.getDueDate());
-        billInfo.setMessage(request.getMessage());
+        BillInfoResponse billInfoResponse = new BillInfoResponse();
+        billInfoResponse.setAcademyName(academy.getAcademyName());
+        billInfoResponse.setStudentName(student.getStudentName());
+        billInfoResponse.setGrade(student.getGrade());
+        billInfoResponse.setContact(student.getPhoneNumber());
+        billInfoResponse.setLectureNames(lectureNames);
+        billInfoResponse.setTotalPrice(totalPrice);
+        billInfoResponse.setDueDate(dueDate);
+        billInfoResponse.setMessage(request.getMessage());
 
-        return billInfo;
+        return billInfoResponse;
     }
 }
