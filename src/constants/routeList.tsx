@@ -10,6 +10,7 @@ interface Route {
 	path: string;
 	link: string;
 	element: ReactNode;
+	menu?: boolean;
 }
 
 export const LayoutRouteList: { [key: string]: Route } = {
@@ -19,6 +20,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/',
 		link: '/',
 		element: <MainPage />,
+		menu: true,
 	},
 	STUDENT: {
 		id: 2,
@@ -26,6 +28,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/student',
 		link: '/student',
 		element: <StoragePage />,
+		menu: true,
 	},
 	STORAGE: {
 		id: 3,
@@ -33,6 +36,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/storage',
 		link: '/storage',
 		element: <StoragePage />,
+		menu: true,
 	},
 	LECTURE: {
 		id: 4,
@@ -40,6 +44,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/lecture',
 		link: '/lecture',
 		element: <StoragePage />,
+		menu: true,
 	},
 	MYPAGE: {
 		id: 5,
@@ -47,6 +52,15 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		path: '/mypage',
 		link: '/mypage',
 		element: <Mypage />,
+		menu: true,
+	},
+	EDITUSER: {
+		id: 5,
+		title: '회원정보 수정',
+		path: '/edit-profile',
+		link: '/edit-profile',
+		element: <Signup isEdit={true} />,
+		menu: false,
 	},
 };
 
@@ -68,4 +82,7 @@ export const routeList: { [key: string]: Route } = {
 };
 
 export const LAYOUT_ROUTE_ARR = Object.values(LayoutRouteList);
+export const MENU_ARR = Object.entries(LayoutRouteList)
+	.filter(([, value]) => value.menu)
+	.map(([, value]) => value);
 export const ROUTE_ARR = Object.values(routeList);

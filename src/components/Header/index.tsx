@@ -7,7 +7,7 @@ import usePopup from '../../hooks/usePopup';
 import AddBillCountPopup from './components/AddBillCountPopup';
 import BillPopup from '../popups/BillPopup';
 import PrimaryButton from '../buttons/PrimaryButton';
-import { LAYOUT_ROUTE_ARR } from '../../constants/routeList';
+import { MENU_ARR } from '../../constants/routeList';
 
 const Header = () => {
 	const { openPopup } = usePopup();
@@ -36,7 +36,7 @@ const Header = () => {
 				</S.PointBox>
 				<S.MenuContainer>
 					<S.Menu>
-						{LAYOUT_ROUTE_ARR.map((route) => (
+						{MENU_ARR.map((route) => (
 							<li key={route.id}>
 								<Link to={route.link}>{route.title}</Link>
 							</li>

@@ -54,7 +54,7 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 	e?: React.BaseSyntheticEvent,
 ) => void | Promise<void>;
 
-const Signup = () => {
+const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 	const [agreements, setAgreements] = useState({
 		agreementAll: false,
 		agreement1: false,
@@ -195,54 +195,59 @@ const Signup = () => {
 					</ColumnGapBox>
 				</Section>
 				<Divider />
-				<Section>
-					<SectionTitle>약관 동의</SectionTitle>
-					<CheckboxWrapper>
-						<input
-							type="checkbox"
-							name="agreementAll"
-							checked={agreements.agreementAll}
-							onChange={(e) => handleCheckboxChange('agreementAll', e.target.checked)}
-						/>
-						<label htmlFor="agreementAll">모든 약관에 동의합니다.</label>
-					</CheckboxWrapper>
-				</Section>
+				{!isEdit && (
+					<>
+						<Section>
+							<SectionTitle>약관 동의</SectionTitle>
+							<CheckboxWrapper>
+								<input
+									type="checkbox"
+									name="agreementAll"
+									checked={agreements.agreementAll}
+									onChange={(e) => handleCheckboxChange('agreementAll', e.target.checked)}
+								/>
+								<label htmlFor="agreementAll">모든 약관에 동의합니다.</label>
+							</CheckboxWrapper>
+						</Section>
 
-				<Section>
-					<SectionTitle>이용약관</SectionTitle>
-					<StyledTextarea readOnly value={termsOfService} />
-					<CheckboxWrapper>
-						<input
-							type="checkbox"
-							name="agreement1"
-							checked={agreements.agreement1}
-							onChange={(e) => handleCheckboxChange('agreement1', e.target.checked)}
-						/>
-						<label htmlFor="agreement1">이용약관에 동의합니다.</label>
-					</CheckboxWrapper>
-				</Section>
+						<Section>
+							<SectionTitle>이용약관</SectionTitle>
+							<StyledTextarea readOnly value={termsOfService} />
+							<CheckboxWrapper>
+								<input
+									type="checkbox"
+									name="agreement1"
+									checked={agreements.agreement1}
+									onChange={(e) => handleCheckboxChange('agreement1', e.target.checked)}
+								/>
+								<label htmlFor="agreement1">이용약관에 동의합니다.</label>
+							</CheckboxWrapper>
+						</Section>
 
-				<Section>
-					<SectionTitle>개인정보 수집 및 이용</SectionTitle>
-					<StyledTextarea readOnly value={privacyPolicy} />
-					<CheckboxWrapper>
-						<input
-							type="checkbox"
-							name="agreement2"
-							checked={agreements.agreement2}
-							onChange={(e) => handleCheckboxChange('agreement2', e.target.checked)}
-						/>
-						<label htmlFor="agreement2">개인정보 수집 및 이용에 동의합니다.</label>
-					</CheckboxWrapper>
-				</Section>
-
+						<Section>
+							<SectionTitle>개인정보 수집 및 이용</SectionTitle>
+							<StyledTextarea readOnly value={privacyPolicy} />
+							<CheckboxWrapper>
+								<input
+									type="checkbox"
+									name="agreement2"
+									checked={agreements.agreement2}
+									onChange={(e) => handleCheckboxChange('agreement2', e.target.checked)}
+								/>
+								<label htmlFor="agreement2">개인정보 수집 및 이용에 동의합니다.</label>
+							</CheckboxWrapper>
+						</Section>
+					</>
+				)}
 				<SubmitButtonWrapper>
-					<PrimaryButton type="submit" text="회원가입" isFill />
+					<PrimaryButton type="submit" text={isEdit ? '회원정보 수정' : '회원가입'} isFill />
 				</SubmitButtonWrapper>
 			</FormWrapper>
-			<Link to="/login">
-				<SignUpTitle>로그인 하러가기</SignUpTitle>
-			</Link>
+			{!isEdit && (
+				<Link to="/login">
+					<SignUpTitle>로그인 하러가기</SignUpTitle>
+				</Link>
+			)}
 		</Container>
 	);
 };
