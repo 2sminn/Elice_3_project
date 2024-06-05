@@ -30,7 +30,12 @@ import { errorAlert } from '../../utils/alert';
 
 const schema = Yup.object().shape({
 	email: Yup.string().required('이메일은 필수 입력 사항입니다.'),
-	password: Yup.string().required('비밀번호는 필수 입력 사항입니다.'),
+	password: Yup.string()
+		.required('비밀번호는 필수 입력 사항입니다.')
+		.matches(
+			/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=.{10,})/,
+			'비밀번호는 영문, 숫자, 특수문자를 포함하여 10자리 이상이어야 합니다.',
+		),
 	confirmPassword: Yup.string()
 		.oneOf([Yup.ref('password')], '비밀번호가 일치하지 않습니다.')
 		.required('비밀번호 확인은 필수 입력 사항입니다.'),

@@ -103,7 +103,7 @@ const StoragePage = () => {
 										<TableList width="10%">O</TableList>
 										<TableList width="15%">{formatDate(storage.due_date)}</TableList>
 										<TableList width="15%">
-											<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
+											<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
 										</TableList>
 									</TableContentBox>
 								))}

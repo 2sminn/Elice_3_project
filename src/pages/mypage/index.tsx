@@ -107,7 +107,7 @@ const Mypage = () => {
 									<TableList width="20%">{formatNumber(data.cashAmount)}</TableList>
 									<TableList width="40%">{data.isRefund ? '가능' : '불가능'}</TableList>
 									<TableList width="20%">
-										<PrimaryButton text="환불신청" width="90%" textSize="10px" isFill />
+										<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
 									</TableList>
 								</TableContentBox>
 							))}
