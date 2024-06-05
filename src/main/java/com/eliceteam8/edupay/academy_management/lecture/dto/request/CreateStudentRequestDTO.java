@@ -22,4 +22,7 @@ public class CreateStudentRequestDTO {
 
     @NotBlank
     private String grade;
+
+    @NotBlank
+    private String email;
 }

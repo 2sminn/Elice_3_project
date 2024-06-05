@@ -21,10 +21,10 @@ public class AcademyStudentController {
         return academyStudentService.getAllAcademyStudents();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AcademyStudentResponseDTO> getStudentById(@PathVariable Long id) {
+    @GetMapping("/{studentId}")
+    public ResponseEntity<AcademyStudentResponseDTO> getStudentById(@PathVariable("studentId") Long id) {
         AcademyStudentResponseDTO academyStudent = academyStudentService.getStudentById(id);
-        return ResponseEntity.ok(academyStudent);
+       return ResponseEntity.ok(academyStudent);
     }
 
     @PostMapping("")
@@ -33,14 +33,14 @@ public class AcademyStudentController {
         return ResponseEntity.ok(createdStudent);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AcademyStudent> updateStudent(@PathVariable Long id, @RequestBody AcademyStudent studentDetails) {
+    @PutMapping("/{studentId}")
+    public ResponseEntity<AcademyStudent> updateStudent(@PathVariable("studentId") Long id, @RequestBody AcademyStudent studentDetails) {
         AcademyStudent updatedStudent = academyStudentService.updateStudent(id, studentDetails);
         return ResponseEntity.ok(updatedStudent);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+    @DeleteMapping("/{studentId}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable("studentId") Long id) {
         academyStudentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
