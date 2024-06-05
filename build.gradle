@@ -42,7 +42,7 @@ dependencies {
 	implementation 'org.modelmapper:modelmapper:2.3.8'
 
 	// DataBase
-	runtimeOnly 'com.h2database:h2'
+//	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'com.google.code.gson:gson:2.10.1'

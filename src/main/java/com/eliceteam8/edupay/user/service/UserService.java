@@ -29,6 +29,12 @@ public class UserService {
     private String url;
 
 
+
+    public void getUserById(Long userId) {
+        userRepository.
+
+    }
+
     public boolean isEmailDuplicate(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -80,6 +86,7 @@ public class UserService {
 
         emailService.sendEmail(emailMessage);
     }
+
 
 
 }
