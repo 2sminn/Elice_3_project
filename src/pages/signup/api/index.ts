@@ -6,6 +6,6 @@ export interface SignUpResponse {
 }
 
 export const signUp = async (signUpData: FormValues): Promise<SignUpResponse> => {
-	const response = await axiosApi.post<SignUpResponse>('/auto/sign-up', signUpData);
+	const response = await axiosApi.post<SignUpResponse>('/auth/sign-up', signUpData);
 	return response.data;
 };

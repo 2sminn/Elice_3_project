@@ -4,6 +4,7 @@ import { LoginData, LoginResponse } from '../type';
 import { successAlert } from '../../../utils/alert';
 import { useTokenStore } from '../../../stores/tokenStore';
 import { useNavigate } from 'react-router-dom';
+import { handleError } from '../../../utils/error';
 
 export const useLoginMutation = () => {
 	const { setTokens } = useTokenStore();
@@ -16,9 +17,7 @@ export const useLoginMutation = () => {
 
 	const onSuccess = (success: LoginResponse) => {
 		const accessToken = success.accessToken;
-		const refreshToken = success.refreshToken;
-
-		setTokens(accessToken, refreshToken);
+		setTokens(accessToken);
 
 		successAlert('로그인 성공!');
 
@@ -26,7 +25,7 @@ export const useLoginMutation = () => {
 	};
 
 	const onError = (error: Error) => {
-		console.error(error.message);
+		handleError(error);
 	};
 
 	return useMutation({ mutationFn, onSuccess, onError });

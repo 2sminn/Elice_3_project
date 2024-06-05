@@ -26,7 +26,8 @@ import useCustomForm from '../../hooks/useCustomForm';
 import ErrorMessage from '../../components/ErrorMessage';
 import { FormValues } from './type';
 import { useSignUpMutation } from './hooks/useSignUpMutation';
-import { errorAlert } from '../../utils/alert';
+import { errorAlert, successAlert } from '../../utils/alert';
+import axiosApi from '../../api/axios';
 
 const schema = Yup.object().shape({
 	email: Yup.string().required('이메일은 필수 입력 사항입니다.'),
@@ -36,17 +37,18 @@ const schema = Yup.object().shape({
 			/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=.{10,})/,
 			'비밀번호는 영문, 숫자, 특수문자를 포함하여 10자리 이상이어야 합니다.',
 		),
-	confirmPassword: Yup.string()
-		.oneOf([Yup.ref('password')], '비밀번호가 일치하지 않습니다.')
-		.required('비밀번호 확인은 필수 입력 사항입니다.'),
+	confirmPassword: Yup.string().test('password-match', '비밀번호가 일치하지 않습니다.', function (value) {
+		return this.parent.password === value;
+	}),
 	academyName: Yup.string().required('사업자명은 필수 입력 사항입니다.'),
-	fullName: Yup.string().required('대표자명은 필수 입력 사항입니다.'),
+	username: Yup.string().required('대표자명은 필수 입력 사항입니다.'),
 	businessNumber: Yup.string().required('사업자번호는 필수 입력 사항입니다.'),
-	businessEmail: Yup.string().email('올바른 이메일 형식이 아닙니다.').required('사업자 이메일은 필수 입력 사항입니다.'),
-	phoneNumber: Yup.string().required('일반 전화번호는 필수 입력 사항입니다.'),
+	academyEmail: Yup.string().email('올바른 이메일 형식이 아닙니다.').required('사업자 이메일은 필수 입력 사항입니다.'),
+	phoneNumber: Yup.string().required('핸드폰번호는 필수 입력 사항입니다.'),
+	landlineNumber: Yup.string().required('일반 전화번호는 필수 입력 사항입니다.'),
 	zipCode: Yup.string().required('우편번호는 필수 입력 사항입니다.'),
 	address: Yup.string().required('주소는 필수 입력 사항입니다.'),
-	detailedAddress: Yup.string().required('상세주소는 필수 입력 사항입니다.'),
+	addressDetail: Yup.string().required('상세주소는 필수 입력 사항입니다.'),
 });
 
 type SubmitHandler<TSubmitFieldValues extends FormValues> = (
@@ -60,15 +62,15 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 		agreement1: false,
 		agreement2: false,
 	});
+	const [isCheckEmail, setIsCheckEmail] = useState(true);
 
-	const { control, handleSubmit, errors, reset, setValue } = useCustomForm<FormValues>(schema, 'onChange');
+	const { control, handleSubmit, errors, setValue, getValues } = useCustomForm<FormValues>(schema, 'onChange');
 	const { mutate: signUpMutate } = useSignUpMutation();
 
 	const handleCheckboxChange = (name: string, checked: boolean) => {
 		setAgreements((prev) => {
 			const newAgreements = { ...prev, [name]: checked };
 
-			// 모든 개별 체크박스가 선택되면 'agreementAll'도 선택
 			if (name === 'agreementAll') {
 				return {
 					agreementAll: checked,
@@ -91,13 +93,36 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 		setValue('address', data.address);
 	};
 
+	const checkEmail = async () => {
+		try {
+			const email = getValues('email');
+			const isCheck = await axiosApi.get(`/users/check-email?email=${email}`);
+			if (isCheck.data.result) {
+				errorAlert('이미 사용중인 이메일 입니다.');
+				setIsCheckEmail(true);
+			} else {
+				successAlert('사용 가능한 이메일입니다.');
+				setIsCheckEmail(false);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const onSubmit: SubmitHandler<FormValues> = (data) => {
 		if (!agreements.agreementAll) {
 			errorAlert('개인정보 활용 동의 및 이용약관에 동의해주세요.');
 			return;
 		}
-		signUpMutate(data);
-		reset();
+
+		if (isCheckEmail) {
+			errorAlert('이메일 중복확인이 필요합니다.');
+			return;
+		}
+
+		const { confirmPassword, ...formData } = data;
+		console.log(confirmPassword);
+		signUpMutate(formData);
 	};
 
 	return (
@@ -114,7 +139,7 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 								render={({ field }) => <TextInput type="email" placeholder="이메일" width="84%" {...field} />}
 							/>
 
-							<PrimaryButton type="button" text="중복확인" width="15%" />
+							<PrimaryButton type="button" text="중복확인" width="15%" onClick={checkEmail} />
 						</BetweenBox>
 						{errors.email && <ErrorMessage message={errors.email.message} />}
 						<Controller
@@ -145,12 +170,12 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 
 						{errors.academyName && <ErrorMessage message={errors.academyName.message} />}
 						<Controller
-							name="fullName"
+							name="username"
 							control={control}
 							render={({ field }) => <TextInput type="text" placeholder="대표자명" {...field} />}
 						/>
 
-						{errors.fullName && <ErrorMessage message={errors.fullName.message} />}
+						{errors.username && <ErrorMessage message={errors.username.message} />}
 						<Controller
 							name="businessNumber"
 							control={control}
@@ -159,17 +184,23 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 
 						{errors.businessNumber && <ErrorMessage message={errors.businessNumber.message} />}
 						<Controller
-							name="businessEmail"
+							name="academyEmail"
 							control={control}
 							render={({ field }) => <TextInput type="email" placeholder="사업자이메일" {...field} />}
 						/>
-						{errors.businessEmail && <ErrorMessage message={errors.businessEmail.message} />}
+						{errors.academyEmail && <ErrorMessage message={errors.academyEmail.message} />}
 						<Controller
 							name="phoneNumber"
 							control={control}
-							render={({ field }) => <TextInput type="tel" placeholder="일반전화" {...field} />}
+							render={({ field }) => <TextInput type="tel" placeholder="핸드폰 번호" {...field} />}
 						/>
 						{errors.phoneNumber && <ErrorMessage message={errors.phoneNumber.message} />}
+						<Controller
+							name="landlineNumber"
+							control={control}
+							render={({ field }) => <TextInput type="tel" placeholder="일반전화" {...field} />}
+						/>
+						{errors.landlineNumber && <ErrorMessage message={errors.landlineNumber.message} />}
 						<BetweenBox>
 							<Controller
 								name="zipCode"
@@ -187,11 +218,11 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 						/>
 						{errors.address && <ErrorMessage message={errors.address.message} />}
 						<Controller
-							name="detailedAddress"
+							name="addressDetail"
 							control={control}
 							render={({ field }) => <TextInput type="text" placeholder="상세주소" {...field} />}
 						/>
-						{errors.detailedAddress && <ErrorMessage message={errors.detailedAddress.message} />}
+						{errors.addressDetail && <ErrorMessage message={errors.addressDetail.message} />}
 					</ColumnGapBox>
 				</Section>
 				<Divider />

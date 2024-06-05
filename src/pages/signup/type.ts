@@ -1,13 +1,14 @@
 export interface FormValues {
 	email: string;
 	password: string;
-	confirmPassword: string;
+	confirmPassword?: string;
 	academyName: string;
-	fullName: string;
+	username: string;
 	businessNumber: string;
-	businessEmail: string;
+	academyEmail: string;
 	phoneNumber: string;
+	landlineNumber: string;
 	zipCode: string;
 	address: string;
-	detailedAddress: string;
+	addressDetail: string;
 }

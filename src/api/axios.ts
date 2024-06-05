@@ -1,17 +1,16 @@
 // src/api/axios.js
 import axios from 'axios';
+import { accessToken } from '../stores/tokenStore';
 
 const axiosApi = axios.create({
-	baseURL: 'https://797d4f71-da19-4daf-b355-b0b50351dce0.mock.pstmn.io',
-	headers: {
-		'Content-Type': 'application/json',
-	},
+	baseURL: 'http://34.47.70.191:8080',
 });
 
-// 요청 인터셉터
 axiosApi.interceptors.request.use(
 	(config) => {
-		// 요청 전에 수행할 작업 넣기
+		if (accessToken) {
+			config.headers.Authorization = `Bearer ${accessToken}`;
+		}
 		return config;
 	},
 	(error) => {
@@ -19,7 +18,6 @@ axiosApi.interceptors.request.use(
 	},
 );
 
-// 응답 인터셉터
 axiosApi.interceptors.response.use(
 	(response) => {
 		return response;
