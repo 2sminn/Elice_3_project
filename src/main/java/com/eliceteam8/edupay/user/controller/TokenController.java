@@ -23,7 +23,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenController {
     private final RedisTemplate<String, String> redisTemplate;
-    private final UserRepository userRepository;
 
     @RequestMapping("/token/refresh")
     public Map<String,Object> refresh(@RequestHeader("Authorization")String authHeader, String email){
@@ -39,36 +38,30 @@ public class TokenController {
         String accessToken = authHeader.substring(7);
 
         //accessToken 만료되지 않았다면
-        //accessToken 만료되어 호출한건데 체크를 또?  ,고의로 직접 /api/member/refresh 를 호출할 수도 있으니 체크
+
+        //고의로 직접 /api/member/refresh 를 호출할 수도 있으니 체크
         if(checkExpiredToken(accessToken) == false){
-            String result = "accessToken 만료되지 않았습니다.";
+            String result = "accessToken이 만료되지 않았습니다.";
             return Map.of("accessToken",accessToken,"result",result);
         }
 
 
-//        Map<String, Object> accessTokenClaims = JwtProvider.validateToken(accessToken);
-//        String email = (String) accessTokenClaims.get("email");
-//        if(email.equals(refreshToken.getEmail()) == false){
-//            throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
-//        }
-//        User user = userRepository.findUserByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException("Not Found User"));
-
-
         String redisRefreshToken = redisTemplate.opsForValue().get(email);
         if(redisRefreshToken == null){
-            throw new UsernameNotFoundException("Not Found RefreshToken");
+            throw new UsernameNotFoundException("해당유저의 refreshToken정보가 존재하지 않습니다.");
         }
 
 
         Map<String, Object> claims = JwtProvider.validateToken(redisRefreshToken);
-        if(email.equals(claims.get("email")) == false){
-            throw new UsernameNotFoundException("유저 정보가 토큰값이 일치하지 않습니다.");
+        if(!email.equals(claims.get("email"))){
+            throw new UsernameNotFoundException("유저 정보와 토큰값이 일치하지 않습니다.");
         }
 
         String newAccessToken = JwtProvider.generateToken(claims,10);
         //String newRefreshToken = checkTime((Integer)claims.get("exp")) == true? JwtProvider.generateToken(claims,60*12):redisRefreshToken;
 
+        //refreshToken 기간이 60분 이하로 남았을 경우 새로운 refreshToken을 발급
+        //아닐 경우 기존 refreshToken을 사용한다
         String newReToken;
         if(checkTime((Integer)claims.get("exp"))){
             newReToken=  JwtProvider.generateToken(claims,60*12);
@@ -76,8 +69,6 @@ public class TokenController {
         }else {
             newReToken = redisRefreshToken;
         }
-
-
 
         return Map.of("accessToken",newAccessToken,"refreshToken",newReToken);
     }
@@ -100,6 +91,8 @@ public class TokenController {
             if(e.getExceptionCode().getCode().equals(ExceptionCode.EXPIRED_TOKEN.getCode())){
                 log.info("=============Expired Token=============");
                 return true;
+            }else {
+                throw e;
             }
         }
         return false;

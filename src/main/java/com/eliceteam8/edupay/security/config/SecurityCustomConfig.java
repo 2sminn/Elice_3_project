@@ -27,8 +27,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityCustomConfig {
 
-
-
    private final LoginSuccessHandler loginSuccessHandler;
 
 
@@ -62,6 +60,7 @@ public class SecurityCustomConfig {
 
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
       //  http.addFilterAfter(new JWTAuthHandlerFilter(), JWTCheckFilter.class);
+
         http.exceptionHandling(config->{
             config.accessDeniedHandler(new CustomAccessDeniedHandler());
         });

@@ -12,6 +12,7 @@ public enum ExceptionCode {
     INVALID_REQUEST_VALUE(400,"G-003","요청값이 잘못되었습니다."),
 
 
+
     //token
     EXPIRED_TOKEN(401,"TOKEN-001","토큰이 만료되었습니다."),
     INVALID_TOKEN(401,"TOKEN-002","유효하지 않은 토큰입니다."),

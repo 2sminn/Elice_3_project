@@ -28,7 +28,7 @@ public class AuthController {
 
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpDTO signUpDto ) {
+    public ResponseEntity<Map<String,Long>> signUp(@Valid @RequestBody SignUpDTO signUpDto ) {
         log.info("signUpDto: {}", signUpDto);
         Long newUserId = authService.signUp(signUpDto);
         return ResponseEntity.status(201).body(Map.of("userId", newUserId));
