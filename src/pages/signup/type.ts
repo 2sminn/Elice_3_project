@@ -7,6 +7,7 @@ export interface FormValues {
 	businessNumber: string;
 	academyEmail: string;
 	phoneNumber: string;
+	landlineNumber: string;
 	zipCode: string;
 	address: string;
 	addressDetail: string;

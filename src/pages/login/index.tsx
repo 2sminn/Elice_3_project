@@ -27,12 +27,11 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 ) => void | Promise<void>;
 
 const Login = () => {
-	const { control, handleSubmit, errors, reset } = useCustomForm<FormValues>(schema, 'onChange');
+	const { control, handleSubmit, errors } = useCustomForm<FormValues>(schema, 'onChange');
 	const { mutate: loginMutate } = useLoginMutation();
 
 	const onSubmitLogin: SubmitHandler<FormValues> = (data) => {
 		loginMutate(data);
-		reset();
 	};
 
 	return (

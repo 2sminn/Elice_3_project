@@ -14,7 +14,7 @@ export const useSignUpMutation = () => {
 
 	const onSuccess = () => {
 		successAlert('회원가입이 성공적으로 완료되었습니다.');
-		navigate('/');
+		navigate('/login');
 	};
 
 	const onError = () => {

@@ -44,7 +44,8 @@ const schema = Yup.object().shape({
 	username: Yup.string().required('대표자명은 필수 입력 사항입니다.'),
 	businessNumber: Yup.string().required('사업자번호는 필수 입력 사항입니다.'),
 	academyEmail: Yup.string().email('올바른 이메일 형식이 아닙니다.').required('사업자 이메일은 필수 입력 사항입니다.'),
-	phoneNumber: Yup.string().required('일반 전화번호는 필수 입력 사항입니다.'),
+	phoneNumber: Yup.string().required('핸드폰번호는 필수 입력 사항입니다.'),
+	landlineNumber: Yup.string().required('일반 전화번호는 필수 입력 사항입니다.'),
 	zipCode: Yup.string().required('우편번호는 필수 입력 사항입니다.'),
 	address: Yup.string().required('주소는 필수 입력 사항입니다.'),
 	addressDetail: Yup.string().required('상세주소는 필수 입력 사항입니다.'),
@@ -65,7 +66,7 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 
 	console.log(isCheckEmail);
 
-	const { control, handleSubmit, errors, reset, setValue, getValues } = useCustomForm<FormValues>(schema, 'onChange');
+	const { control, handleSubmit, errors, setValue, getValues } = useCustomForm<FormValues>(schema, 'onChange');
 	const { mutate: signUpMutate } = useSignUpMutation();
 
 	const handleCheckboxChange = (name: string, checked: boolean) => {
@@ -116,8 +117,10 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 			errorAlert('이메일 중복확인이 필요합니다.');
 			return;
 		}
-		signUpMutate(data);
-		reset();
+
+		const { confirmPassword, ...formData } = data;
+		console.log(confirmPassword);
+		signUpMutate(formData);
 	};
 
 	return (
@@ -187,9 +190,15 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 						<Controller
 							name="phoneNumber"
 							control={control}
-							render={({ field }) => <TextInput type="tel" placeholder="일반전화" {...field} />}
+							render={({ field }) => <TextInput type="tel" placeholder="핸드폰 번호" {...field} />}
 						/>
 						{errors.phoneNumber && <ErrorMessage message={errors.phoneNumber.message} />}
+						<Controller
+							name="landlineNumber"
+							control={control}
+							render={({ field }) => <TextInput type="tel" placeholder="일반전화" {...field} />}
+						/>
+						{errors.landlineNumber && <ErrorMessage message={errors.landlineNumber.message} />}
 						<BetweenBox>
 							<Controller
 								name="zipCode"
