@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.academy_management.response;
 
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.AcademyDTO;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.LectureDetail;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,5 @@ public class AcademyStudentResponseDTO {
 
     private List<LectureDetail> lectureDetails;
 
-    private Long Academy;
+    private AcademyDTO Academy;
 }
