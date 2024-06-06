@@ -29,7 +29,7 @@ public class PaymentService {
     private final IamportClient iamportClient;
 
     public PaymentInfoDTO createPaymentInfoDTO(Long billId) {
-        Bill bill = billRepository.findByBillId(billId)
+        Bill bill = billRepository.findById(billId)
                 .orElseThrow(NoSuchElementException::new);
 
         PaymentInfoDTO paymentInfoDTO = PaymentInfoDTO.builder()
@@ -46,7 +46,7 @@ public class PaymentService {
 
         try {
             IamportResponse<Payment> iamportResponse = getIamportResponse(request);
-            Bill bill = billRepository.findByBillId(request.getBillId()).orElseThrow(NoSuchElementException::new);
+            Bill bill = billRepository.findById(request.getBillId()).orElseThrow(NoSuchElementException::new);
             validatePaymentStatusAndPay(iamportResponse, bill);
 
             if (Status.PAID.equals(bill.getStatus())) {
