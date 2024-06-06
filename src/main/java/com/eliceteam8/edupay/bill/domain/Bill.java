@@ -46,7 +46,6 @@ public class Bill {
 
     private String message;
 
-
     @ManyToOne
     @JoinColumn(name = "academy_id")
     private Academy academy;

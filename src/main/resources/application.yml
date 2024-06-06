@@ -53,3 +53,9 @@ jwt:
 email:
   password-reset:
     url: http://localhost:8080/users/check-reset-password
+
+imp:
+  code: imp27833651
+  api:
+    key: 5460384277175472
+    secret_key: bOZm2BopeFJQ3SBTSE5m70CWqA97Q1SFIBWcHRL1TGuRA8kDmcEFIfLPjHjMQUm8Qw7ZlfG7VcMBKUOr
