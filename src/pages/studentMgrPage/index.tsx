@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import {
 	Container,
 	Title,
@@ -19,7 +19,30 @@ import { BillType } from './type';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Rigistration';
 
-const studentsData = [
+// StudentType 인터페이스 정의
+interface StudentType {
+	name: string;
+	school: string;
+	grade: string;
+	group: string;
+	class: string;
+	teacher: string;
+	paymentInfo: string;
+	contact: string;
+	selected: boolean;
+}
+
+// FilterType 인터페이스 정의
+interface FilterType {
+	name: string;
+	school: string;
+	grade: string;
+	group: string;
+	class: string;
+	teacher: string;
+}
+
+const studentsData: StudentType[] = [
 	{
 		name: '홍길동',
 		school: '학교1',
@@ -45,8 +68,8 @@ const studentsData = [
 ];
 
 const StudentMgrPage = () => {
-	const [searchTerm, setSearchTerm] = useState('');
-	const [filters, setFilters] = useState({
+	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [filters, setFilters] = useState<FilterType>({
 		name: '',
 		school: '',
 		grade: '',
@@ -54,14 +77,14 @@ const StudentMgrPage = () => {
 		class: '',
 		teacher: '',
 	});
-	const [selectAll, setSelectAll] = useState(false);
-	const [students, setStudents] = useState(studentsData);
+	const [selectAll, setSelectAll] = useState<boolean>(false);
+	const [students, setStudents] = useState<StudentType[]>(studentsData);
 	const { mutate: sendBill } = useBillSendMutation();
 	const { openPopup, closePopup } = usePopup();
 
-	const handleSearchChange = (e) => setSearchTerm(e.target.value);
+	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-	const handleFilterChange = (e) => {
+	const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target;
 		setFilters((prevFilters) => ({
 			...prevFilters,
@@ -69,18 +92,20 @@ const StudentMgrPage = () => {
 		}));
 	};
 
-	const filterStudents = (students, filters) => {
+	const filterStudents = (students: StudentType[], filters: FilterType) => {
 		return students.filter((student) => {
-			return Object.keys(filters).every((key) => student[key].includes(filters[key]));
+			return Object.keys(filters).every((key) =>
+				student[key as keyof StudentType].includes(filters[key as keyof FilterType]),
+			);
 		});
 	};
 
-	const handleSearchSubmit = (e) => {
+	const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setStudents(filterStudents(studentsData, { name: searchTerm }));
+		setStudents(filterStudents(studentsData, { name: searchTerm, ...filters }));
 	};
 
-	const handleFilterSubmit = (e) => {
+	const handleFilterSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setStudents(filterStudents(studentsData, filters));
 	};
@@ -123,13 +148,13 @@ const StudentMgrPage = () => {
 		openPopup(<StudentRegistrationPopup onClose={closePopup} />);
 	};
 
-	const handleSelectAllChange = (e) => {
+	const handleSelectAllChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
 		setStudents((prevStudents) => prevStudents.map((student) => ({ ...student, selected: checked })));
 	};
 
-	const handleSelectChange = (index) => (e) => {
+	const handleSelectChange = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setStudents((prevStudents) => {
 			const newStudents = [...prevStudents];
@@ -209,7 +234,14 @@ const StudentMgrPage = () => {
 	);
 };
 
-const StudentTable = ({ students, selectAll, onSelectAllChange, onSelectChange }) => {
+interface StudentTableProps {
+	students: StudentType[];
+	selectAll: boolean;
+	onSelectAllChange: (e: ChangeEvent<HTMLInputElement>) => void;
+	onSelectChange: (index: number) => (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const StudentTable: React.FC<StudentTableProps> = ({ students, selectAll, onSelectAllChange, onSelectChange }) => {
 	return (
 		<Table>
 			<thead>
