@@ -3,6 +3,7 @@ package com.eliceteam8.edupay.user.controller;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
+import com.eliceteam8.edupay.user.dto.CreateTokenDTO;
 import com.eliceteam8.edupay.user.entity.RefreshToken;
 import com.eliceteam8.edupay.user.entity.User;
 import com.eliceteam8.edupay.user.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,36 +27,31 @@ public class TokenController {
     private final RedisTemplate<String, String> redisTemplate;
 
     @RequestMapping("/token/refresh")
-    public Map<String,Object> refresh(@RequestHeader("Authorization")String authHeader, String email){
+    public Map<String,Object> refresh(@RequestHeader("Authorization")String authHeader, @RequestBody CreateTokenDTO createTokenDTO){
 
 
         if(authHeader == null || authHeader.length() < 7){
             throw new CustomJWTException(ExceptionCode.INVALID_TOKEN);
         }
-        if(email == null){
-            throw new IllegalArgumentException("email 값이 없습니다.");
+        if(createTokenDTO.getRefreshToken().isEmpty()){
+            throw new IllegalArgumentException("refreshToken 값이 존재하지 않습니다.");
         }
+        String refreshToken = createTokenDTO.getRefreshToken();
 
         String accessToken = authHeader.substring(7);
-
-        //accessToken 만료되지 않았다면
 
         //고의로 직접 /api/member/refresh 를 호출할 수도 있으니 체크
         if(checkExpiredToken(accessToken) == false){
             String result = "accessToken이 만료되지 않았습니다.";
-            return Map.of("accessToken",accessToken,"result",result);
+            return Map.of("accessToken",accessToken, "refreshToken",refreshToken, "result",result);
         }
 
+        Map<String, Object> claims = JwtProvider.validateToken(refreshToken);
+        String email = claims.get("email").toString();
 
         String redisRefreshToken = redisTemplate.opsForValue().get(email);
         if(redisRefreshToken == null){
             throw new UsernameNotFoundException("해당유저의 refreshToken정보가 존재하지 않습니다.");
-        }
-
-
-        Map<String, Object> claims = JwtProvider.validateToken(redisRefreshToken);
-        if(!email.equals(claims.get("email"))){
-            throw new UsernameNotFoundException("유저 정보와 토큰값이 일치하지 않습니다.");
         }
 
         String newAccessToken = JwtProvider.generateToken(claims,10);

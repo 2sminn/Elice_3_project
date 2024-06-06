@@ -59,10 +59,10 @@ public class UserService {
             boolean result =  redisTemplate.opsForValue().setIfAbsent(userId,
                     token,
                     Duration.ofMinutes(5));
-            log.info("Redis setIfAbsent result: {}", result);
+            log.info("Redis setIfAbsent result:");
             return result;
         } catch (Exception e) {
-            log.error("Error saving refresh token to Redis", e);
+            log.error("Error saving refresh token to Redis");
             return false;
         }
     }
