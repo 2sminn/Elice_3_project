@@ -13,6 +13,7 @@ import { TabBox, TabMenu } from '../storage/style';
 import { Fragment, useEffect, useRef } from 'react';
 import { useGetChargeHistoryQuery } from './hooks/useGetChargeHistoryQuery';
 import { formatNumber } from '../../utils/formatNumber';
+import profileImg from './assets/images/profile.jpeg';
 
 const Mypage = () => {
 	const navigate = useNavigate();
@@ -59,7 +60,7 @@ const Mypage = () => {
 			<PageTitle>마이페이지</PageTitle>
 			<S.MypageContainer>
 				<S.ProfileContainer>
-					<S.ProfileImg></S.ProfileImg>
+					<S.ProfileImg style={{ backgroundImage: `url(${profileImg})` }} />
 					<S.ProfileName>에듀학원</S.ProfileName>
 				</S.ProfileContainer>
 				<S.ProfileInfoContainer>

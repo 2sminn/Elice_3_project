@@ -8,9 +8,17 @@ import AddBillCountPopup from './components/AddBillCountPopup';
 import BillPopup from '../popups/BillPopup';
 import PrimaryButton from '../buttons/PrimaryButton';
 import { MENU_ARR } from '../../constants/routeList';
+import { useTokenStore } from '../../stores/tokenStore';
+import { successAlert } from '../../utils/alert';
 
 const Header = () => {
 	const { openPopup } = usePopup();
+	const { clearTokens } = useTokenStore();
+
+	const handleLogout = () => {
+		clearTokens();
+		successAlert('로그아웃 되었습니다.');
+	};
 
 	return (
 		<S.Container>
@@ -20,7 +28,7 @@ const Header = () => {
 				</S.LogoBox>
 				<S.AcademyInfoBox>
 					<h2>에듀학원</h2>
-					<Link to="/">
+					<Link to="/edit-profile">
 						<img src={settingImg} alt="" />
 					</Link>
 				</S.AcademyInfoBox>
@@ -44,7 +52,7 @@ const Header = () => {
 					</S.Menu>
 				</S.MenuContainer>
 			</S.HeaderTop>
-			<S.LogoutBtn>
+			<S.LogoutBtn onClick={handleLogout}>
 				<img src={logout} alt="로그아웃 버튼" />
 			</S.LogoutBtn>
 		</S.Container>

@@ -20,6 +20,9 @@ export const ProfileImg = styled.div`
 	height: 150px;
 	background-color: #ddd;
 	border-radius: 50%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
 `;
 
 export const ProfileName = styled.h3`

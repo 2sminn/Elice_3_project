@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../Layout';
 import { LAYOUT_ROUTE_ARR, ROUTE_ARR } from '../../constants/routeList';
+import PublicRoute from './PubliceRoute';
+import NotFound from './NotFound';
 
 const RouterComponent = () => {
 	return (
@@ -12,9 +14,12 @@ const RouterComponent = () => {
 						<Route key={route.id} path={route.path} element={route.element} />
 					))}
 				</Route>
-				{ROUTE_ARR.map((route) => (
-					<Route key={route.id} path={route.path} element={route.element} />
-				))}
+				<Route element={<PublicRoute />}>
+					{ROUTE_ARR.map((route) => (
+						<Route key={route.id} path={route.path} element={route.element} />
+					))}
+				</Route>
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Router>
 	);
