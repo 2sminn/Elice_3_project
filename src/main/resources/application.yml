@@ -18,18 +18,41 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: validate
-      naming:
-        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        #      naming:
+      #strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    #        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     generate-ddl: true
     properties:
       hibernate:
         format_sql: true
-        enable_lazy_load_no_trans: true
+  #        enable_lazy_load_no_trans: true
 
+  #  data:
+  #    redis:
+  #      host: localhost
+  #      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GOOGLE_MAIL_USERNAME}
+    password: ${GOOGLE_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
   secretKey: 034509324804235843098432144543676546435
+
+
+
+email:
+  password-reset:
+    url: http://localhost:8080/users/check-reset-password
 
 imp:
   code: imp27833651
