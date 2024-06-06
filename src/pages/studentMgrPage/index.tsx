@@ -14,8 +14,10 @@ import {
 	Th,
 	Td,
 } from './style';
-import { useBillSendMutation } from './hooks/useBillSendMutation'; // 경로는 실제 위치에 맞게 수정
-import { BillType } from './type'; // BillType의 실제 경로로 수정
+import { useBillSendMutation } from './hooks/useBillSendMutation';
+import { BillType } from './type';
+import usePopup from '../../hooks/usePopup';
+import StudentRegistrationPopup from './components/Rigistration';
 
 const studentsData = [
 	{
@@ -55,6 +57,7 @@ const StudentMgrPage = () => {
 	const [selectAll, setSelectAll] = useState(false);
 	const [students, setStudents] = useState(studentsData);
 	const { mutate: sendBill } = useBillSendMutation();
+	const { openPopup, closePopup } = usePopup();
 
 	const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -105,8 +108,20 @@ const StudentMgrPage = () => {
 		});
 	};
 
-	const handleDeleteClick = () => console.log('Delete Clicked');
-	const handleAddNewClick = () => console.log('Add New Student Clicked');
+	const handleDeleteClick = () => {
+		const selectedStudents = students.filter((student) => student.selected);
+		if (selectedStudents.length === 0) {
+			alert('삭제할 원생을 선택하세요.');
+			return;
+		}
+		const newStudents = students.filter((student) => !student.selected);
+		setStudents(newStudents);
+		alert('선택된 원생이 삭제되었습니다.');
+	};
+
+	const handleAddNewClick = () => {
+		openPopup(<StudentRegistrationPopup onClose={closePopup} />);
+	};
 
 	const handleSelectAllChange = (e) => {
 		const { checked } = e.target;
