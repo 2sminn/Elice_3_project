@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState } from 'react';
 import {
 	Container,
 	Title,
@@ -18,8 +18,8 @@ import { useBillSendMutation } from './hooks/useBillSendMutation';
 import { BillType } from './type';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Rigistration';
+import StudentDetailPopup from './components/Detail';
 
-// StudentType 인터페이스 정의
 interface StudentType {
 	name: string;
 	school: string;
@@ -32,7 +32,6 @@ interface StudentType {
 	selected: boolean;
 }
 
-// FilterType 인터페이스 정의
 interface FilterType {
 	name: string;
 	school: string;
@@ -82,9 +81,9 @@ const StudentMgrPage = () => {
 	const { mutate: sendBill } = useBillSendMutation();
 	const { openPopup, closePopup } = usePopup();
 
-	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-	const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target;
 		setFilters((prevFilters) => ({
 			...prevFilters,
@@ -100,12 +99,12 @@ const StudentMgrPage = () => {
 		});
 	};
 
-	const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setStudents(filterStudents(studentsData, { name: searchTerm, ...filters }));
 	};
 
-	const handleFilterSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setStudents(filterStudents(studentsData, filters));
 	};
@@ -119,7 +118,6 @@ const StudentMgrPage = () => {
 
 		selectedStudents.forEach((student) => {
 			const billData: BillType = {
-				// 필요한 데이터로 빌드
 				name: student.name,
 				school: student.school,
 				grade: student.grade,
@@ -148,13 +146,13 @@ const StudentMgrPage = () => {
 		openPopup(<StudentRegistrationPopup onClose={closePopup} />);
 	};
 
-	const handleSelectAllChange = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
 		setStudents((prevStudents) => prevStudents.map((student) => ({ ...student, selected: checked })));
 	};
 
-	const handleSelectChange = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
+	const handleSelectChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setStudents((prevStudents) => {
 			const newStudents = [...prevStudents];
@@ -166,6 +164,28 @@ const StudentMgrPage = () => {
 			}
 			return newStudents;
 		});
+	};
+
+	const handleStudentNameClick = (student: StudentType) => {
+		// 팝업을 열고, 원생의 상세 정보를 전달합니다.
+		openPopup(
+			<StudentDetailPopup
+				student={{
+					name: student.name,
+					birthDate: '2014-01-01', // 예시로 고정된 생년월일
+					contact: student.contact,
+					email: 'abc@gmail.com', // 예시로 고정된 이메일
+					school: student.school,
+					grade: student.grade,
+					classes: ['초등 5반', '단과수학반'], // 예시로 고정된 수강반
+					paymentInfo: {
+						outstanding: 0, // 예시로 고정된 미납 정보
+						upcoming: 1, // 예시로 고정된 납부예정 정보
+					},
+				}}
+				onClose={closePopup}
+			/>,
+		);
 	};
 
 	return (
@@ -229,6 +249,7 @@ const StudentMgrPage = () => {
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}
+				onStudentNameClick={handleStudentNameClick} // 이름 클릭 핸들러 전달
 			/>
 		</Container>
 	);
@@ -237,11 +258,18 @@ const StudentMgrPage = () => {
 interface StudentTableProps {
 	students: StudentType[];
 	selectAll: boolean;
-	onSelectAllChange: (e: ChangeEvent<HTMLInputElement>) => void;
-	onSelectChange: (index: number) => (e: ChangeEvent<HTMLInputElement>) => void;
+	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onSelectChange: (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onStudentNameClick: (student: StudentType) => void; // 새로운 프로퍼티 추가
 }
 
-const StudentTable: React.FC<StudentTableProps> = ({ students, selectAll, onSelectAllChange, onSelectChange }) => {
+const StudentTable: React.FC<StudentTableProps> = ({
+	students,
+	selectAll,
+	onSelectAllChange,
+	onSelectChange,
+	onStudentNameClick,
+}) => {
 	return (
 		<Table>
 			<thead>
@@ -265,7 +293,9 @@ const StudentTable: React.FC<StudentTableProps> = ({ students, selectAll, onSele
 						<Td>
 							<input type="checkbox" checked={student.selected} onChange={onSelectChange(index)} />
 						</Td>
-						<Td>{student.name}</Td>
+						<Td onClick={() => onStudentNameClick(student)} style={{ cursor: 'pointer', color: '#007bff' }}>
+							{student.name}
+						</Td>
 						<Td>{student.school}</Td>
 						<Td>{student.grade}</Td>
 						<Td>{student.group}</Td>
