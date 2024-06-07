@@ -34,18 +34,14 @@ public class StudentPaymentStatus {
     @JoinColumn(name = "payment_id")
     private PaymentHistory payment;
 
-    @Column(name = "payment_status", nullable = false)
-    private String paymentStatus; // PAID, UNPAID 등
-
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @Builder
-    public StudentPaymentStatus(AcademyStudent student, Bill bill, PaymentHistory payment, String paymentStatus, LocalDateTime updatedAt) {
+    public StudentPaymentStatus(AcademyStudent student, Bill bill, PaymentHistory payment, LocalDateTime updatedAt) {
         this.student = student;
         this.bill = bill;
         this.payment = payment;
-        this.paymentStatus = paymentStatus;
         this.updatedAt = updatedAt;
     }
 
@@ -54,7 +50,6 @@ public class StudentPaymentStatus {
                 .student(student)
                 .bill(bill)
                 .payment(payment)
-                .paymentStatus(dto.getPaymentStatus())
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
@@ -65,7 +60,7 @@ public class StudentPaymentStatus {
                 .studentId(this.student.getId())
                 .billId(this.bill.getId())
                 .paymentId(this.payment.getId())
-                .paymentStatus(this.paymentStatus)
+                .billStatus(this.bill.getStatus().name())
                 .updatedAt(this.updatedAt)
                 .build();
     }

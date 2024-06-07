@@ -11,10 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/payments")
 public class StudentPaymentStatusController {
 
     private final StudentPaymentStatusService studentPaymentStatusService;

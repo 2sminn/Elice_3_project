@@ -11,5 +11,4 @@ public class StudentPaymentStatusRequestDto {
     private Long studentId;
     private Long billId;
     private Long paymentId;
-    private String paymentStatus;
 }
