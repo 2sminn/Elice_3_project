@@ -7,7 +7,6 @@ const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
 	const { errorRes } = usePaymentErrorStore();
 
 	console.log(successRes);
-	console.log(errorRes);
 
 	return (
 		<S.Wrap>

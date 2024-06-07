@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useTokenStore } from '../../stores/tokenStore';
+import { getAccessToken } from '../../stores/tokenStore';
 
 const PublicRoute = () => {
-	const { accessToken } = useTokenStore();
+	const accessToken = getAccessToken();
 
 	return accessToken ? <Navigate to="/" /> : <Outlet />;
 };

@@ -17,7 +17,8 @@ export const useLoginMutation = () => {
 
 	const onSuccess = (success: LoginResponse) => {
 		const accessToken = success.accessToken;
-		setTokens(accessToken);
+		const refreshToken = success.refreshToken;
+		setTokens(accessToken, refreshToken);
 
 		successAlert('로그인 성공!');
 
