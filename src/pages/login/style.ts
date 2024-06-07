@@ -14,17 +14,6 @@ export const LogoImage = styled.img`
 	margin-bottom: 40px;
 `;
 
-export const LoginForm = styled.form`
-	width: 500px;
-`;
-
-export const InputContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	margin-bottom: 20px;
-`;
-
 export const SignUpBtn = styled(Link)`
 	display: block;
 	margin-top: 10px;

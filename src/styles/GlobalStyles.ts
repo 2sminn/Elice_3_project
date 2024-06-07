@@ -8,19 +8,6 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* styles.css 또는 App.css 파일에 추가 */
-body, html {
-  overflow: auto;
-  scrollbar-width: 2px;
-  scrollbar-color: #2DB400 #fff;
-}
-
-#contents {
-  scrollbar-color: #2DB400 #eee;
-}
-
-
-
 
   /* Remove default margin */
   body,

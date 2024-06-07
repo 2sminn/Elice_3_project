@@ -1,11 +1,8 @@
-import { useTokenStore } from '../../stores/tokenStore';
 import Header from '../Header';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
-	const { accessToken } = useTokenStore();
-
-	return accessToken ? (
+	return (
 		<>
 			<div className="wrap">
 				<div className="container">
@@ -16,8 +13,6 @@ const Layout = () => {
 				</div>
 			</div>
 		</>
-	) : (
-		<Navigate to="/login" />
 	);
 };
 
