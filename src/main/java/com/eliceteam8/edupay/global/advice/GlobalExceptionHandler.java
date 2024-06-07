@@ -51,8 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         log.error("---handleUsernameNotFoundException---");
-         ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER);
-         response.setMessageDetail(ex.getMessage());
+        final ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER, ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -65,6 +64,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        log.error("---handleIllegalStateException---");
+        final ErrorResponse response =
+                ErrorResponse.of(ExceptionCode.ILLEGAL_STATE, ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
 
     @ExceptionHandler(CustomJWTException.class)

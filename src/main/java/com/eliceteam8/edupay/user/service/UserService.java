@@ -1,7 +1,10 @@
 package com.eliceteam8.edupay.user.service;
 
+import com.eliceteam8.edupay.academy_management.entity.Academy;
+import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.global.mail.EmailMessage;
 import com.eliceteam8.edupay.global.mail.EmailSendService;
+import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
 import com.eliceteam8.edupay.user.repository.UserRepository;
@@ -22,15 +25,36 @@ import java.time.Duration;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AcademyRepository academyRepository;
     private final EmailSendService emailService;
     private final RedisTemplate<String, String> redisTemplate;
 
 
 
+    //업데이트할 유저 정보 가져오기
+    public UpdateUserDTO getUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
+        UpdateUserDTO updateUserDTO = UpdateUserDTO.entityToDTO(user);
 
-    public void getUserById(Long userId) {
+        return updateUserDTO;
+    }
 
+    //유저 정보 업데이트
+    @Transactional
+    public Long updateUserAndAcademy(Long userId, UpdateUserDTO updateUserDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+        Academy academy = academyRepository.findById(updateUserDTO.getAcademyId())
+                .orElseThrow(() -> new UsernameNotFoundException("해당 학원을 찾을 수 없습니다."));
+
+        user.updateUser(updateUserDTO);
+        academy.updateAcademy(updateUserDTO);
+        academy.setUser(user);
+
+        return user.getId();
 
     }
 
@@ -44,9 +68,9 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
         user.generateToken();
 
-        boolean result = passwordTokenSave(user.getId().toString(), user.getPasswordCheckToken());
+        boolean result = passwordTokenSave(user.getId().toString(), user.getPasswordToken());
 
-        sendEmail(email,user.getPasswordCheckToken());
+        sendEmail(email,user.getPasswordToken());
         return result;
     }
 
@@ -67,7 +91,7 @@ public class UserService {
     }
 
 
-    @Async
+
     public void sendEmail(String email, String token) {
 
         String content = "<p>안녕하세요 edupay 입니다.</p>"
@@ -86,6 +110,24 @@ public class UserService {
         emailService.sendEmail(emailMessage);
     }
 
+
+    public boolean checkPasswordResetEmail(String token, String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
+        if(user.isTokenExpired()){
+            throw new IllegalStateException("인증번호가 만료되었습니다.");
+        }
+        if(!user.getPasswordToken().equals(token)){
+            throw new IllegalStateException("인증번호가 일치하지 않습니다.");
+        }
+        String userId = user.getId().toString();
+        if(redisTemplate.hasKey(userId)) {
+            redisTemplate.delete(userId);
+            return true;
+        }
+
+        return false;
+    }
 
 
 }
