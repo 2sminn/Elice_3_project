@@ -28,7 +28,8 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
 
         Gson gson = new Gson();
         String jsonStr = gson.toJson(Map.of("status", ExceptionCode.LOGIN_FAILED.getStatus(),
-                "message", ExceptionCode.LOGIN_FAILED.getMessage(),
+                "messageDetail", ExceptionCode.LOGIN_FAILED.getMessage(),
+                "message", exception.getMessage(),
                 "code",ExceptionCode.LOGIN_FAILED.getCode()));
 
         response.getWriter().println(jsonStr);
