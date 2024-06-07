@@ -62,7 +62,6 @@ public class AuthService implements UserDetailsService {
 
         userRepository.save(user);
 
-        log.info("--------------{}---", signUpDto.getAcademyEmail());
 
         Academy academy = Academy.builder()
                 .academyName(signUpDto.getAcademyName())
