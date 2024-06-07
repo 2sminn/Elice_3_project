@@ -17,7 +17,6 @@ import {
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Rigistration';
 import StudentDetailPopup from './components/Detail';
-import PopupContainer from '../../components/popups/PopupContainer'; // 여기에 PopupContainer 경로를 맞춰서 추가
 
 interface StudentType {
 	name: string;
@@ -100,7 +99,7 @@ const StudentMgrPage = () => {
 
 	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setStudents(filterStudents(studentsData, { name: searchTerm, ...filters }));
+		// setStudents(filterStudents(studentsData, { name: searchTerm, ...filters }));
 	};
 
 	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import axiosApi from '../api/axios';
 
 interface StudentType {
 	id: string;
