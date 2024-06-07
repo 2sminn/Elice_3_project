@@ -41,10 +41,17 @@ public class UserService {
         return updateUserDTO;
     }
 
+    public UpdateUserDTO getUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
+        UpdateUserDTO updateUserDTO = UpdateUserDTO.entityToDTO(user);
+        return updateUserDTO;
+    }
+
     //유저 정보 업데이트
     @Transactional
-    public Long updateUserAndAcademy(Long userId, UpdateUserDTO updateUserDTO) {
-        User user = userRepository.findById(userId)
+    public Long updateUserAndAcademy(UpdateUserDTO updateUserDTO) {
+        User user = userRepository.findById(updateUserDTO.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
         Academy academy = academyRepository.findById(updateUserDTO.getAcademyId())
@@ -128,6 +135,7 @@ public class UserService {
 
         return false;
     }
+
 
 
 }

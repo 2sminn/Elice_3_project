@@ -23,7 +23,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         Gson gson = new Gson();
 
         String jsonStr = gson.toJson(Map.of("status", ExceptionCode.ACCESS_DENIED.getStatus(),
-                "message", ExceptionCode.ACCESS_DENIED.getMessage(),
+                "messageDetail", ExceptionCode.ACCESS_DENIED.getMessage(),
+                "message", accessDeniedException.getMessage(),
                 "code", ExceptionCode.ACCESS_DENIED.getCode()));
 
         response.setContentType("application/json;charset=utf-8");
