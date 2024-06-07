@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class BillService {
     private static final int MAX_MESSAGE_LENGTH = 255;
-    private static final String DEFAULT_MESSAGE = "Please pay the bill within the due date.";
+    private static final String DEFAULT_MESSAGE = "청구서를 기한 내에 납부해 주세요.";
     private static final long INITIAL_REMAINING_BILLS = 10L;
 
     @Autowired
@@ -47,7 +47,7 @@ public class BillService {
         BillLog billLog;
 
         if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() <= 0) {
-//            throw new NotEnoughRemainingBillsException("No remaining bills", "NOT_ENOUGH_REMAINING_BILLS");
+//            throw new NotEnoughRemainingBillsException("청구서 발송 가능 건수가 부족합니다.", "NOT_ENOUGH_REMAINING_BILLS");
             billLog = new BillLog();
             billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
             billLog.setCreatedAt(LocalDateTime.now());
@@ -57,15 +57,15 @@ public class BillService {
         }
 
         if (request.getMessage().length() > MAX_MESSAGE_LENGTH) {
-            throw new MessageTooLongException("Message exceeds maximum allowed length", "MESSAGE_TOO_LONG");
+            throw new MessageTooLongException("메시지가 허용된 최대 길이를 초과했습니다.", "MESSAGE_TOO_LONG");
         }
 
         AcademyStudent student = academyStudentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + request.getStudentId()));
+                .orElseThrow(() -> new EntityNotFoundException("ID가 " + request.getStudentId() + "인 학생을 찾을 수 없습니다."));
 
         Academy academy = student.getAcademy();
         if (academy == null) {
-            throw new EntityNotFoundException("Academy not found for student id: " + request.getStudentId());
+            throw new EntityNotFoundException("ID가 " + request.getStudentId() + "인 학생의 학원을 찾을 수 없습니다.");
         }
 
         List<String> lectureNames = student.getLectures().stream()
@@ -73,7 +73,7 @@ public class BillService {
                 .collect(Collectors.toList());
 
         if (lectureNames.isEmpty()) {
-            throw new EntityNotFoundException("No lectures found for student id: " + request.getStudentId());
+            throw new EntityNotFoundException("ID가 " + request.getStudentId() + "인 학생의 강의를 찾을 수 없습니다.");
         }
 
         long totalPrice = student.getLectures().stream()
@@ -119,7 +119,7 @@ public class BillService {
         BillLog billLog;
 
         if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() < request.getStudentIds().size()) {
-//            throw new NotEnoughRemainingBillsException("Not enough remaining bills", "NOT_ENOUGH_REMAINING_BILLS");
+//            throw new NotEnoughRemainingBillsException("청구서 발송 가능 건수가 부족합니다.", "NOT_ENOUGH_REMAINING_BILLS");
             billLog = new BillLog();
             billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
             billLog.setCreatedAt(LocalDateTime.now());
@@ -142,11 +142,11 @@ public class BillService {
 
     private BillInfoResponse createBillForStudent(Long studentId, String message) {
         AcademyStudent student = academyStudentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> new EntityNotFoundException("ID가 " + studentId + "인 학생을 찾을 수 없습니다."));
 
         Academy academy = student.getAcademy();
         if (academy == null) {
-            throw new EntityNotFoundException("Academy not found for student id: " + studentId);
+            throw new EntityNotFoundException("ID가 " + studentId + "인 학생의 학원을 찾을 수 없습니다.");
         }
 
         List<String> lectureNames = student.getLectures().stream()
@@ -154,7 +154,7 @@ public class BillService {
                 .collect(Collectors.toList());
 
         if (lectureNames.isEmpty()) {
-            throw new EntityNotFoundException("No lectures found for student id: " + studentId);
+            throw new EntityNotFoundException("ID가 " + studentId + "인 학생의 강의를 찾을 수 없습니다.");
         }
 
         long totalPrice = student.getLectures().stream()

@@ -23,7 +23,7 @@ public class StudentPaymentStatus {
     @Column(nullable = false, name = "student_id")
     private Long studentId;
 
-    @Column(nullable = false, name = "order_id")
+    @Column(nullable = false, name = "bill_id")
     private Long orderId;
 
     @Column(nullable = false, name = "payment_status")
