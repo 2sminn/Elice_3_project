@@ -14,11 +14,10 @@ import {
 	Th,
 	Td,
 } from './style';
-import { useBillSendMutation } from './hooks/useBillSendMutation';
-import { BillType } from './type';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Rigistration';
 import StudentDetailPopup from './components/Detail';
+import PopupContainer from '../../components/popups/PopupContainer'; // 여기에 PopupContainer 경로를 맞춰서 추가
 
 interface StudentType {
 	name: string;
@@ -78,7 +77,6 @@ const StudentMgrPage = () => {
 	});
 	const [selectAll, setSelectAll] = useState<boolean>(false);
 	const [students, setStudents] = useState<StudentType[]>(studentsData);
-	const { mutate: sendBill } = useBillSendMutation();
 	const { openPopup, closePopup } = usePopup();
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
@@ -108,28 +106,6 @@ const StudentMgrPage = () => {
 	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setStudents(filterStudents(studentsData, filters));
-	};
-
-	const handleBillingClick = () => {
-		const selectedStudents = students.filter((student) => student.selected);
-		if (selectedStudents.length === 0) {
-			alert('청구서를 발송할 원생을 선택하세요.');
-			return;
-		}
-
-		selectedStudents.forEach((student) => {
-			const billData: BillType = {
-				name: student.name,
-				school: student.school,
-				grade: student.grade,
-				group: student.group,
-				class: student.class,
-				teacher: student.teacher,
-				paymentInfo: student.paymentInfo,
-				contact: student.contact,
-			};
-			sendBill(billData);
-		});
 	};
 
 	const handleDeleteClick = () => {
@@ -235,7 +211,6 @@ const StudentMgrPage = () => {
 			</SearchSection>
 
 			<ButtonGroup>
-				<Button onClick={handleBillingClick}>청구서발송</Button>
 				<Button onClick={handleDeleteClick}>삭제</Button>
 				<Button onClick={handleAddNewClick}>신규원생등록</Button>
 			</ButtonGroup>
