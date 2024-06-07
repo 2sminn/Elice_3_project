@@ -36,6 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
+        String email = userDTO.getEmail();
         // JWT 토큰 생성
 
         String accessToken = JwtProvider.generateToken(userClaims, 60*6);
@@ -43,7 +44,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
-       // refreshTokenSave(refreshToken, userDTO);
+       // refreshTokenSave(refreshToken, email);
 
         userClaims.put("refreshToken", refreshToken);
         userClaims.put("accessToken", accessToken);
@@ -53,20 +54,20 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private boolean refreshTokenSave( String refreshToken, UserDTO userDTO){
+    private boolean refreshTokenSave( String refreshToken, String email){
         try {
             //redis 키값이 존재하면 저장하지 않음
-            if(redisTemplate.getExpire(userDTO.getEmail()) > 600){
+            if(redisTemplate.getExpire(email) > 600){
                 return false;
             }
 
-            boolean result = redisTemplate.opsForValue().setIfAbsent(
-                    userDTO.getEmail(),
+           redisTemplate.opsForValue().setIfAbsent(
+                    email,
                     refreshToken,
                     Duration.ofHours(12));
-            return result;
+            return true;
         } catch (Exception e) {
-            log.error("Error saving refresh token to Redis", e.getMessage());
+            log.error("Error saving refresh token to Redis : {}", e.getMessage());
             return false;
         }
     }

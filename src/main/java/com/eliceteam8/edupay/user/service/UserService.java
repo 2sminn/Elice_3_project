@@ -25,8 +25,7 @@ public class UserService {
     private final EmailSendService emailService;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${email.password-reset.url}")
-    private String url;
+
 
 
 
@@ -47,7 +46,7 @@ public class UserService {
 
         boolean result = passwordTokenSave(user.getId().toString(), user.getPasswordCheckToken());
 
-        sendEmail(email);
+        sendEmail(email,user.getPasswordCheckToken());
         return result;
     }
 
@@ -56,11 +55,11 @@ public class UserService {
             if(redisTemplate.hasKey(userId)){
                 return true;
             }
-            boolean result =  redisTemplate.opsForValue().setIfAbsent(userId,
+             redisTemplate.opsForValue().setIfAbsent(userId,
                     token,
                     Duration.ofMinutes(5));
             log.info("Redis setIfAbsent result:");
-            return result;
+            return true;
         } catch (Exception e) {
             log.error("Error saving refresh token to Redis");
             return false;
@@ -68,14 +67,15 @@ public class UserService {
     }
 
 
-    public void sendEmail(String email) {
+    @Async
+    public void sendEmail(String email, String token) {
 
-        String content = "<p>안녕하세요,</p>"
-                + "<p>비밀번호 재설정을 요청하셨습니다.</p>"
-                + "<p>아래 링크를 클릭하여 비밀번호를 재설정하세요:</p>"
-                + "<p><a href=\"" + url + "\">비밀번호 재설정</a></p>"
+        String content = "<p>안녕하세요 edupay 입니다.</p>"
+                + "<p>이메일 인증 번호를 알려드립니다.</p>"
+                + "<p>인증번호는 발송된 시점부터 5분간만 유효하니, 확인 후 바로 입력해주세요.</p>"
+                + "<h3 style='display: inline-block; padding: 10px; background-color: #f0f0f0; border-radius: 5px; color: #333;'>" + token + "</h3>"
                 + "<br>"
-                + "<p>비밀번호를 기억하고 있거나, 비밀번호 재설정을 요청하지 않으셨다면 이 이메일을 무시하세요.</p>";
+                + "<p><small>이 메일은 자동으로 생성된 메일입니다. 회신하지 마세요.</small></p>";
 
         EmailMessage emailMessage = EmailMessage.builder()
                 .to(email)
