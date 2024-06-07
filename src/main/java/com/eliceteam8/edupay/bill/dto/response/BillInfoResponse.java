@@ -1,4 +1,4 @@
-package com.eliceteam8.edupay.bill.dto.request;
+package com.eliceteam8.edupay.bill.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

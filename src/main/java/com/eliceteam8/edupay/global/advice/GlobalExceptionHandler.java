@@ -1,19 +1,13 @@
 package com.eliceteam8.edupay.global.advice;
 
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
-import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
-import com.eliceteam8.edupay.global.exception.CustomJWTException;
-import com.eliceteam8.edupay.global.exception.EntityNotFoundException;
-import com.eliceteam8.edupay.global.exception.MessageTooLongException;
+import com.eliceteam8.edupay.global.exception.*;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -115,6 +108,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .code(ex.getCode())
                 .message("Message too long")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotEnoughRemainingBillsException.class)
+    public ResponseEntity<ErrorResponse> handleNotEnoughRemainingBillsException(NotEnoughRemainingBillsException ex) {
+        log.error("---handleNotEnoughRemainingBillsException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code(ex.getCode())
+                .message("Not enough remaining bills")
                 .messageDetail(ex.getMessage())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

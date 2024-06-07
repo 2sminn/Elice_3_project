@@ -1,10 +1,14 @@
 package com.eliceteam8.edupay.bill.controller;
 
-import com.eliceteam8.edupay.bill.dto.request.BillInfoResponse;
+import com.eliceteam8.edupay.bill.dto.request.CreateMultipleBillsRequest;
+import com.eliceteam8.edupay.bill.dto.response.BillInfoResponse;
 import com.eliceteam8.edupay.bill.dto.request.CreateSingleBillRequest;
+import com.eliceteam8.edupay.bill.dto.response.BillLogResponse;
 import com.eliceteam8.edupay.bill.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bill")
@@ -16,9 +20,21 @@ public class BillController {
         this.billService = billService;
     }
 
-    // 학생 이름으로 청구서 생성 및 반환 API
+    // 학생 ID로 단일 청구서 생성 및 반환 API
     @PostMapping("")
     public BillInfoResponse createBill(@RequestBody CreateSingleBillRequest request) {
         return billService.createBill(request);
+    }
+
+    // 다중 청구서 생성 및 반환 API
+    @PostMapping("/multiple")
+    public List<BillInfoResponse> createMultipleBills(@RequestBody CreateMultipleBillsRequest request) {
+        return billService.createMultipleBills(request);
+    }
+
+    // 청구서 발송 내역 확인 API
+    @GetMapping("/logs")
+    public List<BillLogResponse> getBillLogs() {
+        return billService.getBillLogs();
     }
 }
