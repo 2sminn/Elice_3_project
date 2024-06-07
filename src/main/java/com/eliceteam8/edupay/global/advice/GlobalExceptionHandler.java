@@ -39,14 +39,10 @@ public class GlobalExceptionHandler {
                 .map(fieldError ->  fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        final ErrorResponse response = ErrorResponse.builder()
-                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .messageDetail(errors.get(0))
-                //.errors(errors)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        final ErrorResponse response =
+                ErrorResponse.of(ExceptionCode.INVALID_INPUT_VALUE, errors.get(0));
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -55,7 +51,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
         log.error("---handleAlreadyExistUserException---");
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -64,21 +60,15 @@ public class GlobalExceptionHandler {
         log.error("---handleUsernameNotFoundException---");
          ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER);
          response.setMessageDetail(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("---handleIllegalArgumentException---");
-        final ErrorResponse response = ErrorResponse.builder()
-
-                .status(ExceptionCode.INVALID_REQUEST_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_REQUEST_VALUE.getCode())
-                .message(ExceptionCode.INVALID_REQUEST_VALUE.getMessage())
-                // .errors(List.of(ex.getMessage()))
-                .messageDetail(ex.getMessage())
-                .build();
+        final ErrorResponse response =
+        ErrorResponse.of(ExceptionCode.INVALID_REQUEST_VALUE, ex.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -122,34 +112,6 @@ public class GlobalExceptionHandler {
                 .messageDetail(ex.getMessage())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-//        log.error("---handleConstraintViolationException---");
-//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-//        List<String> errors = constraintViolations.stream()
-//                .map(constraintViolation ->
-//                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
-//                .collect(Collectors.toList());
-//
-//        ErrorResponse response = ErrorResponse.builder()
-//                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-//                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-//                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-
-//              //  .errors(errors)
-
-//                .build();
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-
-
-    private String extractField(Path path){
-        String[] splitArray = path.toString().split("[.]");
-        int lastIndex = splitArray.length - 1;
-        return splitArray[lastIndex];
     }
 
 
