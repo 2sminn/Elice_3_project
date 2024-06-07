@@ -113,7 +113,7 @@ public class BillService {
         // 이메일 보내기
         String subject = "청구서 안내";
         String text = "청구서가 생성되었습니다. 결제 URL: http://34.47.70.191/bill/" + bill.getId();
-        emailService.sendSimpleMessage("js020315@gmail.com", subject, text);
+        emailService.sendSimpleMessage(student.getEmail(), subject, text);
 
         // 상태 변경
         bill.setStatusToCompleted();
