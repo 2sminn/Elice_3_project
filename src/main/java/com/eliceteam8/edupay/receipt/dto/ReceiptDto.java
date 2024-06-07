@@ -1,5 +1,7 @@
 package com.eliceteam8.edupay.receipt.dto;
 
+import com.eliceteam8.edupay.academy_management.entity.Lecture;
+import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.receipt.entity.ReceiptEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
@@ -16,32 +19,13 @@ import java.time.LocalDateTime;
 public class ReceiptDto {
 
     private Long receiptId;
-    private Long orderId;
+    private Long billId;
     private LocalDateTime receiptDate;
+    private Long studentId;
     private String studentName;
-    private LocalDate birthdate;
-    private String lectureName;
-    private int totalPrice;
-
-    public static ReceiptEntity toEntity(ReceiptDto receiptDto){
-        return ReceiptEntity.builder()
-                .receiptId(receiptDto.getReceiptId())
-                .orderId(receiptDto.getOrderId())
-                .receiptDate(receiptDto.getReceiptDate())
-                .build();
-    }
-
-    public static ReceiptDto fromEntity(ReceiptEntity receiptEntity,String studentName,LocalDate birthdate
-    ,String lectureName,int totalPrice){
-        return ReceiptDto.builder()
-                .receiptId(receiptEntity.getReceiptId())
-                .orderId(receiptEntity.getOrderId())
-                .receiptDate(receiptEntity.getReceiptDate())
-                .studentName(studentName)
-                .birthdate(birthdate)
-                .lectureName(lectureName)
-                .totalPrice(totalPrice)
-                .build();
-    }
+    private String birthdate;
+    private List<Lecture> lectures;
+    private Long totalPrice;
+    private String grade;
 
 }

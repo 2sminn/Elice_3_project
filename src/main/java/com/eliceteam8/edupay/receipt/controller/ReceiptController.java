@@ -4,10 +4,9 @@ import com.eliceteam8.edupay.receipt.dto.ReceiptDto;
 import com.eliceteam8.edupay.receipt.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/receipt")
@@ -23,5 +22,11 @@ public class ReceiptController {
     public ResponseEntity<ReceiptDto> addReceipt(@RequestBody ReceiptDto receiptDto){
         receiptService.createReceipt(receiptDto);
         return ResponseEntity.ok(receiptDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReceiptDto>> getReceiptsByInfo(@RequestParam Long studentId, @RequestParam String year, @RequestParam String month) {
+        List<ReceiptDto> receipts = receiptService.getReceiptsByInfo(studentId, year, month);
+        return ResponseEntity.ok(receipts);
     }
 }
