@@ -13,7 +13,7 @@ public class StudentPaymentStatusResponseDto {
     private Long studentId;
     private Long billId;
     private Long paymentId;
-    private String paymentStatus;
+    private String billStatus;
     private LocalDateTime updatedAt;
 
     public static StudentPaymentStatusResponseDto fromEntity(StudentPaymentStatus entity) {
@@ -24,7 +24,7 @@ public class StudentPaymentStatusResponseDto {
                 .studentId(entity.getStudent().getId())
                 .billId(entity.getBill().getId())
                 .paymentId(entity.getPayment().getId())
-                .paymentStatus(entity.getPaymentStatus())
+                .billStatus(entity.getBill().getStatus().name())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
     }

@@ -44,7 +44,21 @@ spring:
 jwt:
   secretKey: 034509324804235843098432144543676546435
 
-
+springdoc:
+  version: v1.0.0
+  packages-to-scan: com.eliceteam8.edupay
+  swagger-ui:
+    path: /api-edupay
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-edupay/json
+    groups:
+      enabled: true
+  cache:
+    disabled: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
 
 email:
   password-reset:

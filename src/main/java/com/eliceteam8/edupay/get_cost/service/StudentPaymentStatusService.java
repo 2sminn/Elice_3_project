@@ -51,11 +51,11 @@ public class StudentPaymentStatusService {
             }
         } else {
             if (studentName != null) {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetweenAndStudent_StudentName(status.toUpperCase(), startDate, endDate, studentName, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_StudentName(status.toUpperCase(), startDate, endDate, studentName, pageRequest);
             } else if (phoneNumber != null) {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status.toUpperCase(), startDate, endDate, phoneNumber, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status.toUpperCase(), startDate, endDate, phoneNumber, pageRequest);
             } else {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetween(status.toUpperCase(), startDate, endDate, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetween(status.toUpperCase(), startDate, endDate, pageRequest);
             }
         }
         return payments.map(StudentPaymentStatus::toResponseDto);
@@ -66,7 +66,7 @@ public class StudentPaymentStatusService {
     }
 
     public Page<StudentPaymentStatusResponseDto> getUnpaidPayments(LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
-        return getAllPayments("UNPAID", startDate, endDate, studentName, phoneNumber, page, size);
+        return getAllPayments("BEFORE", startDate, endDate, studentName, phoneNumber, page, size);
     }
 
     public StudentPaymentStatus createPaymentStatus(StudentPaymentStatusRequestDto requestDto) {
@@ -87,7 +87,6 @@ public class StudentPaymentStatusService {
         existingStatus.setStudent(student);
         existingStatus.setBill(bill);
         existingStatus.setPayment(payment);
-        existingStatus.setPaymentStatus(requestDto.getPaymentStatus());
         existingStatus.setUpdatedAt(LocalDateTime.now());
 
         return studentPaymentStatusRepository.save(existingStatus);
