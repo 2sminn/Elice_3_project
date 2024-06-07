@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 public class StudentPaymentStatusResponseDto {
     private Long paymentStatusId;
     private Long studentId;
-    private Long orderId;
+    private Long billId;
+    private Long paymentId;
     private String paymentStatus;
     private LocalDateTime updatedAt;
 
@@ -20,8 +21,9 @@ public class StudentPaymentStatusResponseDto {
 
         return StudentPaymentStatusResponseDto.builder()
                 .paymentStatusId(entity.getPaymentStatusId())
-                .studentId(entity.getStudentId())
-                .orderId(entity.getOrderId())
+                .studentId(entity.getStudent().getId())
+                .billId(entity.getBill().getId())
+                .paymentId(entity.getPayment().getId())
                 .paymentStatus(entity.getPaymentStatus())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

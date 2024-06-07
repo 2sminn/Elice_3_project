@@ -9,6 +9,7 @@ import lombok.Setter;
 @Builder
 public class StudentPaymentStatusRequestDto {
     private Long studentId;
-    private Long orderId;
+    private Long billId;
+    private Long paymentId;
     private String paymentStatus;
 }
