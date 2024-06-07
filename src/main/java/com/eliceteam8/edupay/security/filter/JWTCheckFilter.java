@@ -2,8 +2,10 @@ package com.eliceteam8.edupay.security.filter;
 
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
+import com.eliceteam8.edupay.global.response.ErrorResponse;
 import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +23,7 @@ import java.util.Map;
 @Slf4j
 public class JWTCheckFilter extends OncePerRequestFilter {
 
-
+    private ObjectMapper objectMapper = new ObjectMapper();
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
@@ -73,39 +75,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         }catch (CustomJWTException e){
             log.error("JWTCheckFilter error ");
-            String msg = getString(response,
-                    e.getExceptionCode().getStatus(),
-                    e.getExceptionCode().getCode(),
-                    e.getExceptionCode().getMessage()
-                    ,e.getMessage());
-            response.getWriter().println(msg);
+
+            response.setContentType("application/json;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorResponse errorResponse = ErrorResponse.of(e.getExceptionCode());
+            response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
 
 
         }catch (Exception e){
             log.error("JWTCheckFilter Exception ");
-
-            String msg = getString(response,
-                    ExceptionCode.NOT_FOUND_TOKEN.getStatus(),
-                    ExceptionCode.NOT_FOUND_TOKEN.getCode(),
-                    ExceptionCode.NOT_FOUND_TOKEN.getMessage(),
-                    e.getMessage());
-            response.getWriter().println(msg);
+            ErrorResponse errorResponse = ErrorResponse.of(ExceptionCode.NOT_FOUND_TOKEN);
+            response.setContentType("application/json;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
         }
     }
 
-    private static String getString(HttpServletResponse response,
-                                    int status,
-                                    String code,
-                                    String message,
-                                    String messageDetail) {
-        Gson gson = new Gson();
-        String msg = gson.toJson(Map.of("status", status,
-                "message", messageDetail,
-                "messageDetail", message,
-                "code", code));
 
-        response.setContentType("application/json;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        return msg;
-    }
 }
