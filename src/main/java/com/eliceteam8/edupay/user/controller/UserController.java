@@ -23,17 +23,18 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UpdateUserDTO> getUserById(@PathVariable("userId") Long userId) {
-        UpdateUserDTO updateUserDTO = userService.getUserById(userId);
+    @GetMapping
+    public ResponseEntity<UpdateUserDTO> getUser(Principal principal){
+        String email = principal.getName();
+        UpdateUserDTO updateUserDTO = userService.getUser(email);
         return ResponseEntity.ok(updateUserDTO);
     }
 
     
     //유저정보 수정
-    @PutMapping("/{userId}")
-    public ResponseEntity<Map<String,Object>> updateUser(@PathVariable("userId") Long userId, @RequestBody UpdateUserDTO updateUserDTO) {
-        Long updatedUserId = userService.updateUserAndAcademy(userId, updateUserDTO);
+    @PutMapping
+    public ResponseEntity<Map<String,Object>> updateUser(@RequestBody UpdateUserDTO updateUserDTO) {
+        Long updatedUserId = userService.updateUserAndAcademy(updateUserDTO);
         return ResponseEntity.ok(Map.of("userId", updatedUserId,"result","success"));
     }
 

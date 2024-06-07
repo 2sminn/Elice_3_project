@@ -12,4 +12,8 @@ public class AlreadyExistUserException extends RuntimeException{
         this.exceptionCode = exceptionCode;
 
     }
+
+    public ExceptionCode getExceptionCode() {
+        return exceptionCode;
+    }
 }

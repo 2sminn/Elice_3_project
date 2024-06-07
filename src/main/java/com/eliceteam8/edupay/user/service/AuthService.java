@@ -34,7 +34,7 @@ public class AuthService implements UserDetailsService {
         log.info("username: " + username);
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Not Found User"));
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
         UserDTO userDto = new UserDTO(
                 user.getEmail(),

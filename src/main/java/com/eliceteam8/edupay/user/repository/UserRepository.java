@@ -20,7 +20,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @EntityGraph(attributePaths = {"roles", "academy"})
     Optional<User> findById(Long id);
 
-
     Optional<User> findUserByEmail(String email);
 
 }
