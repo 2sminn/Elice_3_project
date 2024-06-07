@@ -34,6 +34,12 @@ public class ErrorResponse {
         this.code = code;
         this.message = message;
     }
+    public ErrorResponse(final ExceptionCode code, String messageDetail) {
+        this.status = code.getStatus();
+        this.code = code.getCode();
+        this.message = code.getMessage();
+        this.messageDetail = messageDetail;
+    }
 
 
     @Builder
@@ -42,6 +48,10 @@ public class ErrorResponse {
     }
 
 
+    @Builder
+    public static ErrorResponse of(final ExceptionCode code,String messageDetail) {
+        return new ErrorResponse(code,messageDetail);
+    }
 
 
 

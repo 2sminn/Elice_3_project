@@ -57,12 +57,6 @@ public class Bill {
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
     private BillLog billLog;
 
-    public Bill(LocalDateTime dueDate, String message) {
-        this.dueDate = dueDate;
-        this.message = message;
-    }
-
-
     public void setStatusToCompleted() {
         this.status = Status.COMPLETED;
     }

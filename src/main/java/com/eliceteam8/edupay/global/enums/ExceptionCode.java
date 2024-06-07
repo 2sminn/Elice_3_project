@@ -19,8 +19,9 @@ public enum ExceptionCode {
     MALFORM_TOKEN(401,"TOKEN-003","토큰의 형식이 잘못되었습니다."),
     INVALID_SIGNATURE(401,"TOKEN-004","토큰의 서명이 유효하지 않습니다."),
     ERROR_TOKEN(401,"TOKEN-005","토큰이 잘못되었습니다."),
-    //토큰생성 오류
     TOKEN_CREATION_ERROR(500,"TOKEN-006","토큰 생성 오류"),
+    //토큰이 존재하지 않음
+    NOT_FOUND_TOKEN(404,"TOKEN-007","토큰을 찾을 수 없습니다."),
 
 
     //user
