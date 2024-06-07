@@ -2,7 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import Select from '../../components/inputs/Select';
 import TextInput from '../../components/inputs/TextInput';
-import { Container, PageTitle, TableList } from '../../styles/commonStyle';
+import {
+	Container,
+	PageTitle,
+	TableContentBox,
+	TableContentContainer,
+	TableList,
+	TableTitleBox,
+} from '../../styles/commonStyle';
 import { storageYearOption, storageMonthOption, storageOXOption } from './constants/options';
 import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
 import * as S from './style';
@@ -67,7 +74,7 @@ const StoragePage = () => {
 					</S.SearchBox>
 				</S.SearchContainer>
 				<S.StorageTable>
-					<S.TableTitleBox>
+					<TableTitleBox>
 						<TableList $isTitle width="15%">
 							이름
 						</TableList>
@@ -84,27 +91,27 @@ const StoragePage = () => {
 							수납일
 						</TableList>
 						<TableList $isTitle width="15%"></TableList>
-					</S.TableTitleBox>
-					<S.TableContentContainer>
+					</TableTitleBox>
+					<TableContentContainer>
 						{storageDatas?.pages.map((page, index) => (
 							<React.Fragment key={index}>
 								{page.invoices.map((storage) => (
-									<S.TableContentBox key={storage.order_id}>
+									<TableContentBox key={storage.order_id}>
 										<TableList width="15%">{storage.student_name}</TableList>
 										<TableList width="15%">1997.07.08</TableList>
 										<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
 										<TableList width="10%">O</TableList>
 										<TableList width="15%">{formatDate(storage.due_date)}</TableList>
 										<TableList width="15%">
-											<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
+											<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
 										</TableList>
-									</S.TableContentBox>
+									</TableContentBox>
 								))}
 							</React.Fragment>
 						))}
 						{isFetching && <div>Loading...</div>}
 						<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
-					</S.TableContentContainer>
+					</TableContentContainer>
 				</S.StorageTable>
 			</S.StorageContainer>
 		</Container>
