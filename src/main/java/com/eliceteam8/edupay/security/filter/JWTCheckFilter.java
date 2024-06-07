@@ -76,7 +76,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String msg = getString(response,
                     e.getExceptionCode().getStatus(),
                     e.getExceptionCode().getCode(),
-                    e.getExceptionCode().getMessage());
+                    e.getExceptionCode().getMessage()
+                    ,e.getMessage());
             response.getWriter().println(msg);
 
 
@@ -86,15 +87,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String msg = getString(response,
                     ExceptionCode.NOT_FOUND_TOKEN.getStatus(),
                     ExceptionCode.NOT_FOUND_TOKEN.getCode(),
-                    ExceptionCode.NOT_FOUND_TOKEN.getMessage());
+                    ExceptionCode.NOT_FOUND_TOKEN.getMessage(),
+                    e.getMessage());
             response.getWriter().println(msg);
         }
     }
 
-    private static String getString(HttpServletResponse response, int status, String code, String message) {
+    private static String getString(HttpServletResponse response,
+                                    int status,
+                                    String code,
+                                    String message,
+                                    String messageDetail) {
         Gson gson = new Gson();
         String msg = gson.toJson(Map.of("status", status,
-                "message", message,
+                "message", messageDetail,
+                "messageDetail", message,
                 "code", code));
 
         response.setContentType("application/json;charset=utf-8");
