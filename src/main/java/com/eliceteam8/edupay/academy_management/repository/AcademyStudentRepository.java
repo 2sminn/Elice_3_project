@@ -12,4 +12,7 @@ public interface AcademyStudentRepository extends JpaRepository<AcademyStudent, 
     Optional<AcademyStudent> findByStudentName(String studentName);
 
     Optional<AcademyStudent> findById(@Param("studentId") Long id);
+
+    Optional<AcademyStudent> findByPhoneNumber(String phoneNumber);
+    Optional<AcademyStudent> findByEmail(String email);
 }

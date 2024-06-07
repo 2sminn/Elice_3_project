@@ -24,7 +24,7 @@ public class AcademyStudent {
     @Column
     private String studentName;
 
-    @Column
+    @Column(unique = true)
     private String phoneNumber;
 
     @Column
@@ -36,7 +36,7 @@ public class AcademyStudent {
     @Column
     private String grade;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @CreationTimestamp
