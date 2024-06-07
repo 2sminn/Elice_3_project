@@ -48,11 +48,14 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         log.info("---------JWTCheckFilter doFilterInternal----------");
-
-
-        String authHeaderStr =  request.getHeader("Authorization");
-
         try {
+            String authHeaderStr =  request.getHeader("Authorization");
+
+            if(authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")){
+                throw new CustomJWTException(ExceptionCode.NOT_FOUND_TOKEN);
+            }
+
+            log.info("authHeaderStr: {}", authHeaderStr);
             String accessToken = authHeaderStr.substring(7);
 
             Map<String, Object> claims = JwtProvider.validateToken(accessToken);
@@ -83,11 +86,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
         }catch (Exception e){
-            log.error("JWTCheckFilter Exception ");
-            ErrorResponse errorResponse = ErrorResponse.of(ExceptionCode.NOT_FOUND_TOKEN);
-            response.setContentType("application/json;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
+            log.error("------JWTCheckFilter 도중  Exception 발생--- ");
+            e.printStackTrace();
+            throw e;
         }
     }
 
