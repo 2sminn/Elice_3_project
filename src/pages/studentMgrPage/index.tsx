@@ -14,11 +14,10 @@ import {
 	Th,
 	Td,
 } from './style';
-import { useBillSendMutation } from './hooks/useBillSendMutation';
-import { BillType } from './type';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Rigistration';
 import StudentDetailPopup from './components/Detail';
+import PopupContainer from '../../components/popups/PopupContainer'; // 여기에 PopupContainer 경로를 맞춰서 추가
 
 interface StudentType {
 	name: string;
@@ -78,7 +77,6 @@ const StudentMgrPage = () => {
 	});
 	const [selectAll, setSelectAll] = useState<boolean>(false);
 	const [students, setStudents] = useState<StudentType[]>(studentsData);
-	const { mutate: sendBill } = useBillSendMutation();
 	const { openPopup, closePopup } = usePopup();
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
@@ -93,9 +91,10 @@ const StudentMgrPage = () => {
 
 	const filterStudents = (students: StudentType[], filters: FilterType) => {
 		return students.filter((student) => {
-			return Object.keys(filters).every((key) =>
-				student[key as keyof StudentType].includes(filters[key as keyof FilterType]),
-			);
+			return Object.keys(filters).every((key) => {
+				const value = student[key as keyof StudentType];
+				return typeof value === 'string' && value.includes(filters[key as keyof FilterType]);
+			});
 		});
 	};
 
@@ -107,28 +106,6 @@ const StudentMgrPage = () => {
 	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setStudents(filterStudents(studentsData, filters));
-	};
-
-	const handleBillingClick = () => {
-		const selectedStudents = students.filter((student) => student.selected);
-		if (selectedStudents.length === 0) {
-			alert('청구서를 발송할 원생을 선택하세요.');
-			return;
-		}
-
-		selectedStudents.forEach((student) => {
-			const billData: BillType = {
-				name: student.name,
-				school: student.school,
-				grade: student.grade,
-				group: student.group,
-				class: student.class,
-				teacher: student.teacher,
-				paymentInfo: student.paymentInfo,
-				contact: student.contact,
-			};
-			sendBill(billData);
-		});
 	};
 
 	const handleDeleteClick = () => {
@@ -167,20 +144,19 @@ const StudentMgrPage = () => {
 	};
 
 	const handleStudentNameClick = (student: StudentType) => {
-		// 팝업을 열고, 원생의 상세 정보를 전달합니다.
 		openPopup(
 			<StudentDetailPopup
 				student={{
 					name: student.name,
-					birthDate: '2014-01-01', // 예시로 고정된 생년월일
+					birthDate: '2014-01-01',
 					contact: student.contact,
-					email: 'abc@gmail.com', // 예시로 고정된 이메일
+					email: 'abc@gmail.com',
 					school: student.school,
 					grade: student.grade,
-					classes: ['초등 5반', '단과수학반'], // 예시로 고정된 수강반
+					classes: ['초등 5반', '단과수학반'],
 					paymentInfo: {
-						outstanding: 0, // 예시로 고정된 미납 정보
-						upcoming: 1, // 예시로 고정된 납부예정 정보
+						outstanding: 0,
+						upcoming: 1,
 					},
 				}}
 				onClose={closePopup}
@@ -198,7 +174,6 @@ const StudentMgrPage = () => {
 					<InputGroup>
 						<Select>
 							<option>원생명</option>
-							{/* Other options */}
 						</Select>
 						<Input placeholder="검색어 입력" value={searchTerm} onChange={handleSearchChange} />
 						<Button type="submit">검색</Button>
@@ -219,19 +194,16 @@ const StudentMgrPage = () => {
 							<option value="">그룹선택</option>
 							<option value="그룹1">그룹1</option>
 							<option value="그룹2">그룹2</option>
-							{/* Other options */}
 						</Select>
 						<Select name="class" value={filters.class} onChange={handleFilterChange}>
 							<option value="">반선택</option>
 							<option value="초등 5반">초등 5반</option>
 							<option value="초등 6반">초등 6반</option>
-							{/* Other options */}
 						</Select>
 						<Select name="teacher" value={filters.teacher} onChange={handleFilterChange}>
 							<option value="">주담임선택</option>
 							<option value="선생님1">선생님1</option>
 							<option value="선생님2">선생님2</option>
-							{/* Other options */}
 						</Select>
 					</InputGroup>
 					<Button type="submit">검색</Button>
@@ -239,7 +211,6 @@ const StudentMgrPage = () => {
 			</SearchSection>
 
 			<ButtonGroup>
-				<Button onClick={handleBillingClick}>청구서발송</Button>
 				<Button onClick={handleDeleteClick}>삭제</Button>
 				<Button onClick={handleAddNewClick}>신규원생등록</Button>
 			</ButtonGroup>
@@ -249,7 +220,7 @@ const StudentMgrPage = () => {
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}
-				onStudentNameClick={handleStudentNameClick} // 이름 클릭 핸들러 전달
+				onStudentNameClick={handleStudentNameClick}
 			/>
 		</Container>
 	);
@@ -260,7 +231,7 @@ interface StudentTableProps {
 	selectAll: boolean;
 	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onSelectChange: (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onStudentNameClick: (student: StudentType) => void; // 새로운 프로퍼티 추가
+	onStudentNameClick: (student: StudentType) => void;
 }
 
 const StudentTable: React.FC<StudentTableProps> = ({
