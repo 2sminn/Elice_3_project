@@ -1,9 +1,9 @@
-import { useTokenStore } from '../../stores/tokenStore';
+import { getAccessToken } from '../../stores/tokenStore';
 import Header from '../Header';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const Layout = () => {
-	const { accessToken } = useTokenStore();
+	const accessToken = getAccessToken();
 
 	return accessToken ? (
 		<>

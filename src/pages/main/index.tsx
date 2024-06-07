@@ -18,8 +18,8 @@ const MainPage = () => {
 						<LineChart />
 					</S.SalesChartContainer>
 					<S.BillContainer>
-						<BillBox title="청구서 발송" content1="발송건" content2="청구금액" count={232} price={256000000} />
-						<BillBox title="청구서 수납" content1="수납건" content2="수납금액" count={195} price={214000000} />
+						<BillBox title="청구서 발송 내역" content1="발송건" content2="청구금액" count={232} price={256000000} />
+						<BillBox title="청구서 수납 내역" content1="수납건" content2="수납금액" count={195} price={214000000} />
 					</S.BillContainer>
 				</S.MiddleContent>
 			</S.ContentContainer>

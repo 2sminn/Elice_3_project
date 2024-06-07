@@ -96,7 +96,7 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 	const checkEmail = async () => {
 		try {
 			const email = getValues('email');
-			const isCheck = await axiosApi.get(`/users/check-email?email=${email}`);
+			const isCheck = await axiosApi.get(`/auth/check-email?email=${email}`);
 			if (isCheck.data.result) {
 				errorAlert('이미 사용중인 이메일 입니다.');
 				setIsCheckEmail(true);
