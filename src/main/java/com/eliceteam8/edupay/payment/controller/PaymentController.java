@@ -10,40 +10,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/payment")
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @GetMapping("/payment/{billId}")
-    public String paymentPage(@PathVariable(name = "billId", required = false) Long billId, Model model) {
+    @GetMapping("/{billId}")
+    public PaymentInfoDTO paymentPage(@PathVariable(name = "billId", required = false) Long billId) {
         PaymentInfoDTO paymentInfoDTO = paymentService.createPaymentInfoDTO(billId);
-        model.addAttribute("requestDTO", paymentInfoDTO);
 
-        return "payment";
+        return paymentInfoDTO;
     }
 
     @ResponseBody
-    @PostMapping("/payment")
+    @PostMapping("")
     public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody String request) throws JsonProcessingException {
         CallbackRequestDTO callbackRequestDTO = CallbackRequestDTO.fromString(request);
         IamportResponse<Payment> iamportResponse = paymentService.validatePayment(callbackRequestDTO);
 
         return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
-    }
-
-    @GetMapping("/success-payment")
-    public String successPaymentPage() {
-        return "success-payment";
-    }
-
-    @GetMapping("/fail-payment")
-    public String failPaymentPage() {
-        return "fail-payment";
     }
 }
