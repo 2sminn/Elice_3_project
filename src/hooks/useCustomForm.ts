@@ -6,6 +6,7 @@ import {
 	FieldValues,
 	UseFormSetValue,
 	Resolver,
+	UseFormGetValues,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -16,6 +17,7 @@ type UseCustomFormReturn<T extends FieldValues> = {
 	errors: FieldErrors<T>;
 	reset: () => void;
 	setValue: UseFormSetValue<T>;
+	getValues: UseFormGetValues<T>;
 };
 
 function useCustomForm<T extends FieldValues>(
@@ -30,6 +32,7 @@ function useCustomForm<T extends FieldValues>(
 		formState: { errors },
 		reset,
 		setValue,
+		getValues,
 	} = useForm<T>({
 		resolver: resolver,
 		mode,
@@ -41,6 +44,7 @@ function useCustomForm<T extends FieldValues>(
 		errors,
 		reset,
 		setValue,
+		getValues,
 	};
 }
 
