@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.exception.ResourceNotFoundException;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
+import com.eliceteam8.edupay.global.exception.DuplicateStudentException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,14 +36,36 @@ public class AcademyStudentService {
     }
 
     @Transactional
+    /*public AcademyStudent createStudent(AcademyStudent academyStudent) {
+
+        if (academyStudentRepository.findByPhoneNumber(academyStudent.getPhoneNumber()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 휴대폰 번호 입니다: " + academyStudent.getPhoneNumber());
+        }
+
+        if (academyStudentRepository.findByEmail(academyStudent.getEmail()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 이메일 주소 입니다: " + academyStudent.getEmail());
+        }
+
+        return academyStudentRepository.save(academyStudent);
+    }*/
+
     public AcademyStudent createStudent(AcademyStudent academyStudent) {
+
+        if (academyStudentRepository.findByEmail(academyStudent.getEmail()).isPresent()) {
+            throw new DuplicateStudentException("존재하는 휴대폰 번호입니다: " + academyStudent.getPhoneNumber());
+        }
+
+        if (academyStudentRepository.findByEmail(academyStudent.getEmail()).isPresent()) {
+            throw new DuplicateStudentException("존재하는 이메일 주소입니다: " + academyStudent.getEmail());
+        }
+
         return academyStudentRepository.save(academyStudent);
     }
 
     @Transactional
     public AcademyStudent updateStudent(Long studentId, AcademyStudent studentDetails) {
         AcademyStudent academyStudent = academyStudentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 학생의 아이디를 찾을 수 없습니다: " + studentId));
 
         academyStudent.setStudentName(studentDetails.getStudentName());
         academyStudent.setBirthDate(studentDetails.getBirthDate());
@@ -57,7 +80,7 @@ public class AcademyStudentService {
     @Transactional
     public void deleteStudent(Long studentId) {
         AcademyStudent academyStudent = academyStudentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 학생의 아이디를 찾을 수 없습니다: " + studentId));
         academyStudentRepository.delete(academyStudent);
     }
 }

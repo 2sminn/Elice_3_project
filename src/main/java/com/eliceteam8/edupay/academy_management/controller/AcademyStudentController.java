@@ -3,9 +3,13 @@ package com.eliceteam8.edupay.academy_management.controller;
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
 import com.eliceteam8.edupay.academy_management.service.AcademyStudentService;
+import com.eliceteam8.edupay.global.exception.ApiError;
+import com.eliceteam8.edupay.global.exception.DuplicateStudentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
