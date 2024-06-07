@@ -2,6 +2,7 @@ package com.eliceteam8.edupay.user.entity;
 
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
+import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -43,8 +44,8 @@ public class User {
     private Academy academy;
 
 
-    private String passwordCheckToken;
-//    private LocalDateTime passwordCheckTokenCreatedAt;
+    private String passwordToken;
+    private LocalDateTime passwordTokenAt;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
@@ -65,6 +66,10 @@ public class User {
                 .build();
     }
 
+    public void updateUser(UpdateUserDTO updateUserDTO) {
+        this.username = updateUserDTO.getUsername();
+        this.phoneNumber = updateUserDTO.getPhoneNumber();
+    }
 
     public void addRole(UserRole userRole){
         roles.add(userRole);
@@ -72,7 +77,11 @@ public class User {
 
 
     public void generateToken() {
-        this.passwordCheckToken = UUID.randomUUID().toString();
-      //  this.passwordCheckTokenCreatedAt = LocalDateTime.now();
+        this.passwordToken = UUID.randomUUID().toString().substring(0, 5);
+        this.passwordTokenAt = LocalDateTime.now();
+    }
+
+    public boolean isTokenExpired() {
+        return passwordTokenAt.plusMinutes(5).isBefore(LocalDateTime.now());
     }
 }

@@ -18,15 +18,11 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: validate
-#      naming:
-        #strategy: org.hibernate.cfg.ImprovedNamingStrategy
-#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     generate-ddl: true
     properties:
       hibernate:
         format_sql: true
-#        enable_lazy_load_no_trans: true
+
 
   data:
     redis:
@@ -53,3 +49,9 @@ jwt:
 email:
   password-reset:
     url: http://localhost:8080/users/check-reset-password
+
+imp:
+  code: imp25436403
+  api:
+    key: 5143242737360173
+    secret_key: TeKWZ3H9KB1m9T9ywmBhKenKA074nS4JhYHCV7Jlq2cV2rpFisx7mMKmEVC5KunIQ8m2C6eAR4aK03eG

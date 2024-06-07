@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.security.filter;
 
+import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UserDTO;
@@ -72,26 +73,33 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         }catch (CustomJWTException e){
-            log.error("JWTCheckFilter error : {}");
-            Gson gson = new Gson();
-            String msg = gson.toJson(Map.of("status",e.getExceptionCode().getStatus(),
-                    "message",e.getExceptionCode().getMessage(),
-                    "code",e.getExceptionCode().getCode()));
-
-            response.setContentType("application/json;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            log.error("JWTCheckFilter error ");
+            String msg = getString(response,
+                    e.getExceptionCode().getStatus(),
+                    e.getExceptionCode().getCode(),
+                    e.getExceptionCode().getMessage());
             response.getWriter().println(msg);
 
 
         }catch (Exception e){
-            log.error("JWTCheckFilter Exception : {}", e.getMessage());
+            log.error("JWTCheckFilter Exception ");
 
-            Gson gson = new Gson();
-            String msg = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
-
-            response.setContentType("application/json;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            String msg = getString(response,
+                    ExceptionCode.NOT_FOUND_TOKEN.getStatus(),
+                    ExceptionCode.NOT_FOUND_TOKEN.getCode(),
+                    ExceptionCode.NOT_FOUND_TOKEN.getMessage());
             response.getWriter().println(msg);
         }
+    }
+
+    private static String getString(HttpServletResponse response, int status, String code, String message) {
+        Gson gson = new Gson();
+        String msg = gson.toJson(Map.of("status", status,
+                "message", message,
+                "code", code));
+
+        response.setContentType("application/json;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return msg;
     }
 }

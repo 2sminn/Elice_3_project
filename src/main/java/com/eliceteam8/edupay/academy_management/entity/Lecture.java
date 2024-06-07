@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.academy_management.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class Lecture {
     @Column(name = "price")
     private Integer price;
 
+    @Column(name = "teacher_name")
+    private String teacherName;
+
     @CreationTimestamp
     // INSERT 쿼리 발생 시 현재 시간 값 적용
     @Column(name = "created_at")
@@ -38,6 +42,7 @@ public class Lecture {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id")
+    @JsonBackReference
     private Academy academy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +52,5 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'OPEN'")
     private LectureStatus lectureStatus; // 강의 상태
-
 }
 

@@ -10,6 +10,8 @@ public enum ExceptionCode {
     ACCESS_DENIED(403,"G-002","접근 권한이 없습니다."),
     //잘못된 요청값 오류
     INVALID_REQUEST_VALUE(400,"G-003","요청값이 잘못되었습니다."),
+    //IllegalStateException
+    ILLEGAL_STATE(400,"G-004","상태값이 올바르지 않습니다."),
 
 
 
@@ -19,14 +21,15 @@ public enum ExceptionCode {
     MALFORM_TOKEN(401,"TOKEN-003","토큰의 형식이 잘못되었습니다."),
     INVALID_SIGNATURE(401,"TOKEN-004","토큰의 서명이 유효하지 않습니다."),
     ERROR_TOKEN(401,"TOKEN-005","토큰이 잘못되었습니다."),
-    //토큰생성 오류
     TOKEN_CREATION_ERROR(500,"TOKEN-006","토큰 생성 오류"),
+    //토큰이 존재하지 않음
+    NOT_FOUND_TOKEN(401,"TOKEN-007","토큰을 찾을 수 없습니다."),
 
 
     //user
     //이미 사용중인 이메일
     ALREADY_EXIST_EMAIL(400,"USER-001","이미 사용중인 이메일입니다."),
-    NOT_FOUND_USER(404,"USER-002","사용자를 찾을 수 없습니다."),
+    NOT_FOUND_USER(400,"USER-002","사용자를 찾을 수 없습니다."),
     //로그인 실패
     LOGIN_FAILED(400,"USER-003","로그인에 실패하였습니다, 이메일 또는 비밀번호를 확인해주세요."),
 

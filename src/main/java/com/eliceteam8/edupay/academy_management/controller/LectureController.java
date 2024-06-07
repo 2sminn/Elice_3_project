@@ -27,23 +27,31 @@ public class LectureController {
         return lectureService.getAllLectures();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Lecture> getLectureById(@PathVariable Long id) {
+    @GetMapping("/{lectureId}")
+    public ResponseEntity<Lecture> getLectureById(@PathVariable("lectureId") Long id) {
         Lecture lecture = lectureService.getLectureById(id)
                 .orElseThrow(() -> new RuntimeException("강의를 찾을 수 없습니다."));
         return ResponseEntity.ok().body(lecture);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Lecture> updateLecture(@PathVariable Long id, @Valid @RequestBody LectureDTO lectureDTO) {
+    @PutMapping("/{lectureId}")
+    public ResponseEntity<Lecture> updateLecture(@PathVariable("lectureId") Long id, @Valid @RequestBody LectureDTO lectureDTO) {
         Lecture updatedLecture = lectureService.updateLecture(id, lectureDTO);
         return ResponseEntity.ok(updatedLecture);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLecture(@PathVariable Long id) {
+    @DeleteMapping("/{lectureId}")
+    public ResponseEntity<Void> deleteLecture(@PathVariable("lectureId") Long id) {
         lectureService.deleteLecture(id);
         return ResponseEntity.noContent().build();
     }
+
+    //학생이 수강중인 강의목록 조회
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<Lecture>> getLecturesByStudentId(@PathVariable("studentId") Long studentId) {
+        List<Lecture> lectures = lectureService.getLecturesByStudentId(studentId);
+        return ResponseEntity.ok(lectures);
+    }
+
 }
 

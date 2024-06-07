@@ -1,17 +1,13 @@
 package com.eliceteam8.edupay.global.advice;
 
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
-import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
-import com.eliceteam8.edupay.global.exception.CustomJWTException;
+import com.eliceteam8.edupay.global.exception.*;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,13 +16,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error("---handleMethodArgumentNotValidException---");
@@ -36,48 +32,47 @@ public class GlobalExceptionHandler {
                 .map(fieldError ->  fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        final ErrorResponse response = ErrorResponse.builder()
-                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-                .messageDetail(errors.get(0))
-                //.errors(errors)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        final ErrorResponse response =
+                ErrorResponse.of(ExceptionCode.INVALID_INPUT_VALUE, errors.get(0));
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyExistUserException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
         log.error("---handleAlreadyExistUserException---");
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         log.error("---handleUsernameNotFoundException---");
-         ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER);
-         response.setMessageDetail(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        final ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_FOUND_USER, ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("---handleIllegalArgumentException---");
-        final ErrorResponse response = ErrorResponse.builder()
-
-                .status(ExceptionCode.INVALID_REQUEST_VALUE.getStatus())
-                .code(ExceptionCode.INVALID_REQUEST_VALUE.getCode())
-                .message(ExceptionCode.INVALID_REQUEST_VALUE.getMessage())
-                // .errors(List.of(ex.getMessage()))
-                .messageDetail(ex.getMessage())
-                .build();
+        final ErrorResponse response =
+        ErrorResponse.of(ExceptionCode.INVALID_REQUEST_VALUE, ex.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        log.error("---handleIllegalStateException---");
+        final ErrorResponse response =
+                ErrorResponse.of(ExceptionCode.ILLEGAL_STATE, ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
 
     @ExceptionHandler(CustomJWTException.class)
@@ -96,36 +91,42 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-
-
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-//        log.error("---handleConstraintViolationException---");
-//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-//        List<String> errors = constraintViolations.stream()
-//                .map(constraintViolation ->
-//                    extractField(constraintViolation.getPropertyPath()) + ": " + constraintViolation.getMessage())
-//                .collect(Collectors.toList());
-//
-//        ErrorResponse response = ErrorResponse.builder()
-//                .status(ExceptionCode.INVALID_INPUT_VALUE.getStatus())
-//                .code(ExceptionCode.INVALID_INPUT_VALUE.getCode())
-//                .message(ExceptionCode.INVALID_INPUT_VALUE.getMessage())
-
-//              //  .errors(errors)
-
-//                .build();
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-
-
-    private String extractField(Path path){
-        String[] splitArray = path.toString().split("[.]");
-        int lastIndex = splitArray.length - 1;
-        return splitArray[lastIndex];
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error("---handleEntityNotFoundException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .code("ENTITY_NOT_FOUND")
+                .message("Entity not found")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MessageTooLongException.class)
+    public ResponseEntity<ErrorResponse> handleMessageTooLongException(MessageTooLongException ex) {
+        log.error("---handleMessageTooLongException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code(ex.getCode())
+                .message("Message too long")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(NotEnoughRemainingBillsException.class)
+    public ResponseEntity<ErrorResponse> handleNotEnoughRemainingBillsException(NotEnoughRemainingBillsException ex) {
+        log.error("---handleNotEnoughRemainingBillsException---");
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code(ex.getCode())
+                .message("Not enough remaining bills")
+                .messageDetail(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
 
 }

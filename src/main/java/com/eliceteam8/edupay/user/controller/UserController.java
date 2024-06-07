@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.user.controller;
 
 
+import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -23,35 +24,25 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
-        userService.getUserById(userId);
-        return null;
+    public ResponseEntity<UpdateUserDTO> getUserById(@PathVariable("userId") Long userId) {
+        UpdateUserDTO updateUserDTO = userService.getUserById(userId);
+        return ResponseEntity.ok(updateUserDTO);
     }
 
-//유효하지
-    @GetMapping("/check-email")
-    public ResponseEntity<Map<String,Object>> checkEmailDuplicate(@RequestParam String email) {
-        boolean isDuplicate = userService.isEmailDuplicate(email);
-        return ResponseEntity.ok(Map.of("result",isDuplicate));
+    
+    //유저정보 수정
+    @PutMapping("/{userId}")
+    public ResponseEntity<Map<String,Object>> updateUser(@PathVariable("userId") Long userId, @RequestBody UpdateUserDTO updateUserDTO) {
+        Long updatedUserId = userService.updateUserAndAcademy(userId, updateUserDTO);
+        return ResponseEntity.ok(Map.of("userId", updatedUserId,"result","success"));
     }
 
+    
+    //비밀번호변경
+    
+    
+    
 
-    @GetMapping("/reset-password")
-    public ResponseEntity<Map<String,Object>> sendPasswordResetEmail(@RequestParam String email,@RequestParam String username) {
-        boolean isSend =  userService.sendPasswordResetEmail(email,username);
-
-        String message =  "인증번호를 발송했습니다. " +
-                "인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.";
-        return ResponseEntity.ok(Map.of("result",isSend,"message",message));
-    }
-
-    @GetMapping("/check-reset-password")
-    public ResponseEntity<Boolean> checkResetEmail(@RequestParam String token, Principal principal){
-        log.info("token : {}",token);
-        log.info("principal : {}",principal.getName());
-       // userService.checkPasswordResetEmail(token);
-        return ResponseEntity.ok(true);
-    }
 
 
 

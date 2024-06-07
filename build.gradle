@@ -19,6 +19,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -63,6 +64,8 @@ dependencies {
 	// apache
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 
+	// portone
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 }
 
 tasks.named('test') {

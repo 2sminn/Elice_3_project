@@ -2,7 +2,9 @@ package com.eliceteam8.edupay.academy_management.entity;
 
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
+import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -65,8 +67,23 @@ public class Academy {
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AcademyStudent> students;
 
-    @OneToMany(mappedBy = "academy")
+    @OneToMany(mappedBy = "academy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Lecture> lectures;
     //createAcademy
 
+
+
+    public void updateAcademy(UpdateUserDTO updateAcademyDTO) {
+        this.academyName = updateAcademyDTO.getAcademyName();
+        this.academyEmail = updateAcademyDTO.getAcademyEmail();
+        this.zipCode = updateAcademyDTO.getZipCode();
+        this.address = updateAcademyDTO.getAddress();
+        this.addressDetail = updateAcademyDTO.getAddressDetail();
+        this.landlineNumber = updateAcademyDTO.getLandlineNumber();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

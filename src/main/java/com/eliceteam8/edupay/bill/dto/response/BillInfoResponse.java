@@ -1,4 +1,4 @@
-package com.eliceteam8.edupay.bill.dto.request;
+package com.eliceteam8.edupay.bill.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BillInfo {
+public class BillInfoResponse {
     private String academyName;
     private String studentName;
     private String grade;
