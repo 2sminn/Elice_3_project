@@ -27,10 +27,9 @@ public class PaymentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody String request) throws JsonProcessingException {
-        CallbackRequestDTO callbackRequestDTO = CallbackRequestDTO.fromString(request);
-        IamportResponse<Payment> iamportResponse = paymentService.validatePayment(callbackRequestDTO);
+    public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody CallbackRequestDTO request) throws JsonProcessingException {
+        IamportResponse<Payment> iamportResponse = paymentService.validatePayment(request);
 
-        return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
