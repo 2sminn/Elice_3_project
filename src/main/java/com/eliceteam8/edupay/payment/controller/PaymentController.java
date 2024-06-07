@@ -26,7 +26,6 @@ public class PaymentController {
         return paymentInfoDTO;
     }
 
-    @ResponseBody
     @PostMapping("")
     public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody String request) throws JsonProcessingException {
         CallbackRequestDTO callbackRequestDTO = CallbackRequestDTO.fromString(request);
