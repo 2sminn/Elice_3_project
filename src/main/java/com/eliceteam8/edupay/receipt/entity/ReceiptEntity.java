@@ -23,11 +23,6 @@ public class ReceiptEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long receiptId;
-<<<<<<< HEAD
-=======
-    @Column(name = "bill_id", nullable = false)
-    private Long orderId;
->>>>>>> 9d7b2e5add34042938ca608d115304171c44318e
     private LocalDateTime receiptDate;
 
     @Column(name = "bill_id")
