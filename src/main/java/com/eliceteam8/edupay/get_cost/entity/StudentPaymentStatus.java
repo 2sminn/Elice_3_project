@@ -1,7 +1,10 @@
 package com.eliceteam8.edupay.get_cost.entity;
 
+import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusRequestDto;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusResponseDto;
+import com.eliceteam8.edupay.payment.entity.PaymentHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,25 +20,40 @@ public class StudentPaymentStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_status_id")
     private Long paymentStatusId;
 
-    @Column(nullable = false, name = "student_id")
-    private Long studentId;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private AcademyStudent student;
 
-    @Column(nullable = false, name = "order_id")
-    private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "bill_id")
+    private Bill bill;
 
-    @Column(nullable = false, name = "payment_status")
-    private String paymentStatus;
+    @ManyToOne
+    @JoinColumn(name = "payment_id")
+    private PaymentHistory payment;
 
-    @Column(nullable = false, name = "updated_at")
+    @Column(name = "payment_status", nullable = false)
+    private String paymentStatus; // PAID, UNPAID 등
+
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public static StudentPaymentStatus fromRequestDto(StudentPaymentStatusRequestDto dto) {
+    @Builder
+    public StudentPaymentStatus(AcademyStudent student, Bill bill, PaymentHistory payment, String paymentStatus, LocalDateTime updatedAt) {
+        this.student = student;
+        this.bill = bill;
+        this.payment = payment;
+        this.paymentStatus = paymentStatus;
+        this.updatedAt = updatedAt;
+    }
+
+    public static StudentPaymentStatus fromRequestDto(StudentPaymentStatusRequestDto dto, AcademyStudent student, Bill bill, PaymentHistory payment) {
         return StudentPaymentStatus.builder()
-                .studentId(dto.getStudentId())
-                .orderId(dto.getOrderId())
+                .student(student)
+                .bill(bill)
+                .payment(payment)
                 .paymentStatus(dto.getPaymentStatus())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -44,18 +62,11 @@ public class StudentPaymentStatus {
     public StudentPaymentStatusResponseDto toResponseDto() {
         return StudentPaymentStatusResponseDto.builder()
                 .paymentStatusId(this.paymentStatusId)
-                .studentId(this.studentId)
-                .orderId(this.orderId)
+                .studentId(this.student.getId())
+                .billId(this.bill.getId())
+                .paymentId(this.payment.getId())
                 .paymentStatus(this.paymentStatus)
                 .updatedAt(this.updatedAt)
                 .build();
-    }
-
-    @Builder
-    public StudentPaymentStatus(Long studentId, Long orderId, String paymentStatus, LocalDateTime updatedAt) {
-        this.studentId = studentId;
-        this.orderId = orderId;
-        this.paymentStatus = paymentStatus;
-        this.updatedAt = updatedAt;
     }
 }
