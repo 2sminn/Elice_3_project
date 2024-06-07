@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { PopupContainer, PopupTitle, PopupForm, PopupInput, PopupButton, PopupButtonContainer } from './style';
 
-const StudentRegistrationPopup = ({ onClose }) => {
+interface StudentRegistrationPopupProps {
+	onClose: () => void;
+}
+
+const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onClose }) => {
 	const [student, setStudent] = useState({
 		name: '',
 		birthday: '',
@@ -12,7 +16,7 @@ const StudentRegistrationPopup = ({ onClose }) => {
 		courseCode: '',
 	});
 
-	const handleChange = (e) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setStudent((prevStudent) => ({
 			...prevStudent,
@@ -20,9 +24,8 @@ const StudentRegistrationPopup = ({ onClose }) => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// 새로운 원생 등록 로직 추가
 		alert('새 원생이 등록되었습니다.');
 		onClose();
 	};
