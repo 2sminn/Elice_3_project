@@ -1,7 +1,14 @@
+import { usePaymentErrorStore, usePaymentSuccessStore } from '../../../stores/paymentStore';
 import { formatNumber } from '../../../utils/formatNumber';
 import * as S from './style';
 
 const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
+	const { successRes } = usePaymentSuccessStore();
+	const { errorRes } = usePaymentErrorStore();
+
+	console.log(successRes);
+	console.log(errorRes);
+
 	return (
 		<S.Wrap>
 			<S.TopWrap $isSuccess={isSuccess}>
@@ -35,7 +42,7 @@ const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
 						</S.InfoContainer>
 						<S.InfoContainer>
 							<h4>{isSuccess ? '청구금액(VAT 포함)' : '사유'}</h4>
-							<p>{isSuccess ? <span>{formatNumber(100000000)}원</span> : '잔액이 부족합니다.'}</p>
+							<p>{isSuccess ? <span>{formatNumber(100000000)}원</span> : errorRes?.error_msg}</p>
 						</S.InfoContainer>
 					</S.InfoBox>
 				</S.ContentContainer>

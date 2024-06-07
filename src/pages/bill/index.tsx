@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import { formatNumber } from '../../utils/formatNumber';
 import * as S from './style';
+import { errorAlert, successAlert } from '../../utils/alert';
+import { usePaymentErrorStore, usePaymentSuccessStore } from '../../stores/paymentStore';
 
 declare global {
 	interface Window {
@@ -13,6 +15,8 @@ const IMP_CODE = import.meta.env.VITE_IMP_CODE;
 
 const BillPage = () => {
 	const navigate = useNavigate();
+	const { setSuccessRes } = usePaymentSuccessStore();
+	const { setErrorRes } = usePaymentErrorStore();
 
 	const requestPay = () => {
 		const { IMP } = window;
@@ -33,14 +37,16 @@ const BillPage = () => {
 			},
 			(rsp: any) => {
 				if (rsp.success) {
-					alert('결제가 완료되었습니다.');
+					successAlert('결제가 완료되었습니다.');
 					// 결제 성공 시 로직 처리
 					console.log(rsp);
+					setSuccessRes(rsp);
 					navigate('/bill/success');
 				} else {
-					alert(`결제에 실패하였습니다. 에러내용: ${rsp.error_msg}`);
+					errorAlert(`결제에 실패하였습니다.${rsp.error_msg}`);
 					// 결제 실패 시 로직 처리
 					console.log(rsp);
+					setErrorRes(rsp);
 					navigate('/bill/error');
 				}
 			},
