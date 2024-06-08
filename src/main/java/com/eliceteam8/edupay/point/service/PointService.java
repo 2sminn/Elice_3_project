@@ -28,12 +28,24 @@ public class PointService {
         return pointHistoryRepository.findByUserId(userId);
     }
 
-    public void savePointHistory(PointHistoryDTO pointHistoryDTO) {
+    public void savePoint(PointHistoryDTO pointHistoryDTO) {
         PointHistory pointHistory = PointHistory.builder()
                 .userId(pointHistoryDTO.getUserId())
                 .point(pointHistoryDTO.getPoint())
                 .paymentUid(pointHistoryDTO.getImpUid())
                 .createdAt(Instant.now())
                 .build();
+
+        pointHistoryRepository.save(pointHistory);
+
+        Point point = pointRepository.findByUserId(pointHistoryDTO.getUserId())
+                .orElse(Point.builder()
+                        .userId(pointHistoryDTO.getUserId())
+                        .point(0L)
+                        .build());
+
+        point.addPoint(pointHistoryDTO.getPoint());
+
+        pointRepository.save(point);
     }
 }

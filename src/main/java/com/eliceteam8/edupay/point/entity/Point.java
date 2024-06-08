@@ -24,4 +24,8 @@ public class Point {
         this.userId = userId;
         this.point = point;
     }
+
+    public void addPoint(Long pointToAdd) {
+        this.point += pointToAdd;
+    }
 }

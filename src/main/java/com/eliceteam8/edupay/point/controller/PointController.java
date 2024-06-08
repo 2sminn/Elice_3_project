@@ -2,8 +2,6 @@ package com.eliceteam8.edupay.point.controller;
 
 import com.eliceteam8.edupay.point.dto.PointHistoryDTO;
 import com.eliceteam8.edupay.point.entity.PointHistory;
-import com.eliceteam8.edupay.point.repository.PointHistoryRepository;
-import com.eliceteam8.edupay.point.repository.PointRepository;
 import com.eliceteam8.edupay.point.service.PointService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,7 @@ public class PointController {
 
     @PostMapping("")
     public ResponseEntity<Void> createPoint(@RequestBody PointHistoryDTO request) throws JsonProcessingException {
-        pointService.savePointHistory(request);
+        pointService.savePoint(request);
 
         return new ResponseEntity(HttpStatus.OK);
     }
