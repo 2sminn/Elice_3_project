@@ -10,8 +10,12 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import { MENU_ARR } from '../../constants/routeList';
 import { useTokenStore } from '../../stores/tokenStore';
 import { successAlert } from '../../utils/alert';
+import { useGetUserQuery } from './hooks/useGetUserQuery';
 
 const Header = () => {
+	const { data: userInfo } = useGetUserQuery();
+	console.log(userInfo);
+
 	const { openPopup } = usePopup();
 	const { clearTokens } = useTokenStore();
 	const navigate = useNavigate();
