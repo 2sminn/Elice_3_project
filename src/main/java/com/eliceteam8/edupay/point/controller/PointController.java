@@ -19,13 +19,13 @@ import java.util.List;
 public class PointController {
     private final PointService pointService;
 
-    @GetMapping("{userId}")
-    public Long getUserPoint(@PathVariable Long userId) {
+    @GetMapping("/{userId}")
+    public Long getUserPoint(@PathVariable(name = "userId", required = false) Long userId) {
         return pointService.getPoint(userId);
     }
 
     @GetMapping("/history/{userId}")
-    public List<PointHistory> getUserPointHistory(@PathVariable Long userId) {
+    public List<PointHistory> getUserPointHistory(@PathVariable(name = "userId", required = false) Long userId) {
         return pointService.getPointHistory(userId);
     }
 

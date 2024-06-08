@@ -20,8 +20,8 @@ public class PointService {
     private final PointHistoryRepository pointHistoryRepository;
 
     public Long getPoint(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        return userOptional.map(User::getPoint)
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(User::getPoint)
                 .orElse(0L);
     }
 
