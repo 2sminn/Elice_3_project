@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response =
         ErrorResponse.of(ExceptionCode.INVALID_REQUEST_VALUE, ex.getMessage());
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response =
                 ErrorResponse.of(ExceptionCode.ILLEGAL_STATE, ex.getMessage());
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(CustomJWTException.class)
@@ -150,7 +150,6 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ExceptionCode.BAD_PARAMETER, ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
 
 
     @ExceptionHandler(Exception.class)

@@ -37,6 +37,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
         String email = userDTO.getEmail();
+        userClaims.remove("password");
         // JWT 토큰 생성
 
         String accessToken = JwtProvider.generateToken(userClaims, 60*6);
@@ -48,7 +49,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         userClaims.put("refreshToken", refreshToken);
         userClaims.put("accessToken", accessToken);
-        userClaims.remove("password");
         // JSON 응답 작성
         response.getWriter().write(objectMapper.writeValueAsString(userClaims));
 
