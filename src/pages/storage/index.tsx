@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import Select from '../../components/inputs/Select';
 import TextInput from '../../components/inputs/TextInput';
@@ -17,7 +17,24 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { formatDate } from '../../utils/formatDate';
 
 const StoragePage = () => {
-	const { data: storageDatas, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery();
+	const [searchFilter, setSearchFilter] = useState({
+		year: '',
+		month: '',
+		isPaid: 'ALL',
+		studentName: '',
+	});
+
+	console.log(searchFilter);
+
+	const { data: storageDatas, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery(searchFilter);
+
+	const handleChangeFilter: ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
+		const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+		setSearchFilter((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
 
 	const observerRef = useRef(null);
 
@@ -48,7 +65,6 @@ const StoragePage = () => {
 			}
 		};
 	}, [fetchNextPage, hasNextPage, isFetching]);
-
 	return (
 		<Container>
 			<S.StorageContainer>
@@ -65,10 +81,10 @@ const StoragePage = () => {
 					</S.SearchTitle>
 					<S.SearchBox>
 						<S.SelectTopBox>
-							<Select title="year-select" options={storageYearOption} />
-							<Select title="month-select" options={storageMonthOption} />
-							<Select title="ox-select" options={storageOXOption} />
-							<TextInput placeholder="원생이름" />
+							<Select title="year-select" options={storageYearOption} name="year" onChange={handleChangeFilter} />
+							<Select title="month-select" options={storageMonthOption} name="month" onChange={handleChangeFilter} />
+							<Select title="ox-select" options={storageOXOption} name="isPaid" onChange={handleChangeFilter} />
+							<TextInput placeholder="원생이름" name="studentName" onChange={handleChangeFilter} />
 						</S.SelectTopBox>
 						<PrimaryButton type="button" text="검색" />
 					</S.SearchBox>
@@ -95,18 +111,20 @@ const StoragePage = () => {
 					<TableContentContainer>
 						{storageDatas?.pages.map((page, index) => (
 							<React.Fragment key={index}>
-								{page.invoices.map((storage) => (
-									<TableContentBox key={storage.order_id}>
-										<TableList width="15%">{storage.student_name}</TableList>
-										<TableList width="15%">1997.07.08</TableList>
-										<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
-										<TableList width="10%">O</TableList>
-										<TableList width="15%">{formatDate(storage.due_date)}</TableList>
-										<TableList width="15%">
-											<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
-										</TableList>
-									</TableContentBox>
-								))}
+								{page.content.length > 0
+									? page.content.map((storage) => (
+											<TableContentBox key={storage.order_id}>
+												<TableList width="15%">{storage.student_name}</TableList>
+												<TableList width="15%">1997.07.08</TableList>
+												<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
+												<TableList width="10%">O</TableList>
+												<TableList width="15%">{formatDate(storage.due_date)}</TableList>
+												<TableList width="15%">
+													<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
+												</TableList>
+											</TableContentBox>
+										))
+									: '수납 내역이 존재하지 않습니다.'}
 							</React.Fragment>
 						))}
 						{isFetching && <div>Loading...</div>}

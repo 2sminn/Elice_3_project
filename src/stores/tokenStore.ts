@@ -18,7 +18,7 @@ export const useTokenStore = create<TokenStoreType>((set) => ({
 	},
 	clearTokens: () => {
 		Cookies.remove('accessToken');
-		set({ accessToken: null });
+		set({ accessToken: null, refreshToken: null });
 	},
 }));
 
