@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.get_cost.controller;
 
+import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusRequestDto;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusResponseDto;
 import com.eliceteam8.edupay.get_cost.entity.StudentPaymentStatus;
@@ -11,10 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/payments")
 public class StudentPaymentStatusController {
 
     private final StudentPaymentStatusService studentPaymentStatusService;
@@ -26,36 +26,42 @@ public class StudentPaymentStatusController {
 
     // 전체 수납 내역 조회
     @GetMapping
-    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getAllPayments(@RequestParam String status,
-                                                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start_date,
-                                                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end_date,
-                                                                                @RequestParam(required = false) String studentName,
-                                                                                @RequestParam(required = false) String phoneNumber,
-                                                                                @RequestParam(defaultValue = "0") int page,
-                                                                                @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(studentPaymentStatusService.getAllPayments(status, start_date, end_date, studentName, phoneNumber, page, size));
+    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getAllPayments(
+            @RequestParam(name = "status") Status status,
+            @RequestParam(name = "start_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(name = "end_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(name = "studentName", required = false) String studentName,
+            @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(studentPaymentStatusService.getAllPayments(status, startDate, endDate, studentName, phoneNumber, page, size));
     }
 
     // 수납된 결제 내역 조회
     @GetMapping("/paid")
-    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getPaidPayments(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start_date,
-                                                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end_date,
-                                                                                 @RequestParam(required = false) String studentName,
-                                                                                 @RequestParam(required = false) String phoneNumber,
-                                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                                 @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(studentPaymentStatusService.getPaidPayments(start_date, end_date, studentName, phoneNumber, page, size));
+    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getPaidPayments(
+            @RequestParam(name = "start_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(name = "end_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(name = "studentName", required = false) String studentName,
+            @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(studentPaymentStatusService.getPaidPayments(startDate, endDate, studentName, phoneNumber, page, size));
     }
 
     // 미수납된 결제 내역 조회
     @GetMapping("/unpaid")
-    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getUnpaidPayments(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start_date,
-                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end_date,
-                                                                                   @RequestParam(required = false) String studentName,
-                                                                                   @RequestParam(required = false) String phoneNumber,
-                                                                                   @RequestParam(defaultValue = "0") int page,
-                                                                                   @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(studentPaymentStatusService.getUnpaidPayments(start_date, end_date, studentName, phoneNumber, page, size));
+    public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getUnpaidPayments(
+            @RequestParam(name = "start_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(name = "end_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(name = "studentName", required = false) String studentName,
+            @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(studentPaymentStatusService.getUnpaidPayments(startDate, endDate, studentName, phoneNumber, page, size));
     }
 
     // 수납 상태 생성

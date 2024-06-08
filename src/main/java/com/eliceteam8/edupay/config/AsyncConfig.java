@@ -15,10 +15,12 @@ public class AsyncConfig implements AsyncConfigurer {
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int processors = Runtime.getRuntime().availableProcessors();
+
         executor.setCorePoolSize(processors);
         executor.setMaxPoolSize(processors * 2);
         executor.setQueueCapacity(50);
         executor.setKeepAliveSeconds(60);
+        executor.setThreadNamePrefix("AsyncExec1-");
         executor.initialize();
         return executor;
     }

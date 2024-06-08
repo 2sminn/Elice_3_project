@@ -38,13 +38,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("userId", updatedUserId,"result","success"));
     }
 
-    
     //비밀번호변경
-    
-    
-    
-
-
 
 
     @GetMapping("/test")

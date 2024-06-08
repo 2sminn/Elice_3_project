@@ -42,17 +42,14 @@ public class PaymentService {
     }
 
     public IamportResponse<Payment> validatePayment(CallbackRequestDTO request) {
-        PaymentHistory savedPaymentHistory = savePaymentHistory(request.getImpUid(), request.getBillId());
+        savePaymentHistory(request.getImpUid(), request.getBillId());
 
         try {
             IamportResponse<Payment> iamportResponse = getIamportResponse(request);
             Bill bill = billRepository.findById(request.getBillId()).orElseThrow(NoSuchElementException::new);
             validatePaymentStatusAndPay(iamportResponse, bill);
 
-            if (Status.PAID.equals(bill.getStatus())) {
-                savedPaymentHistory.markHistoryType(PaymentHistoryType.CHECK);
-            } else {
-                savedPaymentHistory.markHistoryType(PaymentHistoryType.PAY);
+            if (!Status.PAID.equals(bill.getStatus())) {
                 bill.setStatusToPaid();
             }
 
@@ -71,7 +68,6 @@ public class PaymentService {
 
     private void validatePaymentStatusAndPay(IamportResponse<Payment> iamportResponse, Bill bill) throws IamportResponseException, IOException {
         if (!iamportResponse.getResponse().getStatus().equals("paid")) {
-            billRepository.delete(bill);
             throw new RuntimeException("결제 미완료");
         }
 
@@ -83,12 +79,12 @@ public class PaymentService {
         }
     }
 
-    public PaymentHistory savePaymentHistory(String paymentUid, Long billId) {
+    public void savePaymentHistory(String paymentUid, Long billId) {
         PaymentHistory paymentHistory = PaymentHistory.builder()
                 .paymentUid(paymentUid)
                 .billId(billId)
                 .createdAt(Instant.now())
                 .build();
-        return paymentHistoryRepository.save(paymentHistory);
+        paymentHistoryRepository.save(paymentHistory);
     }
 }

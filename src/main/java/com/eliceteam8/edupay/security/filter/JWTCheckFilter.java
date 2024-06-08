@@ -49,47 +49,45 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         log.info("---------JWTCheckFilter doFilterInternal----------");
-
-
-        String authHeaderStr =  request.getHeader("Authorization");
-
         try {
+            String authHeaderStr =  request.getHeader("Authorization");
+
+            if(authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")){
+                throw new CustomJWTException(ExceptionCode.NOT_FOUND_TOKEN);
+            }
             String accessToken = authHeaderStr.substring(7);
 
             Map<String, Object> claims = JwtProvider.validateToken(accessToken);
 
             String email = (String) claims.get("email");
-            String password = (String) claims.get("password");
+            //String password = (String) claims.get("password");
             List<String> roles = (List<String>) claims.get("roles");
             Long academyId = ((Integer) claims.get("academyId")).longValue();
             Long userId = ((Integer) claims.get("userId")).longValue();
 
 
-            UserDTO userDTO = new UserDTO(email, password, roles, academyId, userId);
+            UserDTO userDTO = new UserDTO(email, "", roles, academyId, userId);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDTO, password, userDTO.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDTO, "", userDTO.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
             filterChain.doFilter(request, response);
 
-        }catch (CustomJWTException e){
+        }catch (CustomJWTException e) {
             log.error("JWTCheckFilter error ");
-
             response.setContentType("application/json;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ErrorResponse errorResponse = ErrorResponse.of(e.getExceptionCode());
             response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
 
-
-        }catch (Exception e){
-            log.error("JWTCheckFilter Exception ");
-            ErrorResponse errorResponse = ErrorResponse.of(ExceptionCode.NOT_FOUND_TOKEN);
-            response.setContentType("application/json;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
         }
+//        }catch (Exception e){
+//            log.error("------JWTCheckFilter 도중  Exception 발생--- ");
+//            e.printStackTrace();
+//            throw e;
+//        }
     }
 
 

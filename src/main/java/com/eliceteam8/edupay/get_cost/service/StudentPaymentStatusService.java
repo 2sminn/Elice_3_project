@@ -3,6 +3,7 @@ package com.eliceteam8.edupay.get_cost.service;
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.bill.domain.Bill;
+import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusRequestDto;
 import com.eliceteam8.edupay.get_cost.dto.StudentPaymentStatusResponseDto;
@@ -38,10 +39,10 @@ public class StudentPaymentStatusService {
         this.billRepository = billRepository;
     }
 
-    public Page<StudentPaymentStatusResponseDto> getAllPayments(String status, LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
+    public Page<StudentPaymentStatusResponseDto> getAllPayments(Status status, LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
         Page<StudentPaymentStatus> payments;
         PageRequest pageRequest = PageRequest.of(page, size);
-        if (status.equalsIgnoreCase("all")) {
+        if (status == Status.ALL) {
             if (studentName != null) {
                 payments = studentPaymentStatusRepository.findByStudent_StudentNameAndUpdatedAtBetween(studentName, startDate, endDate, pageRequest);
             } else if (phoneNumber != null) {
@@ -51,22 +52,22 @@ public class StudentPaymentStatusService {
             }
         } else {
             if (studentName != null) {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetweenAndStudent_StudentName(status.toUpperCase(), startDate, endDate, studentName, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_StudentName(status, startDate, endDate, studentName, pageRequest);
             } else if (phoneNumber != null) {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status.toUpperCase(), startDate, endDate, phoneNumber, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status, startDate, endDate, phoneNumber, pageRequest);
             } else {
-                payments = studentPaymentStatusRepository.findByPaymentStatusAndUpdatedAtBetween(status.toUpperCase(), startDate, endDate, pageRequest);
+                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetween(status, startDate, endDate, pageRequest);
             }
         }
         return payments.map(StudentPaymentStatus::toResponseDto);
     }
 
     public Page<StudentPaymentStatusResponseDto> getPaidPayments(LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
-        return getAllPayments("PAID", startDate, endDate, studentName, phoneNumber, page, size);
+        return getAllPayments(Status.PAID, startDate, endDate, studentName, phoneNumber, page, size);
     }
 
     public Page<StudentPaymentStatusResponseDto> getUnpaidPayments(LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
-        return getAllPayments("UNPAID", startDate, endDate, studentName, phoneNumber, page, size);
+        return getAllPayments(Status.BEFORE, startDate, endDate, studentName, phoneNumber, page, size);
     }
 
     public StudentPaymentStatus createPaymentStatus(StudentPaymentStatusRequestDto requestDto) {
@@ -87,7 +88,6 @@ public class StudentPaymentStatusService {
         existingStatus.setStudent(student);
         existingStatus.setBill(bill);
         existingStatus.setPayment(payment);
-        existingStatus.setPaymentStatus(requestDto.getPaymentStatus());
         existingStatus.setUpdatedAt(LocalDateTime.now());
 
         return studentPaymentStatusRepository.save(existingStatus);

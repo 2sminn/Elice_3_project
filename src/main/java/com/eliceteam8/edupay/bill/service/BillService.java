@@ -3,20 +3,18 @@ package com.eliceteam8.edupay.bill.service;
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.entity.Lecture;
-import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.bill.domain.BillLog;
 import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.dto.request.CreateMultipleBillsRequest;
-import com.eliceteam8.edupay.bill.dto.response.BillInfoResponse;
 import com.eliceteam8.edupay.bill.dto.request.CreateSingleBillRequest;
+import com.eliceteam8.edupay.bill.dto.response.BillInfoResponse;
 import com.eliceteam8.edupay.bill.dto.response.BillLogResponse;
 import com.eliceteam8.edupay.bill.repository.BillLogRepository;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.global.exception.EntityNotFoundException;
 import com.eliceteam8.edupay.global.exception.MessageTooLongException;
-import com.eliceteam8.edupay.global.exception.NotEnoughRemainingBillsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +39,15 @@ public class BillService {
     @Autowired
     private AcademyStudentRepository academyStudentRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public BillInfoResponse createBill(CreateSingleBillRequest request) {
         Optional<BillLog> optionalBillLog = billLogRepository.findFirstByOrderByCreatedAtDesc();
         BillLog billLog;
 
         if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() <= 0) {
-//            throw new NotEnoughRemainingBillsException("청구서 발송 가능 건수가 부족합니다.", "NOT_ENOUGH_REMAINING_BILLS");
             billLog = new BillLog();
             billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
             billLog.setCreatedAt(LocalDateTime.now());
@@ -110,6 +110,15 @@ public class BillService {
         billInfoResponse.setDueDate(dueDate);
         billInfoResponse.setMessage(request.getMessage());
 
+        // 이메일 보내기
+        String subject = "청구서 안내";
+        String text = "청구서가 생성되었습니다. 결제 URL: http://34.47.70.191/bill/" + bill.getId();
+        emailService.sendSimpleMessage(student.getEmail(), subject, text);
+
+        // 상태 변경
+        bill.setStatusToCompleted();
+        billRepository.save(bill);
+
         return billInfoResponse;
     }
 
@@ -119,7 +128,6 @@ public class BillService {
         BillLog billLog;
 
         if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() < request.getStudentIds().size()) {
-//            throw new NotEnoughRemainingBillsException("청구서 발송 가능 건수가 부족합니다.", "NOT_ENOUGH_REMAINING_BILLS");
             billLog = new BillLog();
             billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
             billLog.setCreatedAt(LocalDateTime.now());
@@ -172,6 +180,7 @@ public class BillService {
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
+
         BillLog newBillLog = new BillLog();
         newBillLog.setBill(bill);
         newBillLog.setRemainingBills(billLogRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new IllegalStateException("No BillLog found")).getRemainingBills());
@@ -187,6 +196,15 @@ public class BillService {
         billInfoResponse.setTotalPrice(totalPrice);
         billInfoResponse.setDueDate(dueDate);
         billInfoResponse.setMessage(message);
+
+        // 이메일 보내기
+        String subject = "청구서 안내";
+        String text = "청구서가 생성되었습니다. 결제 URL: http://34.47.70.191/bill/" + bill.getId();
+        emailService.sendSimpleMessage(student.getEmail(), subject, text);
+
+        // 상태 변경
+        bill.setStatusToCompleted();
+        billRepository.save(bill);
 
         return billInfoResponse;
     }

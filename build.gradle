@@ -42,6 +42,7 @@ dependencies {
 
 	implementation 'org.modelmapper:modelmapper:2.3.8'
 
+
 	// DataBase
 //	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -70,4 +71,9 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Add this section
+tasks.withType(JavaCompile) {
+	options.compilerArgs << '-parameters'
 }
