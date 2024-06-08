@@ -1,26 +1,27 @@
 package com.eliceteam8.edupay.point.service;
 
 import com.eliceteam8.edupay.point.dto.PointHistoryDTO;
-import com.eliceteam8.edupay.point.entity.Point;
 import com.eliceteam8.edupay.point.entity.PointHistory;
 import com.eliceteam8.edupay.point.repository.PointHistoryRepository;
-import com.eliceteam8.edupay.point.repository.PointRepository;
+import com.eliceteam8.edupay.user.entity.User;
+import com.eliceteam8.edupay.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PointService {
 
-    private final PointRepository pointRepository;
+    private final UserRepository userRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
     public Long getPoint(Long userId) {
-        return pointRepository.findByUserId(userId)
-                .map(Point::getPoint)
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.map(User::getPoint)
                 .orElse(0L);
     }
 
@@ -38,14 +39,11 @@ public class PointService {
 
         pointHistoryRepository.save(pointHistory);
 
-        Point point = pointRepository.findByUserId(pointHistoryDTO.getUserId())
-                .orElse(Point.builder()
-                        .userId(pointHistoryDTO.getUserId())
-                        .point(0L)
-                        .build());
+        User user = userRepository.findById(pointHistoryDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-        point.addPoint(pointHistoryDTO.getPoint());
+        user.addPoint(pointHistoryDTO.getPoint());
 
-        pointRepository.save(point);
+        userRepository.save(user);
     }
 }
