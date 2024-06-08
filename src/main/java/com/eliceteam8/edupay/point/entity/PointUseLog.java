@@ -13,21 +13,18 @@ import java.time.Instant;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PointHistory {
-
+public class PointUseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
     private Long point;
-    private String paymentUid;
     private Instant createdAt;
 
     @Builder
-    public PointHistory(Long userId, Long point, String paymentUid, Instant createdAt) {
+    public PointUseLog(Long userId, Long point, Instant createdAt) {
         this.userId = userId;
         this.point = point;
-        this.paymentUid = paymentUid;
         this.createdAt = createdAt;
     }
 }

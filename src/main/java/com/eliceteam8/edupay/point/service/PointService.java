@@ -1,11 +1,14 @@
 package com.eliceteam8.edupay.point.service;
 
-import com.eliceteam8.edupay.point.dto.PointHistoryDTO;
-import com.eliceteam8.edupay.point.entity.PointHistory;
-import com.eliceteam8.edupay.point.repository.PointHistoryRepository;
+import com.eliceteam8.edupay.point.dto.PointLogDTO;
+import com.eliceteam8.edupay.point.entity.PointRechargeLog;
+import com.eliceteam8.edupay.point.entity.PointUseLog;
+import com.eliceteam8.edupay.point.repository.PointRechargeLogRepository;
+import com.eliceteam8.edupay.point.repository.PointUseLogRepository;
 import com.eliceteam8.edupay.user.entity.User;
 import com.eliceteam8.edupay.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,7 +20,8 @@ import java.util.Optional;
 public class PointService {
 
     private final UserRepository userRepository;
-    private final PointHistoryRepository pointHistoryRepository;
+    private final PointRechargeLogRepository pointRechargeLogRepository;
+    private final PointUseLogRepository pointUseLogRepository;
 
     public Long getPoint(Long userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -25,25 +29,52 @@ public class PointService {
                 .orElse(0L);
     }
 
-    public List<PointHistory> getPointHistory(Long userId) {
-        return pointHistoryRepository.findByUserId(userId);
+    public List<PointRechargeLog> getPointRechargeLog(Long userId) {
+        return pointRechargeLogRepository.findByUserId(userId);
     }
 
-    public void savePoint(PointHistoryDTO pointHistoryDTO) {
-        PointHistory pointHistory = PointHistory.builder()
-                .userId(pointHistoryDTO.getUserId())
-                .point(pointHistoryDTO.getPoint())
-                .paymentUid(pointHistoryDTO.getImpUid())
+    public List<PointUseLog> getPointUseLog(Long userId) {
+        return pointUseLogRepository.findByUserId(userId);
+    }
+
+    public void savePoint(PointLogDTO pointLogDTO) {
+        PointRechargeLog pointRechargeLog = PointRechargeLog.builder()
+                .userId(pointLogDTO.getUserId())
+                .point(pointLogDTO.getPoint())
+                .paymentUid(pointLogDTO.getImpUid())
                 .createdAt(Instant.now())
                 .build();
 
-        pointHistoryRepository.save(pointHistory);
+        pointRechargeLogRepository.save(pointRechargeLog);
 
-        User user = userRepository.findById(pointHistoryDTO.getUserId())
+        User user = userRepository.findById(pointLogDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-        user.addPoint(pointHistoryDTO.getPoint());
+        user.addPoint(pointLogDTO.getPoint());
 
         userRepository.save(user);
+    }
+
+    public void usePoint(PointLogDTO pointLogDTO) {
+        PointUseLog pointUseLog = PointUseLog.builder()
+                .userId(pointLogDTO.getUserId())
+                .point(pointLogDTO.getPoint())
+                .createdAt(Instant.now())
+                .build();
+
+        User user = userRepository.findById(pointUseLog.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"));
+
+        validatePoint(user.getPoint(), pointLogDTO.getPoint());
+
+        user.usePoint(pointLogDTO.getPoint());
+
+        userRepository.save(user);
+    }
+
+    private void validatePoint(Long currentPoint, Long usedPoint) {
+        if (usedPoint > currentPoint) {
+            throw new RuntimeException("포인트 부족");
+        }
     }
 }

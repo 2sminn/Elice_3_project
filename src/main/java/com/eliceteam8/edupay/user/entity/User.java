@@ -82,6 +82,10 @@ public class User {
         this.point += pointToAdd;
     }
 
+    public void usePoint(Long usedPoint) {
+        this.point -= usedPoint;
+    }
+
     public void generateToken() {
         this.passwordToken = UUID.randomUUID().toString().substring(0, 5);
         this.passwordTokenAt = LocalDateTime.now();
