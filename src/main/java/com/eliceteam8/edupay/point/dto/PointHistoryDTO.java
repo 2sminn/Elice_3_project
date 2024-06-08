@@ -13,19 +13,19 @@ import lombok.*;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @ToString
-public class PointDTO {
+public class PointHistoryDTO {
 
     private Long userId;
     private Long point;
     private String impUid;
 
-    public static PointDTO fromString(String request) {
+    public static PointHistoryDTO fromString(String request) {
         JsonObject requestJson = JsonParser.parseString(request).getAsJsonObject();
         Long userId = requestJson.getAsJsonPrimitive("user_id") == null ? null : requestJson.getAsJsonPrimitive("user_id").getAsLong();
         Long point = requestJson.getAsJsonPrimitive("point") == null ? null : requestJson.getAsJsonPrimitive("point").getAsLong();
         String impUid = requestJson.getAsJsonPrimitive("imp_uid") == null ? null : requestJson.getAsJsonPrimitive("imp_uid").getAsString();
 
-        return PointDTO.builder()
+        return PointHistoryDTO.builder()
                 .userId(userId)
                 .point(point)
                 .impUid(impUid)
