@@ -112,17 +112,17 @@ export const storageMonthOption = [
 export const storageOXOption = [
 	{
 		id: 0,
-		name: '수납 유무',
-		value: '',
+		name: '전체',
+		value: 'ALL',
 	},
 	{
 		id: 1,
 		name: '수납',
-		value: 'true',
+		value: 'paid',
 	},
 	{
-		id: 1,
+		id: 2,
 		name: '미수납',
-		value: 'false',
+		value: 'unpaid',
 	},
 ];

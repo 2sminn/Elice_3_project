@@ -16,8 +16,37 @@ export interface invoiceType {
 }
 
 export interface StorageResponseType {
-	total_count: number;
-	invoices: invoiceType[];
-	page: number;
-	page_size: number;
+	content: invoiceType[];
+	pageable: {
+		pageNumber: number;
+		pageSize: number;
+		sort: {
+			sorted: boolean;
+			empty: boolean;
+			unsorted: boolean;
+		};
+		offset: number;
+		paged: boolean;
+		unpaged: boolean;
+	};
+	totalPages: number;
+	totalElements: number;
+	last: boolean;
+	size: number;
+	number: number;
+	sort: {
+		sorted: boolean;
+		empty: boolean;
+		unsorted: boolean;
+	};
+	numberOfElements: number;
+	first: boolean;
+	empty: boolean;
+}
+
+export interface FilterSearchType {
+	year: string;
+	month: string;
+	isPaid: string;
+	studentName: string;
 }

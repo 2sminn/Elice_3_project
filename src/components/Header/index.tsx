@@ -2,7 +2,7 @@ import * as S from './style';
 import logo from '/assets/images/logo.svg';
 import settingImg from './assets/setting.svg';
 import logout from './assets/logout.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import usePopup from '../../hooks/usePopup';
 import AddBillCountPopup from './components/AddBillCountPopup';
 import BillPopup from '../popups/BillPopup';
@@ -10,13 +10,19 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import { MENU_ARR } from '../../constants/routeList';
 import { useTokenStore } from '../../stores/tokenStore';
 import { successAlert } from '../../utils/alert';
+import { useGetUserQuery } from './hooks/useGetUserQuery';
 
 const Header = () => {
+	const { data: userInfo } = useGetUserQuery();
+	console.log(userInfo);
+
 	const { openPopup } = usePopup();
 	const { clearTokens } = useTokenStore();
+	const navigate = useNavigate();
 
 	const handleLogout = () => {
 		clearTokens();
+		navigate('/login');
 		successAlert('로그아웃 되었습니다.');
 	};
 
