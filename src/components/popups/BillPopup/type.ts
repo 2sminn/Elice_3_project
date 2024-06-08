@@ -1,9 +1,15 @@
 export interface BillType {
-	studentName: string;
-	grade: string;
-	tel: string;
-	subject: string;
-	tuition: string;
-	deadline: string;
+	studentId: number;
 	message: string;
+}
+
+export interface StudentType {
+	academy?: string;
+	birthdate: string;
+	email: string;
+	grade: string;
+	lectureDetails?: string | undefined;
+	phoneNumber: string;
+	studentId: number;
+	studentName: string;
 }
