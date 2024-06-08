@@ -41,7 +41,7 @@ public class PaymentService {
         return paymentInfoDTO;
     }
 
-    public IamportResponse<Payment> validatePayment(CallbackRequestDTO request) {
+    public void validatePayment(CallbackRequestDTO request) {
         savePaymentHistory(request.getImpUid(), request.getBillId());
 
         try {
@@ -52,8 +52,6 @@ public class PaymentService {
             if (!Status.PAID.equals(bill.getStatus())) {
                 bill.setStatusToPaid();
             }
-
-            return iamportResponse;
 
         } catch (IamportResponseException | IOException e) {
             throw new RuntimeException(e);
