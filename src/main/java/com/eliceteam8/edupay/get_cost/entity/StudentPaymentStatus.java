@@ -60,7 +60,7 @@ public class StudentPaymentStatus {
                 .studentId(this.student.getId())
                 .billId(this.bill.getId())
                 .paymentId(this.payment.getId())
-                .billStatus(this.bill.getStatus().name())
+                .billStatus(this.bill.getStatus())
                 .updatedAt(this.updatedAt)
                 .build();
     }
