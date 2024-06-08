@@ -5,13 +5,14 @@ import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.service.PointService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -46,6 +47,13 @@ public class PointController {
     @PostMapping("/use")
     public ResponseEntity<Void> usePoint(@RequestBody PointLogDTO request) throws JsonProcessingException {
         pointService.usePoint(request);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/refund")
+    public ResponseEntity<Void> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
+        pointService.refundPoint(request);
 
         return new ResponseEntity(HttpStatus.OK);
     }
