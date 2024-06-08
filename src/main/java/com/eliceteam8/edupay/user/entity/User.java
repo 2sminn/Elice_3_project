@@ -22,10 +22,11 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -43,6 +44,7 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Academy academy;
 
+    private Long point;
 
     private String passwordToken;
     private LocalDateTime passwordTokenAt;
@@ -63,6 +65,7 @@ public class User {
                 .username(signUpDto.getUsername())
                 .email(signUpDto.getEmail())
                 .phoneNumber(signUpDto.getPhoneNumber())
+                .point(0L)
                 .build();
     }
 
@@ -71,10 +74,17 @@ public class User {
         this.phoneNumber = updateUserDTO.getPhoneNumber();
     }
 
-    public void addRole(UserRole userRole){
+    public void addRole(UserRole userRole) {
         roles.add(userRole);
     }
 
+    public void addPoint(Long pointToAdd) {
+        this.point += pointToAdd;
+    }
+
+    public void usePoint(Long usedPoint) {
+        this.point -= usedPoint;
+    }
 
     public void generateToken() {
         this.passwordToken = UUID.randomUUID().toString().substring(0, 5);
