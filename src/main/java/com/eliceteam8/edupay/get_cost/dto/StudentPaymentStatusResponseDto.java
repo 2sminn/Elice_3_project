@@ -12,10 +12,13 @@ import java.time.LocalDateTime;
 public class StudentPaymentStatusResponseDto {
     private Long paymentStatusId;
     private Long studentId;
+    private String studentName;
+    private String birthDate;
     private Long billId;
     private Long paymentId;
     private Status billStatus;
     private LocalDateTime updatedAt;
+    private long totalPrice;
 
     public static StudentPaymentStatusResponseDto fromEntity(StudentPaymentStatus entity) {
         if (entity == null) return null;
@@ -23,10 +26,13 @@ public class StudentPaymentStatusResponseDto {
         return StudentPaymentStatusResponseDto.builder()
                 .paymentStatusId(entity.getPaymentStatusId())
                 .studentId(entity.getStudent().getId())
+                .studentName(entity.getStudent().getStudentName())
+                .birthDate(entity.getStudent().getBirthDate())
                 .billId(entity.getBill().getId())
                 .paymentId(entity.getPayment().getId())
                 .billStatus(entity.getBill().getStatus())
                 .updatedAt(entity.getUpdatedAt())
+                .totalPrice(entity.getBill().getTotalPrice())
                 .build();
     }
 }

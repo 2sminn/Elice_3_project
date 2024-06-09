@@ -58,10 +58,13 @@ public class StudentPaymentStatus {
         return StudentPaymentStatusResponseDto.builder()
                 .paymentStatusId(this.paymentStatusId)
                 .studentId(this.student.getId())
+                .studentName(this.student.getStudentName())
+                .birthDate(this.student.getBirthDate())
                 .billId(this.bill.getId())
                 .paymentId(this.payment.getId())
                 .billStatus(this.bill.getStatus())
                 .updatedAt(this.updatedAt)
+                .totalPrice(this.bill.getTotalPrice())
                 .build();
     }
 }
