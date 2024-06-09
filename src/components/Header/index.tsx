@@ -33,7 +33,7 @@ const Header = () => {
 					<img src={logo} alt="" />
 				</S.LogoBox>
 				<S.AcademyInfoBox>
-					<h2>에듀학원</h2>
+					<h2>{userInfo?.academyName}</h2>
 					<Link to="/edit-profile">
 						<img src={settingImg} alt="" />
 					</Link>
