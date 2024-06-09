@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,13 +46,16 @@ public class Lecture {
     @JsonBackReference
     private Academy academy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
+    @ManyToMany(mappedBy = "lectures")
+    //@JoinColumn(name = "student_id")
     @JsonBackReference
-    private AcademyStudent academyStudent;
+    private List<AcademyStudent> academyStudent;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'OPEN'")
     private LectureStatus lectureStatus; // 강의 상태
+
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LectureSchedule> lectureSchedules; // 강의 일정 리스트
 }
 

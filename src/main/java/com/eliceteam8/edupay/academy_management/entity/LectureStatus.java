@@ -1,6 +1,10 @@
 package com.eliceteam8.edupay.academy_management.entity;
 
 public enum LectureStatus {
-    OPEN, CLOSE
+    OPEN, CLOSE;
     // 강의 상태값: 수강(OPEN), 종강(CLOSE)
+
+    public static LectureStatus valueOf(LectureStatus lectureStatus) {
+        return lectureStatus;
+    }
 }
