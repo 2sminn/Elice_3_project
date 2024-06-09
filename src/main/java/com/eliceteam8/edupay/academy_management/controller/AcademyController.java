@@ -5,6 +5,7 @@ import com.eliceteam8.edupay.academy_management.service.AcademyService;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ import java.security.Principal;
 @RequestMapping("/academy")
 public class AcademyController {
 
-
+    @Autowired
     private final AcademyService academyService;
     @GetMapping
     public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount() {

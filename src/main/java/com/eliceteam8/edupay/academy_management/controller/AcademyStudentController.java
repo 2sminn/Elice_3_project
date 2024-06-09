@@ -48,4 +48,10 @@ public class AcademyStudentController {
         academyStudentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/name/{studentName}")
+    public ResponseEntity<List<AcademyStudent>> getStudentByName(@PathVariable("studentName") String studentName) {
+        List<AcademyStudent> students = academyStudentService.findStudentsByName(studentName);
+        return ResponseEntity.ok(students);
+    }
 }

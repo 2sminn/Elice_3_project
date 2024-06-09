@@ -5,6 +5,7 @@ import com.eliceteam8.edupay.academy_management.exception.ResourceNotFoundExcept
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
 import com.eliceteam8.edupay.global.exception.DuplicateStudentException;
+import com.eliceteam8.edupay.global.exception.StudentNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,16 @@ public class AcademyStudentService {
 
     public AcademyStudentResponseDTO getStudentById(Long studentId) {
         AcademyStudent student = academyStudentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 학생입니다: " + studentId));
         return modelMapper.map(student, AcademyStudentResponseDTO.class);
+    }
+
+    public List<AcademyStudent> findStudentsByName(String studentName) {
+        List<AcademyStudent> students = academyStudentRepository.findByStudentName(studentName);
+        if (students.isEmpty()) {
+            throw new StudentNotFoundException("존재하지 않는 학생입니다: " + studentName);
+        }
+        return students;
     }
 
     @Transactional
