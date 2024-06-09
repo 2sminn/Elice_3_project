@@ -9,13 +9,14 @@ interface StudentRegistrationPopupProps {
 const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onClose }) => {
 	const { createStudent } = useStudentStore();
 	const [student, setStudent] = useState({
-		name: '',
-		birthday: '',
+		studentName: '',
+		birthDate: '',
 		contact: '',
 		email: '',
-		school: '',
+		schoolName: '',
 		grade: '',
-		courseCode: '',
+		class: '',
+		phoneNumber: '',
 	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,13 +42,14 @@ const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onC
 		<PopupContainer>
 			<PopupTitle>신규 원생 등록</PopupTitle>
 			<PopupForm onSubmit={handleSubmit}>
-				<PopupInput name="name" placeholder="원생명" value={student.name} onChange={handleChange} />
-				<PopupInput name="birthday" placeholder="생년월일" value={student.birthday} onChange={handleChange} />
+				<PopupInput name="studentName" placeholder="원생명" value={student.studentName} onChange={handleChange} />
+				<PopupInput name="birthDate" placeholder="생년월일" value={student.birthDate} onChange={handleChange} />
 				<PopupInput name="contact" placeholder="연락처" value={student.contact} onChange={handleChange} />
 				<PopupInput name="email" placeholder="이메일" value={student.email} onChange={handleChange} />
-				<PopupInput name="school" placeholder="학교" value={student.school} onChange={handleChange} />
+				<PopupInput name="schoolName" placeholder="학교" value={student.schoolName} onChange={handleChange} />
 				<PopupInput name="grade" placeholder="학년" value={student.grade} onChange={handleChange} />
-				<PopupInput name="courseCode" placeholder="수강강의코드" value={student.courseCode} onChange={handleChange} />
+				<PopupInput name="class" placeholder="수강반" value={student.class} onChange={handleChange} />
+				<PopupInput name="phoneNumber" placeholder="전화번호" value={student.phoneNumber} onChange={handleChange} />
 				<PopupButtonContainer>
 					<PopupButton type="submit">등록</PopupButton>
 					<PopupButton type="button" onClick={onClose}>
