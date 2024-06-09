@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 
 @Service
 @Transactional
@@ -39,10 +40,13 @@ public class StudentPaymentStatusService {
         this.billRepository = billRepository;
     }
 
-    public Page<StudentPaymentStatusResponseDto> getAllPayments(Status status, LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
+    public Page<StudentPaymentStatusResponseDto> getAllPayments(Status status, Integer year, Integer month, String studentName, String phoneNumber, int page, int size) {
         Page<StudentPaymentStatus> payments;
         PageRequest pageRequest = PageRequest.of(page, size);
-        if (status == Status.ALL) {
+        LocalDateTime startDate = (year != null && month != null) ? YearMonth.of(year, month).atDay(1).atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime endDate = (year != null && month != null) ? YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        if (status.equals(Status.ALL)) {
             if (studentName != null) {
                 payments = studentPaymentStatusRepository.findByStudent_StudentNameAndUpdatedAtBetween(studentName, startDate, endDate, pageRequest);
             } else if (phoneNumber != null) {
@@ -59,27 +63,27 @@ public class StudentPaymentStatusService {
                 payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetween(status, startDate, endDate, pageRequest);
             }
         }
-        return payments.map(StudentPaymentStatus::toResponseDto);
+        return payments.map(StudentPaymentStatusResponseDto::fromEntity);
     }
 
-    public Page<StudentPaymentStatusResponseDto> getPaidPayments(LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
-        return getAllPayments(Status.PAID, startDate, endDate, studentName, phoneNumber, page, size);
+    public Page<StudentPaymentStatusResponseDto> getPaidPayments(Integer year, Integer month, String studentName, String phoneNumber, int page, int size) {
+        return getAllPayments(Status.PAID, year, month, studentName, phoneNumber, page, size);
     }
 
-    public Page<StudentPaymentStatusResponseDto> getUnpaidPayments(LocalDateTime startDate, LocalDateTime endDate, String studentName, String phoneNumber, int page, int size) {
-        return getAllPayments(Status.BEFORE, startDate, endDate, studentName, phoneNumber, page, size);
+    public Page<StudentPaymentStatusResponseDto> getUnpaidPayments(Integer year, Integer month, String studentName, String phoneNumber, int page, int size) {
+        return getAllPayments(Status.BEFORE, year, month, studentName, phoneNumber, page, size);
     }
 
-    public StudentPaymentStatus createPaymentStatus(StudentPaymentStatusRequestDto requestDto) {
+    public StudentPaymentStatusResponseDto createPaymentStatus(StudentPaymentStatusRequestDto requestDto) {
         AcademyStudent student = findStudentById(requestDto.getStudentId());
         Bill bill = findBillById(requestDto.getBillId());
         PaymentHistory payment = findPaymentById(requestDto.getPaymentId());
 
-        StudentPaymentStatus paymentStatus = StudentPaymentStatus.fromRequestDto(requestDto, student, bill, payment);
-        return studentPaymentStatusRepository.save(paymentStatus);
+        StudentPaymentStatus paymentStatus = new StudentPaymentStatus(student, bill, payment, LocalDateTime.now());
+        return StudentPaymentStatusResponseDto.fromEntity(studentPaymentStatusRepository.save(paymentStatus));
     }
 
-    public StudentPaymentStatus updatePaymentStatus(Long id, StudentPaymentStatusRequestDto requestDto) {
+    public StudentPaymentStatusResponseDto updatePaymentStatus(Long id, StudentPaymentStatusRequestDto requestDto) {
         StudentPaymentStatus existingStatus = findPaymentStatusById(id);
         AcademyStudent student = findStudentById(requestDto.getStudentId());
         Bill bill = findBillById(requestDto.getBillId());
@@ -90,7 +94,7 @@ public class StudentPaymentStatusService {
         existingStatus.setPayment(payment);
         existingStatus.setUpdatedAt(LocalDateTime.now());
 
-        return studentPaymentStatusRepository.save(existingStatus);
+        return StudentPaymentStatusResponseDto.fromEntity(studentPaymentStatusRepository.save(existingStatus));
     }
 
     public void deletePaymentStatus(Long id) {
@@ -98,8 +102,8 @@ public class StudentPaymentStatusService {
         studentPaymentStatusRepository.delete(paymentStatus);
     }
 
-    public StudentPaymentStatus getPaymentStatusById(Long id) {
-        return findPaymentStatusById(id);
+    public StudentPaymentStatusResponseDto getPaymentStatusById(Long id) {
+        return StudentPaymentStatusResponseDto.fromEntity(findPaymentStatusById(id));
     }
 
     private StudentPaymentStatus findPaymentStatusById(Long id) {
@@ -119,6 +123,6 @@ public class StudentPaymentStatusService {
 
     private PaymentHistory findPaymentById(Long id) {
         return paymentHistoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("이 아이디로는 결제정보 못 찾음" + id));
+                .orElseThrow(() -> new IllegalArgumentException("이 아이디로는 결제정보 못 찾음: " + id));
     }
 }

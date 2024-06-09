@@ -38,6 +38,8 @@ public class UpdateUserDTO {
     @NotNull
     private int zipCode;
 
+    private Long point;
+
     @NotBlank
     private String address;
 
@@ -49,7 +51,7 @@ public class UpdateUserDTO {
     private String landlineNumber;
 
 
-    //create entityToDto method ,builder
+
     public static UpdateUserDTO entityToDTO(User user){
         return UpdateUserDTO.builder()
                 .userId(user.getId())
@@ -63,6 +65,7 @@ public class UpdateUserDTO {
                 .address(user.getAcademy().getAddress())
                 .addressDetail(user.getAcademy().getAddressDetail())
                 .landlineNumber(user.getAcademy().getLandlineNumber())
+                .point(user.getPoint())
                 .build();
     }
 

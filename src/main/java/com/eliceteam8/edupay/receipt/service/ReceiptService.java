@@ -1,9 +1,12 @@
 package com.eliceteam8.edupay.receipt.service;
 
+import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
 import com.eliceteam8.edupay.academy_management.service.AcademyStudentService;
 import com.eliceteam8.edupay.academy_management.service.LectureService;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.bill.service.BillService;
+import com.eliceteam8.edupay.bill.service.EmailService;
 import com.eliceteam8.edupay.receipt.dto.ReceiptDto;
 import com.eliceteam8.edupay.receipt.entity.ReceiptEntity;
 import com.eliceteam8.edupay.receipt.repository.ReceiptRepository;
@@ -24,9 +27,8 @@ public class ReceiptService {
 
     @Autowired
     private AcademyStudentService studentService;
-
     @Autowired
-    private BillService billService;
+    private EmailService emailService;
 
     public void createReceipt(ReceiptDto receiptDto){
 
@@ -62,4 +64,16 @@ public class ReceiptService {
             .grade(receiptEntity.getStudent().getGrade())
             .build();
    }
+    public void sendReceiptByEmail(Long studentId, String year, String month) {
+        AcademyStudentResponseDTO student = studentService.getStudentById(studentId);
+        String email = student.getEmail();
+
+        String receiptLink = "영수증 조회 링크: http://34.47.70.191//receipt?studentId=" + studentId + "&year=" + year + "&month=" + month;
+
+        String subject = "영수증 발송";
+        String text = "영수증 조회 링크 : " + receiptLink;
+
+        emailService.sendSimpleMessage(email, subject, text);
+    }
+
 }

@@ -42,7 +42,6 @@ public class GlobalExceptionHandler {
     }
 
 
-    //우선순위 높음
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException ex) {
         log.error("---handleHttpMediaTypeNotAcceptableException---");
