@@ -47,6 +47,7 @@ public class Lecture {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonBackReference
     private AcademyStudent academyStudent;
 
     @Enumerated(EnumType.STRING)

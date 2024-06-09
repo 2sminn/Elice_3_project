@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.academy_management.entity;
 
 import com.eliceteam8.edupay.bill.domain.Bill;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,7 @@ public class AcademyStudent {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Lecture> lectures;
 
     @ManyToOne(fetch = FetchType.LAZY)
