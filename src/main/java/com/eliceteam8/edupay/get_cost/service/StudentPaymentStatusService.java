@@ -79,7 +79,7 @@ public class StudentPaymentStatusService {
         Bill bill = findBillById(requestDto.getBillId());
         PaymentHistory payment = findPaymentById(requestDto.getPaymentId());
 
-        StudentPaymentStatus paymentStatus = StudentPaymentStatus.fromRequestDto(requestDto, student, bill, payment);
+        StudentPaymentStatus paymentStatus = new StudentPaymentStatus(student, bill, payment, LocalDateTime.now());
         return StudentPaymentStatusResponseDto.fromEntity(studentPaymentStatusRepository.save(paymentStatus));
     }
 
