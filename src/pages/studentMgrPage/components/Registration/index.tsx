@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { PopupContainer, PopupTitle, PopupForm, PopupInput, PopupButton, PopupButtonContainer } from './style';
+import useStudentStore from '../../../../stores/useStudentStore';
 
 interface StudentRegistrationPopupProps {
 	onClose: () => void;
 }
 
 const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onClose }) => {
+	const { createStudent } = useStudentStore();
 	const [student, setStudent] = useState({
 		name: '',
 		birthday: '',
@@ -24,10 +26,15 @@ const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onC
 		}));
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		alert('새 원생이 등록되었습니다.');
-		onClose();
+		try {
+			await createStudent(student);
+			alert('새 원생이 등록되었습니다.');
+			onClose();
+		} catch (error) {
+			alert('원생 등록에 실패했습니다. 다시 시도해주세요.');
+		}
 	};
 
 	return (

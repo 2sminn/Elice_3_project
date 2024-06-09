@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Container,
 	Title,
@@ -15,58 +15,15 @@ import {
 	Td,
 } from './style';
 import usePopup from '../../hooks/usePopup';
-import StudentRegistrationPopup from './components/Rigistration';
+import StudentRegistrationPopup from './components/Registration';
 import StudentDetailPopup from './components/Detail';
-
-interface StudentType {
-	name: string;
-	school: string;
-	grade: string;
-	group: string;
-	class: string;
-	teacher: string;
-	paymentInfo: string;
-	contact: string;
-	selected: boolean;
-}
-
-interface FilterType {
-	name: string;
-	school: string;
-	grade: string;
-	group: string;
-	class: string;
-	teacher: string;
-}
-
-const studentsData: StudentType[] = [
-	{
-		name: '홍길동',
-		school: '학교1',
-		grade: '5학년',
-		group: '그룹1',
-		class: '초등 5반',
-		teacher: '선생님1',
-		paymentInfo: '미납 0건/예정 1건',
-		contact: '010-0000-0000',
-		selected: false,
-	},
-	{
-		name: '김철수',
-		school: '학교2',
-		grade: '4학년',
-		group: '그룹2',
-		class: '초등 4반',
-		teacher: '선생님2',
-		paymentInfo: '미납 1건/예정 0건',
-		contact: '010-1111-1111',
-		selected: false,
-	},
-];
+import useStudentStore from '../../stores/useStudentStore';
+import { StudentType } from './api';
 
 const StudentMgrPage = () => {
+	const { students, fetchStudents, createStudent, updateStudent, deleteStudent } = useStudentStore();
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [filters, setFilters] = useState<FilterType>({
+	const [filters, setFilters] = useState<Partial<StudentType>>({
 		name: '',
 		school: '',
 		grade: '',
@@ -75,8 +32,11 @@ const StudentMgrPage = () => {
 		teacher: '',
 	});
 	const [selectAll, setSelectAll] = useState<boolean>(false);
-	const [students, setStudents] = useState<StudentType[]>(studentsData);
 	const { openPopup, closePopup } = usePopup();
+
+	useEffect(() => {
+		fetchStudents();
+	}, [fetchStudents]);
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
@@ -88,11 +48,11 @@ const StudentMgrPage = () => {
 		}));
 	};
 
-	const filterStudents = (students: StudentType[], filters: FilterType) => {
+	const filterStudents = (students: StudentType[], filters: Partial<StudentType>) => {
 		return students.filter((student) => {
 			return Object.keys(filters).every((key) => {
 				const value = student[key as keyof StudentType];
-				return typeof value === 'string' && value.includes(filters[key as keyof FilterType]);
+				return typeof value === 'string' && value.includes(filters[key as keyof Partial<StudentType>]);
 			});
 		});
 	};
@@ -104,7 +64,7 @@ const StudentMgrPage = () => {
 
 	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setStudents(filterStudents(studentsData, filters));
+		// setStudents(filterStudents(studentsData, filters));
 	};
 
 	const handleDeleteClick = () => {
@@ -113,33 +73,29 @@ const StudentMgrPage = () => {
 			alert('삭제할 원생을 선택하세요.');
 			return;
 		}
-		const newStudents = students.filter((student) => !student.selected);
-		setStudents(newStudents);
+		selectedStudents.forEach((student) => deleteStudent(student.id));
 		alert('선택된 원생이 삭제되었습니다.');
 	};
 
 	const handleAddNewClick = () => {
-		openPopup(<StudentRegistrationPopup onClose={closePopup} />);
+		openPopup(<StudentRegistrationPopup onClose={handleNewStudentClose} />);
+	};
+
+	const handleNewStudentClose = () => {
+		closePopup();
+		fetchStudents(); // 학생 목록을 새로 불러오기
 	};
 
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		setStudents((prevStudents) => prevStudents.map((student) => ({ ...student, selected: checked })));
+		students.forEach((student) => updateStudent(student.id, { selected: checked }));
 	};
 
 	const handleSelectChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
-		setStudents((prevStudents) => {
-			const newStudents = [...prevStudents];
-			newStudents[index].selected = checked;
-			if (!checked) {
-				setSelectAll(false);
-			} else if (newStudents.every((student) => student.selected)) {
-				setSelectAll(true);
-			}
-			return newStudents;
-		});
+		const student = students[index];
+		updateStudent(student.id, { selected: checked });
 	};
 
 	const handleStudentNameClick = (student: StudentType) => {
@@ -261,7 +217,7 @@ const StudentTable: React.FC<StudentTableProps> = ({
 				{students.map((student, index) => (
 					<tr key={index}>
 						<Td>
-							<input type="checkbox" checked={student.selected} onChange={onSelectChange(index)} />
+							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(index)} />
 						</Td>
 						<Td onClick={() => onStudentNameClick(student)} style={{ cursor: 'pointer', color: '#007bff' }}>
 							{student.name}

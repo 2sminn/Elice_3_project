@@ -1,4 +1,3 @@
-// StudentDetailPopup.tsx
 import React, { useState } from 'react';
 import {
 	PopupContainer,
