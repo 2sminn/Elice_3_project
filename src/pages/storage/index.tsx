@@ -1,12 +1,70 @@
+import React, { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import Select from '../../components/inputs/Select';
 import TextInput from '../../components/inputs/TextInput';
-import { Container, PageTitle, TableList } from '../../styles/commonStyle';
+import {
+	Container,
+	PageTitle,
+	TableContentBox,
+	TableContentContainer,
+	TableList,
+	TableTitleBox,
+} from '../../styles/commonStyle';
 import { storageYearOption, storageMonthOption, storageOXOption } from './constants/options';
+import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
 import * as S from './style';
 import { IoSearchOutline } from 'react-icons/io5';
+import { formatDate } from '../../utils/formatDate';
 
 const StoragePage = () => {
+	const [searchFilter, setSearchFilter] = useState({
+		year: '',
+		month: '',
+		isPaid: 'ALL',
+		studentName: '',
+	});
+
+	console.log(searchFilter);
+
+	const { data: storageDatas, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery(searchFilter);
+
+	const handleChangeFilter: ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
+		const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+		setSearchFilter((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	const observerRef = useRef(null);
+
+	useEffect(() => {
+		const observerOptions: IntersectionObserverInit = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0.8,
+		};
+
+		const handleIntersection: IntersectionObserverCallback = (entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting && hasNextPage && !isFetching) {
+					fetchNextPage();
+				}
+			});
+		};
+
+		const observer = new IntersectionObserver(handleIntersection, observerOptions);
+
+		if (observerRef.current) {
+			observer.observe(observerRef.current);
+		}
+
+		return () => {
+			if (observerRef.current) {
+				observer.unobserve(observerRef.current);
+			}
+		};
+	}, [fetchNextPage, hasNextPage, isFetching]);
 	return (
 		<Container>
 			<S.StorageContainer>
@@ -23,16 +81,16 @@ const StoragePage = () => {
 					</S.SearchTitle>
 					<S.SearchBox>
 						<S.SelectTopBox>
-							<Select title="year-select" options={storageYearOption} />
-							<Select title="month-select" options={storageMonthOption} />
-							<Select title="ox-select" options={storageOXOption} />
-							<TextInput placeholder="원생이름" />
+							<Select title="year-select" options={storageYearOption} name="year" onChange={handleChangeFilter} />
+							<Select title="month-select" options={storageMonthOption} name="month" onChange={handleChangeFilter} />
+							<Select title="ox-select" options={storageOXOption} name="isPaid" onChange={handleChangeFilter} />
+							<TextInput placeholder="원생이름" name="studentName" onChange={handleChangeFilter} />
 						</S.SelectTopBox>
 						<PrimaryButton type="button" text="검색" />
 					</S.SearchBox>
 				</S.SearchContainer>
 				<S.StorageTable>
-					<S.TableTitleBox>
+					<TableTitleBox>
 						<TableList $isTitle width="15%">
 							이름
 						</TableList>
@@ -49,79 +107,29 @@ const StoragePage = () => {
 							수납일
 						</TableList>
 						<TableList $isTitle width="15%"></TableList>
-					</S.TableTitleBox>
-					<S.TableContentContainer>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-						<S.TableContentBox>
-							<TableList width="15%">조정택</TableList>
-							<TableList width="15%">1997.07.08</TableList>
-							<TableList width="30%">수학,영어,일본어</TableList>
-							<TableList width="10%">O</TableList>
-							<TableList width="15%">2024.06.01</TableList>
-							<TableList width="15%">
-								<PrimaryButton text="영수증 발급" width="90%" textSize="10px" isFill />
-							</TableList>
-						</S.TableContentBox>
-					</S.TableContentContainer>
+					</TableTitleBox>
+					<TableContentContainer>
+						{storageDatas?.pages.map((page, index) => (
+							<React.Fragment key={index}>
+								{page.content.length > 0
+									? page.content.map((storage) => (
+											<TableContentBox key={storage.order_id}>
+												<TableList width="15%">{storage.student_name}</TableList>
+												<TableList width="15%">1997.07.08</TableList>
+												<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
+												<TableList width="10%">O</TableList>
+												<TableList width="15%">{formatDate(storage.due_date)}</TableList>
+												<TableList width="15%">
+													<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
+												</TableList>
+											</TableContentBox>
+										))
+									: '수납 내역이 존재하지 않습니다.'}
+							</React.Fragment>
+						))}
+						{isFetching && <div>Loading...</div>}
+						<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
+					</TableContentContainer>
 				</S.StorageTable>
 			</S.StorageContainer>
 		</Container>

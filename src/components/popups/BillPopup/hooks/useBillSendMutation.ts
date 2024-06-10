@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { BillType } from '../type';
 import { sendBill } from '../api';
 import usePopup from '../../../../hooks/usePopup';
+import { successAlert } from '../../../../utils/alert';
 
 export const useBillSendMutation = () => {
 	const { closePopup } = usePopup();
@@ -11,7 +12,7 @@ export const useBillSendMutation = () => {
 	};
 
 	const onSuccess = () => {
-		alert('청구서 발송 성공');
+		successAlert('청구서 발송 성공');
 		closePopup();
 	};
 

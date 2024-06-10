@@ -7,11 +7,15 @@ import { IoMdClose } from 'react-icons/io';
 import usePopup from '../../../hooks/usePopup';
 import useCustomForm from '../../../hooks/useCustomForm';
 import * as Yup from 'yup';
-import { Controller } from 'react-hook-form';
-import { useEffect } from 'react';
+import { Controller, SubmitErrorHandler } from 'react-hook-form';
 import { useBillSendMutation } from './hooks/useBillSendMutation';
+import { errorAlert } from '../../../utils/alert';
+import { useGetStudentsQuery } from './hooks/useGetStudentsQuery';
+import { ChangeEvent, useState } from 'react';
+import { StudentType } from './type';
 
 const billFormSchema = Yup.object().shape({
+	studentId: Yup.number().required(''),
 	studentName: Yup.string().required('원생을 검색 후 선택하세요.'),
 	grade: Yup.string().required(''),
 	tel: Yup.string().required(''),
@@ -22,10 +26,11 @@ const billFormSchema = Yup.object().shape({
 });
 
 interface FormValues {
+	studentId: number;
 	studentName: string;
 	grade: string;
 	tel: string;
-	subject: string;
+	subject: string | undefined;
 	tuition: string;
 	deadline: string;
 	message: string;
@@ -37,31 +42,54 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 ) => void | Promise<void>;
 
 const BillPopup = () => {
+	const [studentName, setStudentName] = useState('');
+
 	const { closePopup } = usePopup();
-	const { control, errors, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
+	const { control, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
 	const { mutate: sendBillMutate } = useBillSendMutation();
+	const { data: students } = useGetStudentsQuery(studentName);
+
+	const addDays = (date: Date, days: number): Date => {
+		const result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+	};
+
+	const today = new Date();
+	const dateAfter14Days = addDays(today, 14);
+
+	const handleChangeStudentName = (e: ChangeEvent<HTMLInputElement>) => {
+		setStudentName(e.target.value);
+	};
 
 	const handleSubmitBill: SubmitHandler<FormValues> = (data) => {
-		sendBillMutate(data);
+		const formData = {
+			studentId: data.studentId,
+			message: data.message,
+		};
+		console.log(formData);
+		sendBillMutate(formData);
 		reset();
 	};
 
-	const handleClickUserChoice = () => {
-		setValue('studentName', '조정택');
-		setValue('grade', '고등학교 3학년');
-		setValue('tel', '010-9774-3591');
-		setValue('subject', '수학, 과학');
-		setValue('tuition', '10,000,000');
-		setValue('deadline', '~2024.07.10');
+	const handleSubmitError: SubmitErrorHandler<FormValues> = (errors) => {
+		if (errors.studentName) {
+			errorAlert(errors.studentName.message);
+		} else if (errors.message) {
+			errorAlert(errors.message.message);
+		}
 	};
 
-	useEffect(() => {
-		if (errors.studentName) {
-			alert(errors.studentName.message);
-		} else if (errors.message) {
-			alert(errors.message.message);
-		}
-	}, [errors]);
+	const handleClickUserChoice = (student: StudentType) => () => {
+		console.log(student);
+		setValue('studentId', student.studentId);
+		setValue('studentName', student.studentName);
+		setValue('grade', student.grade);
+		setValue('tel', student.phoneNumber);
+		setValue('subject', student.lectureDetails || '수학');
+		setValue('tuition', '10,000,000');
+		setValue('deadline', String(dateAfter14Days));
+	};
 
 	return (
 		<S.Container>
@@ -71,93 +99,30 @@ const BillPopup = () => {
 					<IoMdClose size={30} />
 				</button>
 			</S.Title>
-			<S.BillForm onSubmit={handleSubmit(handleSubmitBill)}>
+			<S.BillForm onSubmit={handleSubmit(handleSubmitBill, handleSubmitError)}>
 				<S.UserSearchBox>
-					<TextInput placeholder="원생명을 입력해주세요." />
+					<TextInput placeholder="원생명을 입력해주세요." onChange={handleChangeStudentName} />
 					<S.SearchBtn type="button">
 						<IoSearchOutline size={30} />
 					</S.SearchBtn>
 				</S.UserSearchBox>
 				<S.UserListBox>
 					<S.UserList>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
-						<li>
-							<S.UserInfo>
-								<span>조정택</span> / 1997.07.08 / 010-9774-3591
-							</S.UserInfo>
-							<PrimaryButton
-								type="button"
-								text="선택"
-								isFill
-								width="45px"
-								textSize="12px"
-								onClick={handleClickUserChoice}
-							/>
-						</li>
+						{students?.map((student) => (
+							<li key={student.studentId}>
+								<S.UserInfo>
+									<span>{student.studentName}</span> / {student.birthdate} / {student.phoneNumber}
+								</S.UserInfo>
+								<PrimaryButton
+									type="button"
+									text="선택"
+									isFill
+									width="45px"
+									textSize="12px"
+									onClick={handleClickUserChoice(student)}
+								/>
+							</li>
+						))}
 					</S.UserList>
 				</S.UserListBox>
 				<S.UserInfoContainer>

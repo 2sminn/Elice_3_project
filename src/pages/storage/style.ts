@@ -7,7 +7,7 @@ export const StorageContainer = styled.div`
 
 export const TabBox = styled.ul`
 	width: 100%;
-	border-bottom: 2px solid #fff;
+	border-bottom: ${({ theme }) => `2px solid ${theme.colors.primary}`};
 	display: flex;
 	gap: 2px;
 `;
@@ -76,30 +76,6 @@ export const StorageTable = styled.div`
 	padding: 20px;
 	background-color: #fff;
 	border-radius: ${({ theme }) => theme.radius.small};
-`;
-
-export const TableTitleBox = styled.ul`
-	width: 100%;
-	display: flex;
-	text-align: center;
-	margin-bottom: 20px;
-`;
-
-export const TableContentContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-`;
-
-export const TableContentBox = styled.ul`
-	width: 100%;
-	display: flex;
-	align-items: center;
-	padding: 20px 0;
-	text-align: center;
-
-	&:not(:last-child) {
-		border-bottom: 1px solid #ddd;
-	}
 `;
 
 export const SelectTopBox = styled.div`
