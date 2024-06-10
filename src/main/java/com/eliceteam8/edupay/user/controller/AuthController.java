@@ -1,22 +1,16 @@
 package com.eliceteam8.edupay.user.controller;
 
-import com.eliceteam8.edupay.global.enums.ExceptionCode;
-import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.user.dto.PasswordTokenDTO;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
-import com.eliceteam8.edupay.user.entity.RefreshToken;
+import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
 import com.eliceteam8.edupay.user.service.AuthService;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Map;
 
 
@@ -32,10 +26,13 @@ public class AuthController {
 
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Map<String,Long>> signUp(@Valid @RequestBody SignUpDTO signUpDto ) {
-        log.info("signUpDto: {}", signUpDto);
+    public ResponseEntity<UserIdResponseDTO> signUp(@Valid @RequestBody SignUpDTO signUpDto ) {
         Long newUserId = authService.signUp(signUpDto);
-        return ResponseEntity.status(201).body(Map.of("userId", newUserId));
+        UserIdResponseDTO responseDTO = UserIdResponseDTO.builder()
+                .userId(newUserId)
+                .result("success")
+                .build();
+        return ResponseEntity.status(201).body(responseDTO);
     }
 
 

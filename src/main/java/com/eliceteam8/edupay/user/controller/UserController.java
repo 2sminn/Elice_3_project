@@ -2,6 +2,7 @@ package com.eliceteam8.edupay.user.controller;
 
 
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
+import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -24,8 +25,6 @@ public class UserController {
     private final UserService userService;
 
 
-
-
     @GetMapping
     public ResponseEntity<UpdateUserDTO> getUser(Principal principal){
         String email = principal.getName();
@@ -36,9 +35,13 @@ public class UserController {
     
     //유저정보 수정
     @PutMapping
-    public ResponseEntity<Map<String,Object>> updateUser(@RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<UserIdResponseDTO> updateUser(@RequestBody UpdateUserDTO updateUserDTO) {
         Long updatedUserId = userService.updateUserAndAcademy(updateUserDTO);
-        return ResponseEntity.ok(Map.of("userId", updatedUserId,"result","success"));
+        UserIdResponseDTO responseDTO = UserIdResponseDTO.builder()
+                .userId(updatedUserId)
+                .result("success")
+                .build();
+        return ResponseEntity.ok(responseDTO);
     }
 
     //비밀번호변경
