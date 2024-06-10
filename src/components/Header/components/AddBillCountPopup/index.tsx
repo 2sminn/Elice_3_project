@@ -84,7 +84,7 @@ const AddBillCountPopup = () => {
 					console.log(rsp);
 					const data = {
 						user_id: String(userInfo?.userId),
-						point: String(rsp.paid_amount),
+						point: String(eduData?.edu),
 						imp_uid: rsp.imp_uid,
 					};
 

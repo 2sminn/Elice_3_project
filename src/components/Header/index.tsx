@@ -14,7 +14,6 @@ import { useGetUserQuery } from './hooks/useGetUserQuery';
 
 const Header = () => {
 	const { data: userInfo } = useGetUserQuery();
-	console.log(userInfo);
 
 	const { openPopup } = usePopup();
 	const { clearTokens } = useTokenStore();
@@ -42,7 +41,7 @@ const Header = () => {
 					<S.PointContainer>
 						<p>잔여수량</p>
 						<p>
-							<span>1,000</span> 건
+							<span>{userInfo?.point}</span> 건
 						</p>
 					</S.PointContainer>
 					<PrimaryButton text="충전하기" isFill onClick={() => openPopup(<AddBillCountPopup />)} />

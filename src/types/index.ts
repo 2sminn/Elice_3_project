@@ -10,4 +10,5 @@ export interface UserType {
 	address: string;
 	addressDetail: string;
 	landlineNumber: string;
+	point: number;
 }
