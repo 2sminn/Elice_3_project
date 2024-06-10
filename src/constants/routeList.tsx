@@ -4,6 +4,7 @@ import Login from '../pages/login';
 import Signup from '../pages/signup';
 import StoragePage from '../pages/storage';
 import StudentMgrPage from '../pages/studentMgrPage';
+import LectureMgrPage from '../pages/lectureMgrPage';
 import Mypage from '../pages/mypage';
 
 interface Route {
@@ -45,7 +46,7 @@ export const LayoutRouteList: { [key: string]: Route } = {
 		title: '강의관리',
 		path: '/lecture',
 		link: '/lecture',
-		element: <StoragePage />,
+		element: <LectureMgrPage />,
 		menu: true,
 	},
 	MYPAGE: {
