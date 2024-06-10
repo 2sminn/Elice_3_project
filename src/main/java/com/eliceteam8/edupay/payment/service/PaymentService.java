@@ -41,20 +41,15 @@ public class PaymentService {
         return paymentInfoDTO;
     }
 
-    public void validatePayment(CallbackRequestDTO request) {
+    public void validatePayment(CallbackRequestDTO request) throws IamportResponseException, IOException {
         savePaymentHistory(request.getImpUid(), request.getBillId());
 
-        try {
-            IamportResponse<Payment> iamportResponse = getIamportResponse(request);
-            Bill bill = billRepository.findById(request.getBillId()).orElseThrow(NoSuchElementException::new);
-            validatePaymentStatusAndPay(iamportResponse, bill);
+        IamportResponse<Payment> iamportResponse = getIamportResponse(request);
+        Bill bill = billRepository.findById(request.getBillId()).orElseThrow(NoSuchElementException::new);
+        validatePaymentStatusAndPay(iamportResponse, bill);
 
-            if (!Status.PAID.equals(bill.getStatus())) {
-                bill.setStatusToPaid();
-            }
-
-        } catch (IamportResponseException | IOException e) {
-            throw new RuntimeException(e);
+        if (!Status.PAID.equals(bill.getStatus())) {
+            bill.setStatusToPaid();
         }
     }
 
@@ -64,7 +59,7 @@ public class PaymentService {
         return iamportResponse;
     }
 
-    private void validatePaymentStatusAndPay(IamportResponse<Payment> iamportResponse, Bill bill) throws IamportResponseException, IOException {
+    private void validatePaymentStatusAndPay(IamportResponse<Payment> iamportResponse, Bill bill) {
         if (!iamportResponse.getResponse().getStatus().equals("paid")) {
             throw new RuntimeException("결제 미완료");
         }

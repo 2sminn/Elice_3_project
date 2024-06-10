@@ -65,7 +65,7 @@ public class Academy {
     private List<Bill> bill = new ArrayList<>();
 
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AcademyStudent> students;
+    private List<AcademyStudent> academyStudents;
 
     @OneToMany(mappedBy = "academy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference

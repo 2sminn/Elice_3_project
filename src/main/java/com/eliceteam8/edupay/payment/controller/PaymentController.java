@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
 import com.eliceteam8.edupay.payment.service.PaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -27,7 +30,7 @@ public class PaymentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Void> validationPayment(@RequestBody CallbackRequestDTO request) throws JsonProcessingException {
+    public ResponseEntity<Void> validationPayment(@RequestBody CallbackRequestDTO request) throws IOException, IamportResponseException {
         paymentService.validatePayment(request);
 
         return new ResponseEntity(HttpStatus.OK);

@@ -1,15 +1,23 @@
 package com.eliceteam8.edupay.academy_management.controller;
 
+import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.entity.Lecture;
+import com.eliceteam8.edupay.academy_management.entity.LectureSchedule;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateLectureRequestDTO;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.SearchLectureDTO;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.UpdateLectureRequestDTO;
 import com.eliceteam8.edupay.academy_management.response.LectureDTO;
 import com.eliceteam8.edupay.academy_management.service.LectureService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/lectures")
@@ -17,9 +25,15 @@ public class LectureController {
     @Autowired
     private LectureService lectureService;
 
-    @PostMapping("")
+    /*@PostMapping("")
     public Lecture createLecture(@Valid @RequestBody CreateLectureRequestDTO lectureDTO) {
         return lectureService.createLecture(lectureDTO);
+    }*/
+
+    @PostMapping("")
+    public ResponseEntity<Lecture> createLecture(@Valid @RequestBody CreateLectureRequestDTO lectureDTO) {
+        Lecture lecture = lectureService.createLecture(lectureDTO);
+        return ResponseEntity.ok(lecture);
     }
 
     @GetMapping
@@ -35,8 +49,9 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<Lecture> updateLecture(@PathVariable("lectureId") Long id, @Valid @RequestBody LectureDTO lectureDTO) {
-        Lecture updatedLecture = lectureService.updateLecture(id, lectureDTO);
+    public ResponseEntity<Lecture> updateLecture(@PathVariable("lectureId") Long id, @Valid @RequestBody UpdateLectureRequestDTO updateLectureRequestDTO) {
+        //UpdateLectureRequestDTO UpdateLectureRequestDTO;
+        Lecture updatedLecture = lectureService.updateLecture(id, updateLectureRequestDTO);
         return ResponseEntity.ok(updatedLecture);
     }
 
@@ -50,6 +65,12 @@ public class LectureController {
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<Lecture>> getLecturesByStudentId(@PathVariable("studentId") Long studentId) {
         List<Lecture> lectures = lectureService.getLecturesByStudentId(studentId);
+        return ResponseEntity.ok(lectures);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<Lecture>> searchLectures(@Valid @RequestBody SearchLectureDTO criteria) {
+        List<Lecture> lectures = lectureService.searchLectures(criteria);
         return ResponseEntity.ok(lectures);
     }
 
