@@ -2,6 +2,7 @@ package com.eliceteam8.edupay.bill.domain;
 
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.get_cost.entity.StudentPaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -50,12 +53,15 @@ public class Bill {
     @JoinColumn(name = "academy_id")
     private Academy academy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private AcademyStudent student;
 
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
     private BillLog billLog;
+
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentPaymentStatus> paymentStatuses = new ArrayList<>();
 
     // 청구서가 발행되었을 때 청구서 상태를 'COMPLETED'로 바꾸는 메서드
     public void setStatusToCompleted() {

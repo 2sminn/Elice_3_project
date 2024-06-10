@@ -10,7 +10,11 @@ import com.eliceteam8.edupay.academy_management.lecture.dto.request.SearchStuden
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.UpdateStudentRequestDTO;
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
+import com.eliceteam8.edupay.academy_management.repository.LectureRepository;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
+import com.eliceteam8.edupay.bill.domain.Bill;
+import com.eliceteam8.edupay.bill.repository.BillRepository;
+import com.eliceteam8.edupay.get_cost.repository.StudentPaymentStatusRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,6 +134,34 @@ public class AcademyStudentService {
         AcademyStudent academyStudent = academyStudentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 학생의 아이디를 찾을 수 없습니다: " + studentId));
         academyStudentRepository.delete(academyStudent);
+    }
+
+    @Autowired
+    private StudentPaymentStatusRepository studentPaymentStatusRepository;
+
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private LectureRepository lectureRepository;
+
+    @Transactional
+    public void deleteStudentWithDependencies(Long studentId) {
+        // 연관된 bill 및 student_payment_status 삭제
+        List<Bill> bills = billRepository.findByStudentId(studentId);
+        for (Bill bill : bills) {
+            studentPaymentStatusRepository.deleteByBillId(bill.getId());
+            billRepository.delete(bill);
+        }
+
+        // 연관된 lecture 삭제
+        List<Lecture> lectures = lectureRepository.findByAcademyStudentId(studentId);
+        for (Lecture lecture : lectures) {
+            lectureRepository.delete(lecture);
+        }
+
+        // 원생 삭제
+        academyStudentRepository.deleteById(studentId);
     }
 
 

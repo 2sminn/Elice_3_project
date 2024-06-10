@@ -46,7 +46,7 @@ public class Lecture {
     @JsonBackReference
     private Academy academy;
 
-    @ManyToMany(mappedBy = "lectures")
+    @ManyToMany(mappedBy = "lectures", cascade = CascadeType.ALL)
     //@JoinColumn(name = "student_id")
     @JsonBackReference
     private List<AcademyStudent> academyStudent;
