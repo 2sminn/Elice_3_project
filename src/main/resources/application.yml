@@ -24,10 +24,13 @@ spring:
         format_sql: true
 
 
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    cache:
+      type: redis
+
 
   mail:
     host: smtp.gmail.com
