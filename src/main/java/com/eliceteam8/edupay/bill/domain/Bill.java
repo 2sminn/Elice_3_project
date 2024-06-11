@@ -60,7 +60,7 @@ public class Bill {
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
     private BillLog billLog;
 
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "bill")
     private List<StudentPaymentStatus> paymentStatuses = new ArrayList<>();
 
     // 청구서가 발행되었을 때 청구서 상태를 'COMPLETED'로 바꾸는 메서드

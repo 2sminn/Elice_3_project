@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.user.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;

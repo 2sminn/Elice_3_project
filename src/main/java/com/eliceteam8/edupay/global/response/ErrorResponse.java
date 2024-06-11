@@ -54,6 +54,10 @@ public class ErrorResponse {
         return new ErrorResponse(code,messageDetail);
     }
 
+    public ErrorResponse(String message) {
+        this.message = message;
+    }
+
 
 
 }

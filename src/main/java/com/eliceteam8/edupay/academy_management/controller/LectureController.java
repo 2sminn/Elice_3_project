@@ -11,6 +11,8 @@ import com.eliceteam8.edupay.academy_management.service.LectureService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -37,8 +39,12 @@ public class LectureController {
     }
 
     @GetMapping
-    public List<Lecture> getAllLectures() {
-        return lectureService.getAllLectures();
+    public ResponseEntity<List<LectureDTO>> getAllLectures(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<LectureDTO> lectures = lectureService.getAllLectures(pageable);
+        return ResponseEntity.ok(lectures);
     }
 
     @GetMapping("/{lectureId}")

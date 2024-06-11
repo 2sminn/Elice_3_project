@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "academy_student")
+@Where(clause = "is_deleted = false")
 public class AcademyStudent {
 
     @Id
@@ -51,7 +53,7 @@ public class AcademyStudent {
     private LocalDateTime updatedAt;
 
     //@OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "lecture_student",
             joinColumns = @JoinColumn(name = "student_id"),
@@ -60,12 +62,18 @@ public class AcademyStudent {
     //@JsonBackReference
     private List<Lecture> lectures;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id", nullable = false)
     @JsonBackReference
     private Academy academy;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student")
     @JsonBackReference // stack overflow
     private List<Bill> bills = new ArrayList<>();
+
 }
+
+

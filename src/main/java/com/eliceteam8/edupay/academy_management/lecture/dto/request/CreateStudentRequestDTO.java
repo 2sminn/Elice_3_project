@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,9 +33,10 @@ public class CreateStudentRequestDTO {
     @Email(message = "유효한 이메일 주소를 입력해주세요.")
     private String email;
 
-    @NotNull(message = "강의 ID를 입력해주세요.")
+    //@NotNull(message = "강의 ID를 입력해주세요.")
     private List<Long> lectureIds;
 
-    //private Academy Academy;
+    private Long academyId;
+    private String academyName;
 
 }

@@ -29,7 +29,7 @@ public class UpdateStudentRequestDTO {
     @NotNull(message = "이메일을 입력해주세요.")
     private String email;
 
-    @NotNull(message = "강의 ID를 입력해주세요.")
+    //@NotNull(message = "강의 ID를 입력해주세요.")
     private List<Long> lectureIds = new ArrayList<>();
 
 }

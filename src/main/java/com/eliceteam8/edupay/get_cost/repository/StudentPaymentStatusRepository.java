@@ -18,5 +18,4 @@ public interface StudentPaymentStatusRepository extends JpaRepository<StudentPay
     Page<StudentPaymentStatus> findByBill_StatusAndUpdatedAtBetweenAndStudent_StudentName(Status status, LocalDateTime startDate, LocalDateTime endDate, String studentName, Pageable pageable);
     Page<StudentPaymentStatus> findByBill_StatusAndUpdatedAtBetweenAndStudent_PhoneNumber(Status status, LocalDateTime startDate, LocalDateTime endDate, String phoneNumber, Pageable pageable);
 
-    void deleteByBillId(Long billId);
 }
