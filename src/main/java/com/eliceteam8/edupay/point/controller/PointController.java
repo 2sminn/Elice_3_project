@@ -33,7 +33,7 @@ public class PointController {
 
     @GetMapping("/recharge/log")
     public Page<PointRechargeLog> getUserPointRechargeLog(@RequestHeader("Authorization") String token) {
-        Pageable pageable = PageRequest.of(1, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         return pointService.getPointRechargeLog(userService.getUserIdByToken(token), pageable);
     }
@@ -47,7 +47,7 @@ public class PointController {
 
     @GetMapping("/use/log")
     public Page<PointUseLog> getUserPointUseLog(@RequestHeader("Authorization") String token) {
-        Pageable pageable = PageRequest.of(1, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         return pointService.getPointUseLog(userService.getUserIdByToken(token), pageable);
     }
