@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -30,7 +33,12 @@ public class UserService {
     private final EmailSendService emailService;
     private final RedisTemplate<String, String> redisTemplate;
 
+    public static final int MAX_ATTEMPT = 5;
+    public static final int BLOCK_TIME = 10 * 60;
 
+    public static final String ATTEMPT_KEY = "pw_attempt_";
+    public static final String BLOCK_KEY = "pw_block_";
+    public static final String USER_KEY = "pw_";
 
     //업데이트할 유저 정보 가져오기
     public UpdateUserDTO getUserById(Long userId) {
@@ -74,20 +82,48 @@ public class UserService {
     public boolean sendPasswordResetEmail(String email,String username) {
         User user = userRepository.findUserByEmailAndUsername(email,username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
-        user.generateToken();
 
-        boolean result = passwordTokenSave(user.getId().toString(), user.getPasswordToken());
+        String userId = user.getId().toString();
+        String attemptsKey = ATTEMPT_KEY + userId;
+        String blockKey = BLOCK_KEY + userId;
 
-        sendEmail(email,user.getPasswordToken());
+        //블록된 유저인지 확인
+        if(redisTemplate.hasKey(blockKey)){
+            throw new IllegalStateException("비밀번호 찾기 시도 횟수 초과로 30분간 이용이 제한됩니다.");
+        }
+
+
+        //몇번째 시도인지 확인
+        String attemptsCountStr = redisTemplate.opsForValue().get(attemptsKey);
+        int attemptsCount = attemptsCountStr != null ? Integer.parseInt(attemptsCountStr) : 0;
+
+        //시도횟수 초과시 30분간 이용 제한
+        if(attemptsCount >= MAX_ATTEMPT){
+            redisTemplate.opsForValue().set(blockKey,
+                    String.valueOf(Instant.now().getEpochSecond() + BLOCK_TIME), BLOCK_TIME, TimeUnit.SECONDS);
+            redisTemplate.delete(attemptsKey);
+
+            throw new IllegalStateException("비밀번호 찾기 시도 횟수 초과로 30분간 이용이 제한됩니다.");
+
+        }
+
+        redisTemplate.opsForValue().increment(attemptsKey);
+        redisTemplate.expire(attemptsKey, BLOCK_TIME, TimeUnit.SECONDS);
+
+        String token = UUID.randomUUID().toString().substring(0, 5);
+        boolean result = passwordTokenSave(userId, token);
+
+        sendEmail(email,token);
         return result;
     }
 
     private boolean passwordTokenSave(String userId, String token){
+        String userKey = USER_KEY + userId;
         try {
             if(redisTemplate.hasKey(userId)){
                 return true;
             }
-             redisTemplate.opsForValue().setIfAbsent(userId,
+             redisTemplate.opsForValue().setIfAbsent(userKey,
                     token,
                     Duration.ofMinutes(5));
             return true;
@@ -121,19 +157,18 @@ public class UserService {
     public boolean checkPasswordResetEmail(String token, String email) {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
-        if(user.isTokenExpired()){
+
+        String userId = USER_KEY+ user.getId().toString();
+        String savedToken = redisTemplate.opsForValue().get(userId);
+        if(savedToken == null){
             throw new IllegalStateException("인증번호가 만료되었습니다.");
         }
-        if(!user.getPasswordToken().equals(token)){
+        if(!savedToken.equals(token)){
             throw new IllegalStateException("인증번호가 일치하지 않습니다.");
         }
-        String userId = user.getId().toString();
-        if(redisTemplate.hasKey(userId)) {
-            redisTemplate.delete(userId);
-            return true;
-        }
 
-        return false;
+        redisTemplate.delete(userId);
+        return true;
     }
 
 
