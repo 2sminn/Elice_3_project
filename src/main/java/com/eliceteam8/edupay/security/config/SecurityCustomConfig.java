@@ -58,7 +58,7 @@ public class SecurityCustomConfig {
                 );
 
 
-        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
       //  http.addFilterAfter(new JWTAuthHandlerFilter(), JWTCheckFilter.class);
 
         http.exceptionHandling(config->{
