@@ -21,7 +21,8 @@ import useStudentStore from '../../stores/useStudentStore';
 import { StudentType } from './api';
 
 const StudentMgrPage = () => {
-	const { students, fetchStudents, fetchStudent, deleteStudent, updateStudent, searchStudents } = useStudentStore();
+	const { students, fetchStudents, fetchStudent, deleteStudent, updateStudent, searchStudents, filterStudents } =
+		useStudentStore();
 	const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filters, setFilters] = useState<Partial<StudentType>>({
@@ -56,7 +57,7 @@ const StudentMgrPage = () => {
 
 	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// 필터링 로직 추가
+		filterStudents(filters);
 	};
 
 	const handleDeleteClick = async () => {

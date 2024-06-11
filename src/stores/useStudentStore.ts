@@ -19,6 +19,7 @@ interface StudentStore {
 	updateStudent: (id: string, student: Partial<StudentType>) => Promise<void>;
 	deleteStudent: (id: string) => Promise<void>;
 	searchStudents: (term: string) => void;
+	filterStudents: (filters: Partial<StudentType>) => void;
 }
 
 const useStudentStore = create<StudentStore>((set) => ({
@@ -102,6 +103,17 @@ const useStudentStore = create<StudentStore>((set) => ({
 	searchStudents: (term: string) => {
 		set((state) => ({
 			students: state.students.filter((student) => student.studentName?.toLowerCase().includes(term.toLowerCase())),
+		}));
+	},
+
+	filterStudents: (filters: Partial<StudentType>) => {
+		set((state) => ({
+			students: state.students.filter((student) => {
+				return Object.entries(filters).every(([key, value]) => {
+					if (!value) return true;
+					return student[key as keyof StudentType]?.toString().toLowerCase().includes(value.toString().toLowerCase());
+				});
+			}),
 		}));
 	},
 }));
