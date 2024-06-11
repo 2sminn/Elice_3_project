@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.point.dto.PointLogDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.service.PointService;
+import com.eliceteam8.edupay.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,16 @@ import java.util.List;
 @RequestMapping("/point")
 public class PointController {
     private final PointService pointService;
+    private final UserService userService;
 
-    @GetMapping("/{userId}")
-    public Long getUserPoint(@PathVariable(name = "userId", required = false) Long userId) {
-        return pointService.getPoint(userId);
+    @GetMapping("/balance")
+    public Long getUserPoint(@RequestHeader("Authorization") String token) {
+        return pointService.getPoint(userService.getUserIdByToken(token));
     }
 
-    @GetMapping("/recharge/{userId}")
-    public List<PointRechargeLog> getUserPointRechargeLog(@PathVariable(name = "userId", required = false) Long userId) {
-        return pointService.getPointRechargeLog(userId);
+    @GetMapping("/recharge/log")
+    public List<PointRechargeLog> getUserPointRechargeLog(@RequestHeader("Authorization") String token) {
+        return pointService.getPointRechargeLog(userService.getUserIdByToken(token));
     }
 
     @PostMapping("/recharge")
@@ -39,9 +41,9 @@ public class PointController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/use/{userId}")
-    public List<PointUseLog> getUserPointUseLog(@PathVariable(name = "userId", required = false) Long userId) {
-        return pointService.getPointUseLog(userId);
+    @GetMapping("/use/log")
+    public List<PointUseLog> getUserPointUseLog(@RequestHeader("Authorization") String token) {
+        return pointService.getPointUseLog(userService.getUserIdByToken(token));
     }
 
     @PostMapping("/use")
