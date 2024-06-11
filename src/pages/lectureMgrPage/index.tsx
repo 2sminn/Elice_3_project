@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// pages/lectureMgrPage/LectureMgrPage.tsx
+import React, { useEffect, useState } from 'react';
 import {
 	Container,
 	Title,
@@ -14,64 +15,63 @@ import {
 	Th,
 	Td,
 } from './style';
-
-const lecturesData = [
-	{
-		name: '국어',
-		teacher: '선생님1',
-		fee: '200,000원',
-		status: '종강',
-		selected: false,
-	},
-	{
-		name: '수학',
-		teacher: '선생님2',
-		fee: '150,000원',
-		status: '수강',
-		selected: false,
-	},
-];
+import useLectureStore from '../../stores/useLectureStore';
+import { LectureType } from './api';
+import usePopup from '../../hooks/usePopup';
+import LectureRegistrationPopup from './components/Registration';
+import LectureDetailPopup from './components/Detail'; // 강의 상세 팝업 컴포넌트 추가
 
 const LectureMgrPage = () => {
-	const [searchTerm, setSearchTerm] = useState('');
-	const [searchField, setSearchField] = useState('name');
-	const [selectAll, setSelectAll] = useState(false);
-	const [lectures, setLectures] = useState(lecturesData);
+	const { lectures, filteredLectures, fetchLectures, deleteLecture, searchLectures, selectLecture, fetchLecture } =
+		useLectureStore();
+	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [searchField, setSearchField] = useState<keyof LectureType>('lectureName');
+	const [selectAll, setSelectAll] = useState<boolean>(false);
+	const { openPopup, closePopup } = usePopup();
 
-	const handleSearchChange = (e) => setSearchTerm(e.target.value);
+	useEffect(() => {
+		fetchLectures();
+	}, [fetchLectures]);
 
-	const handleSearchFieldChange = (e) => setSearchField(e.target.value);
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-	const filterLectures = (lectures, searchTerm, searchField) => {
-		return lectures.filter((lecture) => lecture[searchField].includes(searchTerm));
-	};
+	const handleSearchFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+		setSearchField(e.target.value as keyof LectureType);
 
-	const handleSearchSubmit = (e) => {
+	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setLectures(filterLectures(lecturesData, searchTerm, searchField));
+		searchLectures(searchTerm, searchField);
 	};
 
-	const handleDeleteClick = () => console.log('Delete Clicked');
-	const handleAddNewClick = () => console.log('Add New Lecture Clicked');
+	const handleDeleteClick = async () => {
+		const selectedLectures = lectures.filter((lecture) => lecture.selected);
+		if (selectedLectures.length === 0) {
+			alert('삭제할 강의를 선택하세요.');
+			return;
+		}
+		await Promise.all(selectedLectures.map((lecture) => deleteLecture(lecture.id)));
+		alert('선택된 강의가 삭제되었습니다.');
+	};
 
-	const handleSelectAllChange = (e) => {
+	const handleAddNewClick = () => {
+		openPopup(<LectureRegistrationPopup onClose={closePopup} onSuccess={fetchLectures} />);
+	};
+
+	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		setLectures((prevLectures) => prevLectures.map((lecture) => ({ ...lecture, selected: checked })));
+		lectures.forEach((lecture) => selectLecture(lecture.id));
 	};
 
-	const handleSelectChange = (index) => (e) => {
-		const { checked } = e.target;
-		setLectures((prevLectures) => {
-			const newLectures = [...prevLectures];
-			newLectures[index].selected = checked;
-			if (!checked) {
-				setSelectAll(false);
-			} else if (newLectures.every((lecture) => lecture.selected)) {
-				setSelectAll(true);
-			}
-			return newLectures;
-		});
+	const handleSelectChange = (lectureId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+		selectLecture(lectureId);
+	};
+
+	const handleLectureNameClick = async (lectureId: number) => {
+		const lecture = await fetchLecture(lectureId);
+		if (lecture) {
+			openPopup(<LectureDetailPopup lecture={lecture} onClose={closePopup} />);
+		}
 	};
 
 	return (
@@ -83,9 +83,9 @@ const LectureMgrPage = () => {
 				<SearchForm onSubmit={handleSearchSubmit}>
 					<InputGroup>
 						<Select value={searchField} onChange={handleSearchFieldChange}>
-							<option value="name">강의명</option>
-							<option value="status">반상태</option>
-							<option value="teacher">담임명</option>
+							<option value="lectureName">강의명</option>
+							<option value="lectureStatus">반상태</option>
+							<option value="teacherName">담임명</option>
 						</Select>
 						<Input placeholder="검색어 입력" value={searchTerm} onChange={handleSearchChange} />
 						<Button type="submit">검색</Button>
@@ -99,16 +99,31 @@ const LectureMgrPage = () => {
 			</ButtonGroup>
 
 			<LectureTable
-				lectures={lectures}
+				lectures={filteredLectures}
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}
+				onLectureNameClick={handleLectureNameClick}
 			/>
 		</Container>
 	);
 };
 
-const LectureTable = ({ lectures, selectAll, onSelectAllChange, onSelectChange }) => {
+interface LectureTableProps {
+	lectures: LectureType[];
+	selectAll: boolean;
+	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onSelectChange: (lectureId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onLectureNameClick: (lectureId: number) => void;
+}
+
+const LectureTable: React.FC<LectureTableProps> = ({
+	lectures,
+	selectAll,
+	onSelectAllChange,
+	onSelectChange,
+	onLectureNameClick,
+}) => {
 	return (
 		<Table>
 			<thead>
@@ -123,15 +138,17 @@ const LectureTable = ({ lectures, selectAll, onSelectAllChange, onSelectChange }
 				</tr>
 			</thead>
 			<tbody>
-				{lectures.map((lecture, index) => (
-					<tr key={index}>
+				{lectures.map((lecture) => (
+					<tr key={lecture.id}>
 						<Td>
-							<input type="checkbox" checked={lecture.selected} onChange={onSelectChange(index)} />
+							<input type="checkbox" checked={lecture.selected || false} onChange={onSelectChange(lecture.id)} />
 						</Td>
-						<Td>{lecture.name}</Td>
-						<Td>{lecture.teacher}</Td>
-						<Td>{lecture.fee}</Td>
-						<Td>{lecture.status}</Td>
+						<Td onClick={() => onLectureNameClick(lecture.id)} style={{ cursor: 'pointer', color: '#007bff' }}>
+							{lecture.lectureName}
+						</Td>
+						<Td>{lecture.teacherName}</Td>
+						<Td>{lecture.price.toLocaleString()}원</Td>
+						<Td>{lecture.lectureStatus}</Td>
 					</tr>
 				))}
 			</tbody>
