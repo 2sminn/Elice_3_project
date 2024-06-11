@@ -7,6 +7,8 @@ import com.eliceteam8.edupay.bill.dto.response.BillLogResponse;
 import com.eliceteam8.edupay.bill.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class BillController {
 
     // 청구서 발송 내역 확인 API
     @GetMapping("/logs")
-    public List<BillLogResponse> getBillLogs() {
-        return billService.getBillLogs();
+    public Page<BillLogResponse> getBillLogs(Pageable pageable) {
+        return billService.getBillLogs(pageable);
     }
 }
