@@ -9,4 +9,5 @@ public class SearchStudentDTO {
     private String studentName;
     private String phoneNumber;
     private String email;
+    private String schoolName;
 }

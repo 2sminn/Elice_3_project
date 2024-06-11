@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.global.advice;
 
+import com.eliceteam8.edupay.academy_management.exception.ResourceNotFoundException;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.*;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
@@ -123,8 +124,8 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(DuplicateStudentException.class)
-    public ResponseEntity<ApiError> handleDuplicateStudentException(DuplicateStudentException ex) {
-        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    public ResponseEntity<ApiError> handleDuplicateStudentException(DuplicateStudentException e) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -142,5 +143,12 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
 
 }

@@ -8,7 +8,11 @@ import com.eliceteam8.edupay.academy_management.repository.LectureRepository;
 import com.eliceteam8.edupay.academy_management.repository.LectureScheduleRepository;
 import com.eliceteam8.edupay.academy_management.response.LectureDTO;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,7 @@ public class LectureService {
         return lectureRepository.save(lecture);
     }
 
+
     //학생이 수강중인 강의 조회
     @Autowired
     private LectureRepository lectureRepository;
@@ -46,9 +51,9 @@ public class LectureService {
     public Lecture createLecture(CreateLectureRequestDTO lectureDTO) {
 
         //Academy academy = academyRepository.findById(lectureDTO.getAcademyId())
-             //  .orElseThrow(() -> new RuntimeException("학원을 찾을 수 없습니다."));
+        //  .orElseThrow(() -> new RuntimeException("학원을 찾을 수 없습니다."));
 
-                // Lecture 엔티티 생성 및 DTO 값 설정
+        // Lecture 엔티티 생성 및 DTO 값 설정
         Lecture lecture = new Lecture();
         lecture.setLectureName(lectureDTO.getLectureName());
         lecture.setPrice(lectureDTO.getPrice());
@@ -75,8 +80,14 @@ public class LectureService {
     }
 
 
-    public List<Lecture> getAllLectures() {
-        return lectureRepository.findAll();
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public List<LectureDTO> getAllLectures(Pageable pageable) {
+        Page<Lecture> lecturesPage = lectureRepository.findAll(pageable);
+        return lecturesPage.stream()
+                .map(lecture -> modelMapper.map(lecture, LectureDTO.class))
+                .collect(Collectors.toList());
     }
 
     public Optional<Lecture> getLectureById(Long lectureId) {
@@ -129,14 +140,18 @@ public class LectureService {
         lectureRepository.delete(lecture);
     }
 
+
     public List<Lecture> searchLectures(SearchLectureDTO criteria) {
         return lectureRepository.searchLectures(
                 criteria.getLectureName(),
-                criteria.getTeacherName()
+                criteria.getTeacherName(),
+                criteria.getLectureStatus()
         );
 
     }
 }
+
+
 
 
 

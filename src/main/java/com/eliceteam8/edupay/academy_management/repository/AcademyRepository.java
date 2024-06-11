@@ -27,6 +27,6 @@ public interface AcademyRepository extends JpaRepository<Academy,Long> {
             " WHERE a.id = :academyId AND b.status = 'PAID' ")
     Long sumPaidBill(@Param("academyId") Long academyId);
 
-    Optional<Academy> findById(Long academyId);
+    Optional<Academy> findById(Long id);
 
 }
