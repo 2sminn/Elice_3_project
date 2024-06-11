@@ -14,12 +14,13 @@ interface StudentStore {
 	loading: boolean;
 	error: string | null;
 	fetchStudents: () => Promise<void>;
-	fetchStudent: (id: string) => Promise<StudentType | null>;
-	createStudent: (student: Omit<StudentType, 'id' | 'paymentInfo'>) => Promise<void>;
-	updateStudent: (id: string, student: Partial<StudentType>) => Promise<void>;
-	deleteStudent: (id: string) => Promise<void>;
+	fetchStudent: (studentId: string) => Promise<StudentType | null>;
+	createStudent: (student: Omit<StudentType, 'studentId' | 'paymentInfo'>) => Promise<void>;
+	updateStudent: (studentId: string, student: Partial<StudentType>) => Promise<void>;
+	deleteStudent: (studentId: string) => Promise<void>;
 	searchStudents: (term: string) => void;
 	filterStudents: (filters: Partial<StudentType>) => void;
+	selectStudent: (studentId: string) => void;
 }
 
 const useStudentStore = create<StudentStore>((set) => ({
@@ -40,14 +41,14 @@ const useStudentStore = create<StudentStore>((set) => ({
 		}
 	},
 
-	fetchStudent: async (id: string) => {
-		if (!id) {
-			console.error('No ID provided for fetching student');
+	fetchStudent: async (studentId: string) => {
+		if (!studentId) {
+			console.error('No studentId provided for fetching student');
 			return null;
 		}
 		set({ loading: true, error: null });
 		try {
-			const student = await apiFetchStudent(id);
+			const student = await apiFetchStudent(studentId);
 			console.log('Fetched Student:', student);
 			set({ student, loading: false });
 			return student;
@@ -70,13 +71,13 @@ const useStudentStore = create<StudentStore>((set) => ({
 		}
 	},
 
-	updateStudent: async (id: string, student) => {
+	updateStudent: async (studentId: string, student) => {
 		set({ loading: true, error: null });
 		try {
-			const updatedStudent = await apiUpdateStudent(id, student);
+			const updatedStudent = await apiUpdateStudent(studentId, student);
 			console.log('Updated Student:', updatedStudent);
 			set((state) => ({
-				students: state.students.map((s) => (s.id === id ? updatedStudent : s)),
+				students: state.students.map((s) => (s.studentId === studentId ? updatedStudent : s)),
 				loading: false,
 			}));
 		} catch (error: any) {
@@ -85,13 +86,13 @@ const useStudentStore = create<StudentStore>((set) => ({
 		}
 	},
 
-	deleteStudent: async (id: string) => {
+	deleteStudent: async (studentId: string) => {
 		set({ loading: true, error: null });
 		try {
-			await apiDeleteStudent(id);
-			console.log('Deleted Student ID:', id);
+			await apiDeleteStudent(studentId);
+			console.log('Deleted Student ID:', studentId);
 			set((state) => ({
-				students: state.students.filter((s) => s.id !== id),
+				students: state.students.filter((s) => s.studentId !== studentId),
 				loading: false,
 			}));
 		} catch (error: any) {
@@ -113,6 +114,18 @@ const useStudentStore = create<StudentStore>((set) => ({
 					if (!value) return true;
 					return student[key as keyof StudentType]?.toString().toLowerCase().includes(value.toString().toLowerCase());
 				});
+			}),
+		}));
+	},
+
+	selectStudent: (studentId: string) => {
+		set((state) => ({
+			students: state.students.map((student) => {
+				if (student.studentId === studentId) {
+					return { ...student, selected: !student.selected };
+				} else {
+					return student;
+				}
 			}),
 		}));
 	},

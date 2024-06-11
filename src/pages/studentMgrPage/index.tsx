@@ -23,6 +23,7 @@ import { StudentType } from './api';
 const StudentMgrPage = () => {
 	const { students, fetchStudents, fetchStudent, deleteStudent, updateStudent, searchStudents, filterStudents } =
 		useStudentStore();
+	const onSelect = useStudentStore((store) => store.selectStudent);
 	const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filters, setFilters] = useState<Partial<StudentType>>({
@@ -66,7 +67,7 @@ const StudentMgrPage = () => {
 			alert('삭제할 원생을 선택하세요.');
 			return;
 		}
-		await Promise.all(selectedStudents.map((student) => deleteStudent(student.id)));
+		await Promise.all(selectedStudents.map((student) => deleteStudent(student.studentId)));
 		alert('선택된 원생이 삭제되었습니다.');
 	};
 
@@ -82,20 +83,19 @@ const StudentMgrPage = () => {
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		students.forEach((student) => updateStudent(student.id, { selected: checked }));
+		students.forEach((student) => updateStudent(student.studentId, { selected: checked }));
 	};
 
-	const handleSelectChange = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { checked } = e.target;
-		updateStudent(id, { selected: checked });
+	const handleSelectChange = (studentId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+		onSelect(studentId);
 	};
 
-	const handleStudentNameClick = async (id: string) => {
-		if (!id) {
-			console.error('No ID provided for student click handler');
+	const handleStudentNameClick = async (studentId: string) => {
+		if (!studentId) {
+			console.error('No studentId provided for student click handler');
 			return;
 		}
-		const student = await fetchStudent(id);
+		const student = await fetchStudent(studentId);
 		if (student) {
 			setSelectedStudent(student);
 			openPopup(<StudentDetailPopup student={student} onClose={closePopup} />);
@@ -178,8 +178,8 @@ interface StudentTableProps {
 	students: StudentType[];
 	selectAll: boolean;
 	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onSelectChange: (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onStudentNameClick: (id: string) => void;
+	onSelectChange: (studentId: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onStudentNameClick: (studentId: string) => void;
 }
 
 const StudentTable: React.FC<StudentTableProps> = ({
@@ -208,11 +208,11 @@ const StudentTable: React.FC<StudentTableProps> = ({
 			</thead>
 			<tbody>
 				{students.map((student) => (
-					<tr key={student.id}>
+					<tr key={student.studentId}>
 						<Td>
-							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(student.id)} />
+							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(student.studentId)} />
 						</Td>
-						<Td onClick={() => onStudentNameClick(student.id)} style={{ cursor: 'pointer', color: '#007bff' }}>
+						<Td onClick={() => onStudentNameClick(student.studentId)} style={{ cursor: 'pointer', color: '#007bff' }}>
 							{student.studentName}
 						</Td>
 						<Td>{student.schoolName}</Td>
