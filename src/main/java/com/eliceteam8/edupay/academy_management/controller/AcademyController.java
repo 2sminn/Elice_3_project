@@ -2,7 +2,9 @@ package com.eliceteam8.edupay.academy_management.controller;
 
 import com.eliceteam8.edupay.academy_management.dto.response.AcademyCountDTO;
 import com.eliceteam8.edupay.academy_management.service.AcademyService;
+import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
+import com.eliceteam8.edupay.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,12 @@ public class AcademyController {
 
 
     private final AcademyService academyService;
+    private final UserService userService;
     @GetMapping
-    public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount() {
-        UserDTO user = (UserDTO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AcademyCountDTO studentAndLectureCount = academyService.getStudentAndLectureCount(user.getAcademyId());
+    public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount(Principal principal){
+        String email = principal.getName();
+        UpdateUserDTO currentUser = userService.getUser(email);
+        AcademyCountDTO studentAndLectureCount = academyService.getStudentAndLectureCount(currentUser.getAcademyId());
         return ResponseEntity.ok(studentAndLectureCount);
     }
 }
