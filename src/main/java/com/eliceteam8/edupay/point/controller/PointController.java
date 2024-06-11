@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.point.dto.PointLogDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.service.PointService;
+import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,15 +29,18 @@ public class PointController {
     private final UserService userService;
 
     @GetMapping("/balance")
-    public Long getUserPoint(@RequestHeader("Authorization") String token) {
-        return pointService.getPoint(userService.getUserIdByToken(token));
+    public Long getUserPoint() {
+        UserDTO user = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return pointService.getPoint(user.getUserId());
     }
 
     @GetMapping("/recharge/log")
-    public Page<PointRechargeLog> getUserPointRechargeLog(@RequestHeader("Authorization") String token) {
+    public Page<PointRechargeLog> getUserPointRechargeLog() {
         Pageable pageable = PageRequest.of(0, 10);
+        UserDTO user = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return pointService.getPointRechargeLog(userService.getUserIdByToken(token), pageable);
+        return pointService.getPointRechargeLog(user.getUserId(), pageable);
     }
 
     @PostMapping("/recharge")
@@ -46,10 +51,11 @@ public class PointController {
     }
 
     @GetMapping("/use/log")
-    public Page<PointUseLog> getUserPointUseLog(@RequestHeader("Authorization") String token) {
+    public Page<PointUseLog> getUserPointUseLog() {
         Pageable pageable = PageRequest.of(0, 10);
+        UserDTO user = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return pointService.getPointUseLog(userService.getUserIdByToken(token), pageable);
+        return pointService.getPointUseLog(user.getUserId(), pageable);
     }
 
     @PostMapping("/use")
