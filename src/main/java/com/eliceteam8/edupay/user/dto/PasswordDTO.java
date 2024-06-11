@@ -15,4 +15,6 @@ public class PasswordDTO {
 
     @NotBlank(message = "비밀번호 확인을 입력해주세요.")
     private String confirmPassword;
+
+    private String email;
 }
