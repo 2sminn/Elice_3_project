@@ -101,7 +101,7 @@ const useStudentStore = create<StudentStore>((set) => ({
 
 	searchStudents: (term: string) => {
 		set((state) => ({
-			students: state.students.filter((student) => student.studentName.toLowerCase().includes(term.toLowerCase())),
+			students: state.students.filter((student) => student.studentName?.toLowerCase().includes(term.toLowerCase())),
 		}));
 	},
 }));
