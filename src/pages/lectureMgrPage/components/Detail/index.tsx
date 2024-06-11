@@ -14,7 +14,7 @@ import {
 	ScheduleInputGroup,
 	ScheduleRemoveButton,
 	PopupSelect,
-	ScheduleItem, // Import ScheduleItem
+	ScheduleItem,
 	PopupButton,
 } from './style';
 import useLectureStore from '../../../../stores/useLectureStore';
@@ -130,7 +130,10 @@ const LectureDetailPopup: React.FC<LectureDetailPopupProps> = ({ lecture, onClos
 					)}
 				</DetailItem>
 				{isEditing && (
-					<PopupButton type="button" onClick={() => append({ day: 'Monday', startTime: '', endTime: '' })}>
+					<PopupButton
+						type="button"
+						onClick={() => append({ id: Date.now(), day: 'Monday', startTime: '', endTime: '' })}
+					>
 						일정 추가
 					</PopupButton>
 				)}

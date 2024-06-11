@@ -63,7 +63,7 @@ const LectureMgrPage = () => {
 		lectures.forEach((lecture) => selectLecture(lecture.id));
 	};
 
-	const handleSelectChange = (lectureId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSelectChange = (lectureId: number) => () => {
 		selectLecture(lectureId);
 	};
 
