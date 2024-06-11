@@ -94,4 +94,8 @@ public class User {
     public boolean isTokenExpired() {
         return passwordTokenAt.plusMinutes(5).isBefore(LocalDateTime.now());
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

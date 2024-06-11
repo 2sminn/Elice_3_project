@@ -20,7 +20,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/academy")
 public class AcademyController {
-    
+
     private final AcademyService academyService;
     @GetMapping
     public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount(){

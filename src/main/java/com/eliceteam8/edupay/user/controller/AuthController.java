@@ -1,6 +1,6 @@
 package com.eliceteam8.edupay.user.controller;
 
-import com.eliceteam8.edupay.user.dto.EmailDTO;
+import com.eliceteam8.edupay.user.dto.BooleanResultDTO;
 import com.eliceteam8.edupay.user.dto.PasswordTokenDTO;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
 import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 
 @Slf4j
@@ -38,16 +36,16 @@ public class AuthController {
 
 
     @GetMapping("/check-email")
-    public ResponseEntity<EmailDTO> checkEmailDuplicate(@RequestParam String email) {
+    public ResponseEntity<BooleanResultDTO> checkEmailDuplicate(@RequestParam String email) {
         boolean isDuplicate = userService.isEmailDuplicate(email);
-        EmailDTO result = EmailDTO.builder().result(isDuplicate).build();
+        BooleanResultDTO result = BooleanResultDTO.builder().result(isDuplicate).build();
         return ResponseEntity.ok(result);
     }
 
 
 
     @PostMapping("/send-password-token")
-    public ResponseEntity<EmailDTO> sendPasswordResetEmail(@RequestBody PasswordTokenDTO passwordTokenDTO){
+    public ResponseEntity<BooleanResultDTO> sendPasswordResetEmail(@RequestBody PasswordTokenDTO passwordTokenDTO){
         boolean isSend =  userService.sendPasswordResetEmail(
                 passwordTokenDTO.getEmail(),
                 passwordTokenDTO.getUsername()
@@ -55,12 +53,12 @@ public class AuthController {
 
         String message =  "인증번호를 발송했습니다. " +
                 "인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.";
-        EmailDTO result = EmailDTO.builder().result(isSend).message(message).build();
+        BooleanResultDTO result = BooleanResultDTO.builder().result(isSend).message(message).build();
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/check-password-token")
-    public ResponseEntity<EmailDTO> checkResetEmail(@RequestBody PasswordTokenDTO passwordTokenDTO){
+    public ResponseEntity<BooleanResultDTO> checkResetEmail(@RequestBody PasswordTokenDTO passwordTokenDTO){
         if(passwordTokenDTO.getToken().isBlank()){
             throw new IllegalArgumentException("토큰값이 존재하지 않습니다.");
         }
@@ -68,8 +66,8 @@ public class AuthController {
                 passwordTokenDTO.getToken(),
                 passwordTokenDTO.getEmail()
         );
-        EmailDTO emailDTO = EmailDTO.builder().result(result).build();
-        return ResponseEntity.ok(emailDTO);
+        BooleanResultDTO booleanResultDTO = BooleanResultDTO.builder().result(result).build();
+        return ResponseEntity.ok(booleanResultDTO);
     }
 
 

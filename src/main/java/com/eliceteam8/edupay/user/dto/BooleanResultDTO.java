@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class EmailDTO {
+public class BooleanResultDTO {
 
     private Boolean result;
     private String message;

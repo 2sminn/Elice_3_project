@@ -1,6 +1,8 @@
 package com.eliceteam8.edupay.user.controller;
 
 
+import com.eliceteam8.edupay.user.dto.BooleanResultDTO;
+import com.eliceteam8.edupay.user.dto.PasswordDTO;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
 import com.eliceteam8.edupay.user.service.UserService;
@@ -45,6 +47,17 @@ public class UserController {
     }
 
     //비밀번호변경
+    @PatchMapping("/password")
+    public ResponseEntity<BooleanResultDTO> updatePassword(@RequestBody PasswordDTO passwordDTO ) {
+        if(!passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())){
+           throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        Long id = userService.updatePassword(passwordDTO);
+        String message = "ID:"+id+" 님 비밀번호가 변경되었습니다.";
+        BooleanResultDTO result = BooleanResultDTO.builder().result(true).message(message).build();
+        return ResponseEntity.ok(result);
+
+    }
 
 
     @GetMapping("/test")
