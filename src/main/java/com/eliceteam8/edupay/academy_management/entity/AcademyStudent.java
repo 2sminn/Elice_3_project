@@ -51,7 +51,7 @@ public class AcademyStudent {
     private LocalDateTime updatedAt;
 
     //@OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "lecture_student",
             joinColumns = @JoinColumn(name = "student_id"),
@@ -65,7 +65,7 @@ public class AcademyStudent {
     @JsonBackReference
     private Academy academy;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference // stack overflow
     private List<Bill> bills = new ArrayList<>();
 }

@@ -17,4 +17,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     List<Lecture> searchLectures(
             @Param("lectureName") String studentName,
             @Param("teacherName") String teacherName);
+
+
 }

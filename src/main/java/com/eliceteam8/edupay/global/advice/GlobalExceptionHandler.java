@@ -41,14 +41,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException ex) {
-        log.error("---handleHttpMediaTypeNotAcceptableException---");
-        final ErrorResponse response = ErrorResponse.of(ExceptionCode.NOT_ACCEPTABLE_MEDIA_TYPE, ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyExistUserException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
@@ -90,14 +82,6 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode());
         response.setMessageDetail(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
-        log.error("---handleSQLIntegrityConstraintViolationException---");
-
-        final ErrorResponse response = new ErrorResponse(ExceptionCode.UNIQUE_VIOLATION);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

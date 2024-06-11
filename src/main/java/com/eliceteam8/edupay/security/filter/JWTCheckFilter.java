@@ -35,10 +35,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
-        if(path.startsWith("/users/check-email")){
-            return true;
-        }
-
 
 
         return false;
@@ -60,7 +56,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             Map<String, Object> claims = JwtProvider.validateToken(accessToken);
 
             String email = (String) claims.get("email");
-            //String password = (String) claims.get("password");
             List<String> roles = (List<String>) claims.get("roles");
             Long academyId = ((Integer) claims.get("academyId")).longValue();
             Long userId = ((Integer) claims.get("userId")).longValue();
@@ -83,11 +78,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
 
         }
-//        }catch (Exception e){
-//            log.error("------JWTCheckFilter 도중  Exception 발생--- ");
-//            e.printStackTrace();
-//            throw e;
-//        }
+
     }
 
 
