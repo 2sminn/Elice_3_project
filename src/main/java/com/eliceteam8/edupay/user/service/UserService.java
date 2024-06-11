@@ -5,6 +5,7 @@ import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.global.enums.ErrorMessage;
 import com.eliceteam8.edupay.global.mail.EmailMessage;
 import com.eliceteam8.edupay.global.mail.EmailSendService;
+import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +57,14 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
         UpdateUserDTO updateUserDTO = UpdateUserDTO.entityToDTO(user);
         return updateUserDTO;
+    }
+
+    public Long getUserIdByToken(String token) {
+        Map<String, Object> claims = JwtProvider.validateToken(token.substring(7));
+
+        Long userId = ((Integer) claims.get("userId")).longValue();
+
+        return userId;
     }
 
     //유저 정보 업데이트
