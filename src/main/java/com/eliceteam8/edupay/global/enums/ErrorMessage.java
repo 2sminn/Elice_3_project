@@ -11,5 +11,7 @@ public class ErrorMessage {
 
     public static final String INVALID_EMAIL = "이메일 형식이 올바르지 않습니다.";
 
+    public static final String NOT_FOUND_USER = "해당 사용자를 찾을 수 없습니다.";
+
 
 }

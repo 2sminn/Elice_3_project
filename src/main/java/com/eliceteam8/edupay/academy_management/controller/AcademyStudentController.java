@@ -1,10 +1,15 @@
 package com.eliceteam8.edupay.academy_management.controller;
 
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateLectureRequestDTO;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateStudentRequestDTO;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.SearchStudentDTO;
+import com.eliceteam8.edupay.academy_management.lecture.dto.request.UpdateStudentRequestDTO;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
 import com.eliceteam8.edupay.academy_management.service.AcademyStudentService;
-import com.eliceteam8.edupay.global.exception.ApiError;
-import com.eliceteam8.edupay.global.exception.DuplicateStudentException;
+import com.eliceteam8.edupay.user.dto.UserDTO;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,24 +33,32 @@ public class AcademyStudentController {
     @GetMapping("/{studentId}")
     public ResponseEntity<AcademyStudentResponseDTO> getStudentById(@PathVariable("studentId") Long id) {
         AcademyStudentResponseDTO academyStudent = academyStudentService.getStudentById(id);
-       return ResponseEntity.ok(academyStudent);
+        AcademyStudentResponseDTO responseDTO = new AcademyStudentResponseDTO();
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<AcademyStudent>> searchStudents(@RequestBody SearchStudentDTO criteria) {
+        List<AcademyStudent> students = academyStudentService.searchStudents(criteria);
+        return ResponseEntity.ok(students);
     }
 
     @PostMapping("")
-    public ResponseEntity<AcademyStudent> createStudent(@RequestBody AcademyStudent academyStudent) {
+    public ResponseEntity<AcademyStudent> createStudent(@Valid @RequestBody CreateStudentRequestDTO academyStudent) {
+
         AcademyStudent createdStudent = academyStudentService.createStudent(academyStudent);
         return ResponseEntity.ok(createdStudent);
     }
 
     @PutMapping("/{studentId}")
-    public ResponseEntity<AcademyStudent> updateStudent(@PathVariable("studentId") Long id, @RequestBody AcademyStudent studentDetails) {
+    public ResponseEntity<AcademyStudent> updateStudent(@PathVariable("studentId") Long id, @RequestBody UpdateStudentRequestDTO studentDetails) {
         AcademyStudent updatedStudent = academyStudentService.updateStudent(id, studentDetails);
         return ResponseEntity.ok(updatedStudent);
     }
 
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable("studentId") Long id) {
-        academyStudentService.deleteStudent(id);
+        academyStudentService.deleteStudentWithDependencies(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -50,14 +50,22 @@ public class AcademyStudent {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+    //@OneToMany(mappedBy = "academyStudent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "lecture_student",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "lecture_id")
+    )
+    //@JsonBackReference
     private List<Lecture> lectures;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academy_id")
+    @JoinColumn(name = "academy_id", nullable = false)
+    @JsonBackReference
     private Academy academy;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference // stack overflow
     private List<Bill> bills = new ArrayList<>();
 }
