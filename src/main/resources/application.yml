@@ -18,7 +18,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: validate
-    generate-ddl: true
+    generate-ddgl: true
     properties:
       hibernate:
         format_sql: true
