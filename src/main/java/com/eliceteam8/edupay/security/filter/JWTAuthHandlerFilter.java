@@ -35,7 +35,7 @@ public class JWTAuthHandlerFilter extends OncePerRequestFilter {
         }catch(JwtException jwtException){
             new CustomJWTException(ExceptionCode.INVALID_SIGNATURE);
         }catch(Exception e){
-            // throw new CustomJWTException("Error");
+            throw e;
         }
     }
 }
