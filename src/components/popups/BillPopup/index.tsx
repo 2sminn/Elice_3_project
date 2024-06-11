@@ -67,7 +67,6 @@ const BillPopup = () => {
 			studentId: data.studentId,
 			message: data.message,
 		};
-		console.log(formData);
 		sendBillMutate(formData);
 		reset();
 	};

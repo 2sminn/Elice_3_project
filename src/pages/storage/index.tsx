@@ -69,11 +69,9 @@ const StoragePage = () => {
 		<Container>
 			<S.StorageContainer>
 				<PageTitle>수납관리</PageTitle>
-				<S.TabBox>
+				{/* <S.TabBox>
 					<S.TabMenu $active={true}>전체</S.TabMenu>
-					<S.TabMenu>수납내역</S.TabMenu>
-					<S.TabMenu>미수납내역</S.TabMenu>
-				</S.TabBox>
+				</S.TabBox> */}
 				<S.SearchContainer>
 					<S.SearchTitle>
 						<IoSearchOutline color="#fff" size={25} />

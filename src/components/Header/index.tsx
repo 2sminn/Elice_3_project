@@ -14,7 +14,6 @@ import { useGetUserQuery } from './hooks/useGetUserQuery';
 
 const Header = () => {
 	const { data: userInfo } = useGetUserQuery();
-	console.log(userInfo);
 
 	const { openPopup } = usePopup();
 	const { clearTokens } = useTokenStore();
@@ -33,7 +32,7 @@ const Header = () => {
 					<img src={logo} alt="" />
 				</S.LogoBox>
 				<S.AcademyInfoBox>
-					<h2>에듀학원</h2>
+					<h2>{userInfo?.academyName}</h2>
 					<Link to="/edit-profile">
 						<img src={settingImg} alt="" />
 					</Link>
@@ -42,7 +41,7 @@ const Header = () => {
 					<S.PointContainer>
 						<p>잔여수량</p>
 						<p>
-							<span>1,000</span> 건
+							<span>{userInfo?.point}</span> 건
 						</p>
 					</S.PointContainer>
 					<PrimaryButton text="충전하기" isFill onClick={() => openPopup(<AddBillCountPopup />)} />

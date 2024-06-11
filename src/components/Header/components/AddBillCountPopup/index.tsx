@@ -3,13 +3,15 @@ import usePopup from '../../../../hooks/usePopup';
 import { formatNumber } from '../../../../utils/formatNumber';
 import * as S from './style';
 import PrimaryButton from '../../../buttons/PrimaryButton';
-import { errorAlert, successAlert } from '../../../../utils/alert';
+import { errorAlert } from '../../../../utils/alert';
+import { useAddPointMutation } from '../../hooks/useAddPointMutation';
+import { useGetUserQuery } from '../../hooks/useGetUserQuery';
 
 const EduDatas = [
 	{
 		id: 1,
 		edu: 20,
-		price: 10000,
+		price: 100,
 	},
 	{
 		id: 2,
@@ -57,6 +59,9 @@ const AddBillCountPopup = () => {
 
 	const [eduData, setEduData] = useState<eduDataType | null>(null);
 
+	const { mutate: addPointMutate } = useAddPointMutation();
+	const { data: userInfo } = useGetUserQuery();
+
 	const requestPay = () => {
 		const { IMP } = window;
 		IMP.init(IMP_CODE); // 'your_imp_uid'를 실제 가맹점 식별코드로 변경
@@ -67,18 +72,24 @@ const AddBillCountPopup = () => {
 				pay_method: 'card', // 결제수단
 				merchant_uid: `merchant_${new Date().getTime()}`, // 주문번호
 				name: '학원비 결제', // 주문명
-				amount: 100, // 금액
-				buyer_email: 'iamport@siot.do',
-				buyer_name: '조정택',
-				buyer_tel: '010-1234-5678',
-				buyer_addr: '서울특별시 강남구 삼성동',
-				buyer_postcode: '123-456',
+				amount: eduData && eduData.price, // 금액
+				buyer_email: userInfo?.academyEmail,
+				buyer_name: userInfo?.username,
+				buyer_tel: userInfo?.phoneNumber,
+				buyer_addr: userInfo?.address,
+				buyer_postcode: userInfo?.zipCode,
 			},
 			(rsp: any) => {
 				if (rsp.success) {
-					successAlert('결제가 완료되었습니다.');
-					// 결제 성공 시 로직 처리
 					console.log(rsp);
+					const data = {
+						user_id: String(userInfo?.userId),
+						point: String(eduData?.edu),
+						imp_uid: rsp.imp_uid,
+					};
+
+					addPointMutate(data);
+					// 결제 성공 시 로직 처리
 				} else {
 					errorAlert(`결제에 실패하였습니다.${rsp.error_msg}`);
 					// 결제 실패 시 로직 처리
