@@ -17,6 +17,7 @@ export interface StudentType {
 	};
 	phoneNumber: string;
 	selected?: boolean;
+	classes: string[]; // 추가된 필드
 }
 
 export const fetchStudents = async (): Promise<StudentType[]> => {

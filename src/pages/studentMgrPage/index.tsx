@@ -23,8 +23,6 @@ import { StudentType } from './api';
 const StudentMgrPage = () => {
 	const { students, fetchStudents, fetchStudent, deleteStudent, updateStudent, searchStudents, filterStudents } =
 		useStudentStore();
-	const onSelect = useStudentStore((store) => store.selectStudent);
-	const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filters, setFilters] = useState<Partial<StudentType>>({
 		studentName: '',
@@ -87,7 +85,8 @@ const StudentMgrPage = () => {
 	};
 
 	const handleSelectChange = (studentId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		onSelect(studentId);
+		const { checked } = e.target;
+		updateStudent(studentId, { selected: checked });
 	};
 
 	const handleStudentNameClick = async (studentId: string) => {
@@ -97,7 +96,6 @@ const StudentMgrPage = () => {
 		}
 		const student = await fetchStudent(studentId);
 		if (student) {
-			setSelectedStudent(student);
 			openPopup(<StudentDetailPopup student={student} onClose={closePopup} />);
 		}
 	};

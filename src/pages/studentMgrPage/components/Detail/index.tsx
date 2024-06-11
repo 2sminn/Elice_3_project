@@ -12,23 +12,10 @@ import {
 	SaveButton,
 } from './style';
 import useStudentStore from '../../../../stores/useStudentStore';
+import { StudentType } from '../../api';
 
 interface StudentDetailPopupProps {
-	student: {
-		id: string;
-		studentName: string;
-		birthDate: string;
-		contact: string;
-		email: string;
-		schoolName: string;
-		grade: string;
-		classes: string[];
-		paymentInfo: {
-			outstanding: number;
-			upcoming: number;
-		};
-		phoneNumber: string;
-	};
+	student: StudentType;
 	onClose: () => void;
 }
 
@@ -56,7 +43,7 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 	const handleSaveClick = async () => {
 		console.log('저장된 데이터:', editedStudent);
 		try {
-			await updateStudent(editedStudent.id, editedStudent);
+			await updateStudent(editedStudent.studentId, editedStudent);
 			alert('원생 정보가 업데이트 되었습니다.');
 		} catch (error) {
 			alert('원생 정보 업데이트에 실패했습니다.');
