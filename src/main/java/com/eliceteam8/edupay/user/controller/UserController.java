@@ -48,7 +48,7 @@ public class UserController {
 
     //비밀번호변경
     @PatchMapping("/password")
-    public ResponseEntity<BooleanResultDTO> updatePassword(@RequestBody PasswordDTO passwordDTO ) {
+    public ResponseEntity<BooleanResultDTO> updatePassword(@Valid @RequestBody PasswordDTO passwordDTO ) {
         if(!passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())){
            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
