@@ -40,12 +40,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         userClaims.remove("password");
         // JWT 토큰 생성
 
-        String accessToken = JwtProvider.generateToken(userClaims, 60*6);
+
+        String accessToken = JwtProvider.generateToken(userClaims, 10);
 
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
-        // Redis에 저장
-       // refreshTokenSave(refreshToken, email);
+        refreshTokenSave(refreshToken, email);
+
 
         userClaims.put("refreshToken", refreshToken);
         userClaims.put("accessToken", accessToken);
