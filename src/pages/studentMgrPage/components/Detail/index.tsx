@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	PopupContainer,
 	Header,
@@ -11,27 +11,22 @@ import {
 	Input,
 	SaveButton,
 } from './style';
+import useStudentStore from '../../../../stores/useStudentStore';
+import { StudentType } from '../../api';
 
 interface StudentDetailPopupProps {
-	student: {
-		name: string;
-		birthDate: string;
-		contact: string;
-		email: string;
-		school: string;
-		grade: string;
-		classes: string[];
-		paymentInfo: {
-			outstanding: number;
-			upcoming: number;
-		};
-	};
+	student: StudentType;
 	onClose: () => void;
 }
 
 const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClose }) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedStudent, setEditedStudent] = useState(student);
+	const { updateStudent } = useStudentStore();
+
+	useEffect(() => {
+		setEditedStudent(student);
+	}, [student]);
 
 	const handleEditClick = () => {
 		setIsEditing(true);
@@ -45,9 +40,14 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 		}));
 	};
 
-	const handleSaveClick = () => {
+	const handleSaveClick = async () => {
 		console.log('저장된 데이터:', editedStudent);
-		// 실제 저장 로직을 추가할 수 있는 부분
+		try {
+			await updateStudent(editedStudent.studentId, editedStudent);
+			alert('원생 정보가 업데이트 되었습니다.');
+		} catch (error) {
+			alert('원생 정보 업데이트에 실패했습니다.');
+		}
 		setIsEditing(false);
 	};
 
@@ -60,7 +60,11 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 			<DetailList>
 				<DetailItem>
 					<strong>이름:</strong>
-					{isEditing ? <Input name="name" value={editedStudent.name} onChange={handleInputChange} /> : student.name}
+					{isEditing ? (
+						<Input name="studentName" value={editedStudent.studentName} onChange={handleInputChange} />
+					) : (
+						student.studentName
+					)}
 				</DetailItem>
 				<DetailItem>
 					<strong>생년월일:</strong>
@@ -85,9 +89,9 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 				<DetailItem>
 					<strong>학교:</strong>
 					{isEditing ? (
-						<Input name="school" value={editedStudent.school} onChange={handleInputChange} />
+						<Input name="schoolName" value={editedStudent.schoolName} onChange={handleInputChange} />
 					) : (
-						student.school
+						student.schoolName
 					)}
 				</DetailItem>
 				<DetailItem>
