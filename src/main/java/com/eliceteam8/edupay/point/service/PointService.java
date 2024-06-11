@@ -13,12 +13,13 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,12 +38,12 @@ public class PointService {
                 .orElse(0L);
     }
 
-    public List<PointRechargeLog> getPointRechargeLog(Long userId) {
-        return pointRechargeLogRepository.findByUserId(userId);
+    public Page<PointRechargeLog> getPointRechargeLog(Long userId, Pageable pageable) {
+        return pointRechargeLogRepository.findByUserId(userId, pageable);
     }
 
-    public List<PointUseLog> getPointUseLog(Long userId) {
-        return pointUseLogRepository.findByUserId(userId);
+    public Page<PointUseLog> getPointUseLog(Long userId, Pageable pageable) {
+        return pointUseLogRepository.findByUserId(userId, pageable);
     }
 
     public void savePoint(PointLogDTO pointLogDTO) {

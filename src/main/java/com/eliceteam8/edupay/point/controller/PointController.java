@@ -9,12 +9,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,8 +32,10 @@ public class PointController {
     }
 
     @GetMapping("/recharge/log")
-    public List<PointRechargeLog> getUserPointRechargeLog(@RequestHeader("Authorization") String token) {
-        return pointService.getPointRechargeLog(userService.getUserIdByToken(token));
+    public Page<PointRechargeLog> getUserPointRechargeLog(@RequestHeader("Authorization") String token) {
+        Pageable pageable = PageRequest.of(1, 10);
+
+        return pointService.getPointRechargeLog(userService.getUserIdByToken(token), pageable);
     }
 
     @PostMapping("/recharge")
@@ -42,8 +46,10 @@ public class PointController {
     }
 
     @GetMapping("/use/log")
-    public List<PointUseLog> getUserPointUseLog(@RequestHeader("Authorization") String token) {
-        return pointService.getPointUseLog(userService.getUserIdByToken(token));
+    public Page<PointUseLog> getUserPointUseLog(@RequestHeader("Authorization") String token) {
+        Pageable pageable = PageRequest.of(1, 10);
+
+        return pointService.getPointUseLog(userService.getUserIdByToken(token), pageable);
     }
 
     @PostMapping("/use")
