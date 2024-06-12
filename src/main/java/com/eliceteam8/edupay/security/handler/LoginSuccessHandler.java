@@ -45,7 +45,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
-        refreshTokenSave(refreshToken, email);
+        //refreshTokenSave(refreshToken, email);
 
 
         userClaims.put("refreshToken", refreshToken);

@@ -18,6 +18,8 @@ import com.eliceteam8.edupay.global.exception.MessageTooLongException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -115,10 +117,6 @@ public class BillService {
         String text = "청구서가 생성되었습니다. 결제 URL: http://34.47.70.191/bill/" + bill.getId();
         emailService.sendSimpleMessage(student.getEmail(), subject, text);
 
-        // 상태 변경
-        bill.setStatusToCompleted();
-        billRepository.save(bill);
-
         return billInfoResponse;
     }
 
@@ -202,23 +200,21 @@ public class BillService {
         String text = "청구서가 생성되었습니다. 결제 URL: http://34.47.70.191/bill/" + bill.getId();
         emailService.sendSimpleMessage(student.getEmail(), subject, text);
 
-        // 상태 변경
-        bill.setStatusToCompleted();
-        billRepository.save(bill);
-
         return billInfoResponse;
     }
 
-    public List<BillLogResponse> getBillLogs() {
-        return billLogRepository.findAll().stream()
-                .map(log -> {
-                    BillLogResponse response = new BillLogResponse();
-                    response.setId(log.getId());
-                    response.setRemainingBills(log.getRemainingBills());
-                    response.setCreatedAt(log.getCreatedAt());
-                    response.setBillId(log.getBill() != null ? log.getBill().getId() : null);
-                    return response;
-                })
-                .collect(Collectors.toList());
+    public Page<BillLogResponse> getBillLogs(Pageable pageable) {
+        Page<BillLog> billLogs = billLogRepository.findAll(pageable);
+        if (billLogs.isEmpty()) {
+            throw new EntityNotFoundException("청구서 내역이 존재하지 않습니다.");
+        }
+        return billLogs.map(log -> {
+            BillLogResponse response = new BillLogResponse();
+            response.setId(log.getId());
+            response.setRemainingBills(log.getRemainingBills());
+            response.setCreatedAt(log.getCreatedAt());
+            response.setBillId(log.getBill() != null ? log.getBill().getId() : null);
+            return response;
+        });
     }
 }

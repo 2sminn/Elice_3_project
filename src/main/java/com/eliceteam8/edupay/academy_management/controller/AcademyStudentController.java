@@ -1,20 +1,21 @@
 package com.eliceteam8.edupay.academy_management.controller;
 
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
-import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateLectureRequestDTO;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.CreateStudentRequestDTO;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.SearchStudentDTO;
 import com.eliceteam8.edupay.academy_management.lecture.dto.request.UpdateStudentRequestDTO;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
+import com.eliceteam8.edupay.academy_management.service.AcademyService;
 import com.eliceteam8.edupay.academy_management.service.AcademyStudentService;
 import com.eliceteam8.edupay.user.dto.UserDTO;
-import jakarta.servlet.http.HttpSession;
+import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -25,17 +26,29 @@ public class AcademyStudentController {
     @Autowired
     private AcademyStudentService academyStudentService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AcademyService academyService;
+
     @GetMapping
-    public List<AcademyStudentResponseDTO> getAllAcademyStudents() {
-        return academyStudentService.getAllAcademyStudents();
+    public ResponseEntity<List<AcademyStudentResponseDTO>> getAllAcademyStudents(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<AcademyStudentResponseDTO> students = academyStudentService.getAllAcademyStudents(pageable);
+        return ResponseEntity.ok(students);
+        //return academyStudentService.getAllAcademyStudents();
     }
 
     @GetMapping("/{studentId}")
     public ResponseEntity<AcademyStudentResponseDTO> getStudentById(@PathVariable("studentId") Long id) {
         AcademyStudentResponseDTO academyStudent = academyStudentService.getStudentById(id);
-        AcademyStudentResponseDTO responseDTO = new AcademyStudentResponseDTO();
-        return ResponseEntity.ok(responseDTO);
+        //AcademyStudentResponseDTO responseDTO = new AcademyStudentResponseDTO();
+        return ResponseEntity.ok(academyStudent);
     }
+
 
     @PostMapping("/search")
     public ResponseEntity<List<AcademyStudent>> searchStudents(@RequestBody SearchStudentDTO criteria) {
@@ -45,7 +58,6 @@ public class AcademyStudentController {
 
     @PostMapping("")
     public ResponseEntity<AcademyStudent> createStudent(@Valid @RequestBody CreateStudentRequestDTO academyStudent) {
-
         AcademyStudent createdStudent = academyStudentService.createStudent(academyStudent);
         return ResponseEntity.ok(createdStudent);
     }
@@ -58,7 +70,7 @@ public class AcademyStudentController {
 
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable("studentId") Long id) {
-        academyStudentService.deleteStudentWithDependencies(id);
+        academyStudentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
 }

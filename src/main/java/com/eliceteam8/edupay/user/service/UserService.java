@@ -59,14 +59,6 @@ public class UserService {
         return updateUserDTO;
     }
 
-    public Long getUserIdByToken(String token) {
-        Map<String, Object> claims = JwtProvider.validateToken(token.substring(7));
-
-        Long userId = ((Integer) claims.get("userId")).longValue();
-
-        return userId;
-    }
-
     //유저 정보 업데이트
     @Transactional
     public Long updateUserAndAcademy(UpdateUserDTO updateUserDTO) {
