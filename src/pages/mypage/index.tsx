@@ -20,12 +20,15 @@ import { formatDate } from '../../utils/formatDate';
 import { useGetUseHistoryQuery } from './hooks/useGetUseHistoryQuery';
 import { useRefundMutation } from './hooks/useRefundMutation';
 import { useGetUserQuery } from '../../components/Header/hooks/useGetUserQuery';
+import { successAlert } from '../../utils/alert';
 
 const Mypage = () => {
 	const [page, setPage] = useState(1);
 	const [tab, setTab] = useState('충전');
 	const { mutate: refundMutate } = useRefundMutation();
 	const { data: userInfo, refetch } = useGetUserQuery();
+
+	console.log(userInfo);
 
 	const navigate = useNavigate();
 
@@ -40,6 +43,10 @@ const Mypage = () => {
 		};
 		refundMutate(data);
 		refetch();
+	};
+
+	const handleSettle = () => {
+		successAlert('정산요청이 완료되었습니다.');
 	};
 
 	const {
@@ -110,7 +117,7 @@ const Mypage = () => {
 			<S.MypageContainer>
 				<S.ProfileContainer>
 					<S.ProfileImg style={{ backgroundImage: `url(${profileImg})` }} />
-					<S.ProfileName>에듀학원</S.ProfileName>
+					<S.ProfileName>{userInfo?.academyName}</S.ProfileName>
 				</S.ProfileContainer>
 				<S.ProfileInfoContainer>
 					<S.ProfileInfoBox>
@@ -127,7 +134,7 @@ const Mypage = () => {
 					</S.ProfileInfoBox>
 				</S.ProfileInfoContainer>
 				<S.ProfileBtnContainer>
-					<PrimaryButton text="정산 요청" width="200px" />
+					<PrimaryButton text="정산 요청" width="200px" onClick={handleSettle} />
 					<PrimaryButton text="회원정보수정" width="200px" onClick={goToProfileEdit} />
 				</S.ProfileBtnContainer>
 			</S.MypageContainer>
