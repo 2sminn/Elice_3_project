@@ -2,11 +2,11 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { getStorages } from '../api';
 import { FilterSearchType, StorageResponseType } from '../type';
 
-export const useGetStoragesQuery = (searchFilter: FilterSearchType) => {
+export const useGetStoragesQuery = (searchFilter: FilterSearchType, page: number) => {
 	const queryKey = ['storage'];
 
 	const queryFn = async (): Promise<StorageResponseType> => {
-		const storageDatas = await getStorages(searchFilter);
+		const storageDatas = await getStorages(searchFilter, page);
 
 		return storageDatas;
 	};

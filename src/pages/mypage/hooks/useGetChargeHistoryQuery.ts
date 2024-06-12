@@ -12,7 +12,7 @@ export const useGetChargeHistoryQuery = () => {
 	};
 
 	const getNextPageParam = (lastPage: ChargeHistoryResponseType, allPages: ChargeHistoryResponseType[]) => {
-		return lastPage.page + 1 <= lastPage.page_size ? allPages.length : undefined;
+		return !lastPage.last ? allPages.length : undefined;
 	};
 
 	return useInfiniteQuery<ChargeHistoryResponseType>({ queryKey, queryFn, getNextPageParam, initialPageParam: 0 });

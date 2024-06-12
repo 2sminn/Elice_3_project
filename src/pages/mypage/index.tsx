@@ -14,6 +14,7 @@ import { Fragment, useEffect, useRef } from 'react';
 import { useGetChargeHistoryQuery } from './hooks/useGetChargeHistoryQuery';
 import { formatNumber } from '../../utils/formatNumber';
 import profileImg from './assets/images/profile.jpeg';
+import { formatDate } from '../../utils/formatDate';
 
 const Mypage = () => {
 	const navigate = useNavigate();
@@ -92,7 +93,7 @@ const Mypage = () => {
 						날짜
 					</TableList>
 					<TableList $isTitle width="20%">
-						금액
+						충전개수
 					</TableList>
 					<TableList $isTitle width="40%">
 						환불가능여부
@@ -102,11 +103,11 @@ const Mypage = () => {
 				<TableContentContainer>
 					{chargeHistoryDatas?.pages.map((page, index) => (
 						<Fragment key={index}>
-							{page?.chargeHistory?.map((data) => (
-								<TableContentBox key={data.chargeId}>
-									<TableList width="15%">{data.createdAt}</TableList>
-									<TableList width="20%">{formatNumber(data.cashAmount)}</TableList>
-									<TableList width="40%">{data.isRefund ? '가능' : '불가능'}</TableList>
+							{page?.content?.map((data) => (
+								<TableContentBox key={data.id}>
+									<TableList width="15%">{formatDate(data.createdAt)}</TableList>
+									<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
+									<TableList width="40%">O</TableList>
 									<TableList width="20%">
 										<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
 									</TableList>
