@@ -43,24 +43,45 @@ public class StudentPaymentStatusService {
     public Page<StudentPaymentStatusResponseDto> getAllPayments(Status status, Integer year, Integer month, String studentName, String phoneNumber, int page, int size) {
         Page<StudentPaymentStatus> payments;
         PageRequest pageRequest = PageRequest.of(page, size);
-        LocalDateTime startDate = (year != null && month != null) ? YearMonth.of(year, month).atDay(1).atStartOfDay() : LocalDateTime.MIN;
-        LocalDateTime endDate = (year != null && month != null) ? YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59) : LocalDateTime.MAX;
 
-        if (status.equals(Status.ALL)) {
-            if (studentName != null) {
-                payments = studentPaymentStatusRepository.findByStudent_StudentNameAndUpdatedAtBetween(studentName, startDate, endDate, pageRequest);
-            } else if (phoneNumber != null) {
-                payments = studentPaymentStatusRepository.findByStudent_PhoneNumberAndUpdatedAtBetween(phoneNumber, startDate, endDate, pageRequest);
+        if (year != null && month != null) {
+            LocalDateTime startDate = YearMonth.of(year, month).atDay(1).atStartOfDay();
+            LocalDateTime endDate = YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59);
+
+            if (status == Status.ALL) {
+                if (studentName != null) {
+                    payments = studentPaymentStatusRepository.findByStudent_StudentNameAndUpdatedAtBetween(studentName, startDate, endDate, pageRequest);
+                } else if (phoneNumber != null) {
+                    payments = studentPaymentStatusRepository.findByStudent_PhoneNumberAndUpdatedAtBetween(phoneNumber, startDate, endDate, pageRequest);
+                } else {
+                    payments = studentPaymentStatusRepository.findByUpdatedAtBetween(startDate, endDate, pageRequest);
+                }
             } else {
-                payments = studentPaymentStatusRepository.findByUpdatedAtBetween(startDate, endDate, pageRequest);
+                if (studentName != null) {
+                    payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_StudentName(status, startDate, endDate, studentName, pageRequest);
+                } else if (phoneNumber != null) {
+                    payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status, startDate, endDate, phoneNumber, pageRequest);
+                } else {
+                    payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetween(status, startDate, endDate, pageRequest);
+                }
             }
         } else {
-            if (studentName != null) {
-                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_StudentName(status, startDate, endDate, studentName, pageRequest);
-            } else if (phoneNumber != null) {
-                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetweenAndStudent_PhoneNumber(status, startDate, endDate, phoneNumber, pageRequest);
+            if (status == Status.ALL) {
+                if (studentName != null) {
+                    payments = studentPaymentStatusRepository.findByStudent_StudentName(studentName, pageRequest);
+                } else if (phoneNumber != null) {
+                    payments = studentPaymentStatusRepository.findByStudent_PhoneNumber(phoneNumber, pageRequest);
+                } else {
+                    payments = studentPaymentStatusRepository.findAll(pageRequest);
+                }
             } else {
-                payments = studentPaymentStatusRepository.findByBill_StatusAndUpdatedAtBetween(status, startDate, endDate, pageRequest);
+                if (studentName != null) {
+                    payments = studentPaymentStatusRepository.findByBill_StatusAndStudent_StudentName(status, studentName, pageRequest);
+                } else if (phoneNumber != null) {
+                    payments = studentPaymentStatusRepository.findByBill_StatusAndStudent_PhoneNumber(status, phoneNumber, pageRequest);
+                } else {
+                    payments = studentPaymentStatusRepository.findByBill_Status(status, pageRequest);
+                }
             }
         }
         return payments.map(StudentPaymentStatusResponseDto::fromEntity);

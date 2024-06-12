@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.get_cost.entity;
 
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.academy_management.entity.Lecture;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.payment.entity.PaymentHistory;
 import jakarta.persistence.*;
@@ -32,6 +33,10 @@ public class StudentPaymentStatus {
     @JoinColumn(name = "payment_id")
     private PaymentHistory payment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lecture_id") // Lecture 관계 추가
+    private Lecture lecture;
+
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
@@ -39,6 +44,7 @@ public class StudentPaymentStatus {
         this.student = student;
         this.bill = bill;
         this.payment = payment;
+        this.lecture = lecture;
         this.updatedAt = updatedAt;
     }
 }

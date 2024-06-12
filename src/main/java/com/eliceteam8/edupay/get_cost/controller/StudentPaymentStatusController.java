@@ -23,15 +23,15 @@ public class StudentPaymentStatusController {
     // 전체 수납 내역 조회
     @GetMapping
     public ResponseEntity<Page<StudentPaymentStatusResponseDto>> getAllPayments(
-            @RequestParam(name = "status") Status status,
+            @RequestParam(name = "status", defaultValue = "ALL") Status status,
             @RequestParam(name = "year", required = false) Integer year,
             @RequestParam(name = "month", required = false) Integer month,
             @RequestParam(name = "studentName", required = false) String studentName,
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
-            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(studentPaymentStatusService.getAllPayments(status, year, month, studentName, phoneNumber, page, size));
+        return ResponseEntity.ok(studentPaymentStatusService.getAllPayments(status, year, month, studentName, phoneNumber, page-1, size));
     }
 
     // 수납된 결제 내역 조회
@@ -41,10 +41,10 @@ public class StudentPaymentStatusController {
             @RequestParam(name = "month", required = false) Integer month,
             @RequestParam(name = "studentName", required = false) String studentName,
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
-            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(studentPaymentStatusService.getPaidPayments(year, month, studentName, phoneNumber, page, size));
+        return ResponseEntity.ok(studentPaymentStatusService.getPaidPayments(year, month, studentName, phoneNumber, page-1, size));
     }
 
     // 미수납된 결제 내역 조회
@@ -54,10 +54,10 @@ public class StudentPaymentStatusController {
             @RequestParam(name = "month", required = false) Integer month,
             @RequestParam(name = "studentName", required = false) String studentName,
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
-            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(studentPaymentStatusService.getUnpaidPayments(year, month, studentName, phoneNumber, page, size));
+        return ResponseEntity.ok(studentPaymentStatusService.getUnpaidPayments(year, month, studentName, phoneNumber, page-1, size));
     }
 
     // 수납 상태 생성

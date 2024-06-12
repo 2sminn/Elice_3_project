@@ -1,7 +1,7 @@
 -- academy_student 테이블에 데이터 삽입
-INSERT INTO academy_student (student_name, birth_date, phone_number, email, grade, school_name, created_at, updated_at)
+INSERT INTO academy_student (student_name, birth_date, phone_number, email, grade, school_name, lecture_id, created_at, updated_at)
 VALUES
-    ('John Doe', '2005-05-15', '010-1111-1111', 'john.doe@example.com', '10', 'Springfield High', NOW(), NOW()),
+    ('John Doe', '2005-05-15', '010-1111-1111', 'john.doe@example.com', '10', 'Springfield High',  NOW(), NOW()),
     ('Jane Smith', '2006-06-20', '010-2222-2222', 'jane.smith@example.com', '11', 'Springfield High', NOW(), NOW()),
     ('Alice Johnson', '2004-04-25', '010-3333-3333', 'alice.johnson@example.com', '12', 'Springfield High', NOW(), NOW()),
     ('Bob Brown', '2007-07-30', '010-4444-4444', 'bob.brown@example.com', '9', 'Springfield High', NOW(), NOW()),
@@ -52,26 +52,26 @@ VALUES
 INSERT INTO lecture (academy_id, lecture_name, price, created_at, updated_at, student_id, lecture_status, teacher_name)
 VALUES
     (12, 'Math', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Kim'),
-    (12, 'English', 3000, NOW(), NOW(), 3, 'OPEN', 'Mrs. Lee'),
-    (12, 'Science', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Park'),
-    (12, 'History', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Choi'),
-    (12, 'Geography', 3000, NOW(), NOW(), 3, 'OPEN', 'Mr. Jung'),
-    (12, 'Math', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Kim'),
     (12, 'English', 3000, NOW(), NOW(), 2, 'OPEN', 'Mrs. Lee'),
-    (12, 'Science', 3000, NOW(), NOW(), 3, 'OPEN', 'Mr. Park'),
+    (12, 'Science', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Park'),
     (12, 'History', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Choi'),
     (12, 'Geography', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Jung'),
-    (12, 'Math', 3000, NOW(), NOW(), 3, 'OPEN', 'Mr. Kim'),
-    (12, 'English', 3000, NOW(), NOW(), 4, 'OPEN', 'Mrs. Lee'),
-    (12, 'Science', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Park'),
-    (12, 'History', 3000, NOW(), NOW(), 3, 'OPEN', 'Mr. Choi'),
-    (12, 'Geography', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Jung'),
     (12, 'Math', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Kim'),
-    (12, 'English', 3000, NOW(), NOW(), 3, 'OPEN', 'Mrs. Lee'),
+    (12, 'English', 3000, NOW(), NOW(), 4, 'OPEN', 'Mrs. Lee'),
     (12, 'Science', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Park'),
     (12, 'History', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Choi'),
-    (12, 'Geography', 3000, NOW(), NOW(), 3, 'OPEN', 'Mr. Jung'),
-    (12, 'Math', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Kim');
+    (12, 'Geography', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Jung'),
+    (12, 'Math', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Kim'),
+    (12, 'English', 3000, NOW(), NOW(), 4, 'OPEN', 'Mrs. Lee'),
+    (12, 'Science', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Park'),
+    (12, 'History', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Choi'),
+    (12, 'Geography', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Jung'),
+    (12, 'Math', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Kim'),
+    (12, 'English', 3000, NOW(), NOW(), 2, 'OPEN', 'Mrs. Lee'),
+    (12, 'Science', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Park'),
+    (12, 'History', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Choi'),
+    (12, 'Geography', 3000, NOW(), NOW(), 4, 'OPEN', 'Mr. Jung'),
+    (12, 'Math', 3000, NOW(), NOW(), 2, 'OPEN', 'Mr. Kim');
 
 -- student_payment_status 테이블에 데이터 삽입
 INSERT INTO student_payment_status (bill_id, payment_id, student_id, updated_at)

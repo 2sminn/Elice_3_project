@@ -1,5 +1,6 @@
 package com.eliceteam8.edupay.bill.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,6 @@ public class BillLog {
 
     @OneToOne
     @JoinColumn(name = "bill_id", referencedColumnName = "id")
+    @JsonBackReference
     private Bill bill;
 }
