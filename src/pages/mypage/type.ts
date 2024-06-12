@@ -34,3 +34,8 @@ export interface ChargeHistoryResponseType {
 	first: boolean;
 	empty: boolean;
 }
+
+export interface RefundRequestType {
+	user_id?: string;
+	imp_uid: string;
+}

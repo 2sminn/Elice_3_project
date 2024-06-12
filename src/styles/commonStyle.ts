@@ -1,3 +1,4 @@
+import { FaSpinner } from 'react-icons/fa';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -46,4 +47,26 @@ export const TableContentBox = styled.ul`
 	&:not(:last-child) {
 		border-bottom: 1px solid #ddd;
 	}
+`;
+
+export const LoadingSpiner = styled(FaSpinner)`
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+	animation: spin 1s linear infinite;
+	font-size: 18px;
+	display: block;
+	margin: 0 auto;
+`;
+
+export const WarningMessage = styled.p`
+	font-size: 18px;
+	font-weight: 500;
+	color: #000;
+	text-align: center;
 `;
