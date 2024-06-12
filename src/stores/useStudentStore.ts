@@ -5,26 +5,28 @@ import {
 	createStudent as apiCreateStudent,
 	updateStudent as apiUpdateStudent,
 	deleteStudent as apiDeleteStudent,
+	searchStudents as apiSearchStudents,
 	StudentType,
 } from '../pages/studentMgrPage/api';
 
 interface StudentStore {
 	students: StudentType[];
+	filteredStudents: StudentType[];
 	student: StudentType | null;
 	loading: boolean;
 	error: string | null;
 	fetchStudents: () => Promise<void>;
-	fetchStudent: (studentId: string) => Promise<StudentType | null>;
-	createStudent: (student: Omit<StudentType, 'studentId' | 'paymentInfo'>) => Promise<void>;
-	updateStudent: (studentId: string, student: Partial<StudentType>) => Promise<void>;
-	deleteStudent: (studentId: string) => Promise<void>;
-	searchStudents: (term: string) => void;
-	filterStudents: (filters: Partial<StudentType>) => void;
-	selectStudent: (studentId: string) => void;
+	fetchStudent: (studentId: number) => Promise<StudentType | null>;
+	createStudent: (student: Omit<StudentType, 'studentId'>) => Promise<void>;
+	updateStudent: (studentId: number, student: Partial<StudentType>) => Promise<void>;
+	deleteStudent: (studentId: number) => Promise<void>;
+	searchStudents: (term: string, field: keyof StudentType) => void;
+	selectStudent: (studentId: number) => void;
 }
 
 const useStudentStore = create<StudentStore>((set) => ({
 	students: [],
+	filteredStudents: [],
 	student: null,
 	loading: false,
 	error: null,
@@ -33,27 +35,20 @@ const useStudentStore = create<StudentStore>((set) => ({
 		set({ loading: true, error: null });
 		try {
 			const students = await apiFetchStudents();
-			console.log('Fetched Students:', students);
-			set({ students, loading: false });
+			console.log('Fetched students in store:', students); // 상태 관리에서 데이터 확인
+			set({ students, filteredStudents: students, loading: false });
 		} catch (error: any) {
-			console.error('Error fetching students:', error);
 			set({ error: error.message, loading: false });
 		}
 	},
 
-	fetchStudent: async (studentId: string) => {
-		if (!studentId) {
-			console.error('No studentId provided for fetching student');
-			return null;
-		}
+	fetchStudent: async (studentId: number) => {
 		set({ loading: true, error: null });
 		try {
 			const student = await apiFetchStudent(studentId);
-			console.log('Fetched Student:', student);
 			set({ student, loading: false });
 			return student;
 		} catch (error: any) {
-			console.error('Error fetching student:', error.response ? error.response.data : error.message);
 			set({ error: error.message, loading: false });
 			return null;
 		}
@@ -63,70 +58,60 @@ const useStudentStore = create<StudentStore>((set) => ({
 		set({ loading: true, error: null });
 		try {
 			const newStudent = await apiCreateStudent(student);
-			console.log('Created Student:', newStudent);
-			set((state) => ({ students: [...state.students, newStudent], loading: false }));
+			set((state) => ({
+				students: [...state.students, newStudent],
+				filteredStudents: [...state.filteredStudents, newStudent],
+				loading: false,
+			}));
 		} catch (error: any) {
-			console.error('Error creating student:', error);
 			set({ error: error.message, loading: false });
 		}
 	},
 
-	updateStudent: async (studentId: string, student) => {
+	updateStudent: async (studentId: number, student) => {
 		set({ loading: true, error: null });
 		try {
 			const updatedStudent = await apiUpdateStudent(studentId, student);
-			console.log('Updated Student:', updatedStudent);
 			set((state) => ({
 				students: state.students.map((s) => (s.studentId === studentId ? updatedStudent : s)),
+				filteredStudents: state.filteredStudents.map((s) => (s.studentId === studentId ? updatedStudent : s)),
 				loading: false,
 			}));
 		} catch (error: any) {
-			console.error('Error updating student:', error);
 			set({ error: error.message, loading: false });
 		}
 	},
 
-	deleteStudent: async (studentId: string) => {
+	deleteStudent: async (studentId: number) => {
 		set({ loading: true, error: null });
 		try {
 			await apiDeleteStudent(studentId);
-			console.log('Deleted Student ID:', studentId);
 			set((state) => ({
 				students: state.students.filter((s) => s.studentId !== studentId),
+				filteredStudents: state.filteredStudents.filter((s) => s.studentId !== studentId),
 				loading: false,
 			}));
 		} catch (error: any) {
-			console.error('Error deleting student:', error);
 			set({ error: error.message, loading: false });
 		}
 	},
 
-	searchStudents: (term: string) => {
+	searchStudents: (term: string, field: keyof StudentType) => {
 		set((state) => ({
-			students: state.students.filter((student) => student.studentName?.toLowerCase().includes(term.toLowerCase())),
+			filteredStudents: state.students.filter((student) =>
+				student[field]?.toString().toLowerCase().includes(term.toLowerCase()),
+			),
 		}));
 	},
 
-	filterStudents: (filters: Partial<StudentType>) => {
+	selectStudent: (studentId: number) => {
 		set((state) => ({
-			students: state.students.filter((student) => {
-				return Object.entries(filters).every(([key, value]) => {
-					if (!value) return true;
-					return student[key as keyof StudentType]?.toString().toLowerCase().includes(value.toString().toLowerCase());
-				});
-			}),
-		}));
-	},
-
-	selectStudent: (studentId: string) => {
-		set((state) => ({
-			students: state.students.map((student) => {
-				if (student.studentId === studentId) {
-					return { ...student, selected: !student.selected };
-				} else {
-					return student;
-				}
-			}),
+			students: state.students.map((student) =>
+				student.studentId === studentId ? { ...student, selected: !student.selected } : student,
+			),
+			filteredStudents: state.filteredStudents.map((student) =>
+				student.studentId === studentId ? { ...student, selected: !student.selected } : student,
+			),
 		}));
 	},
 }));

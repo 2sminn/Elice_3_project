@@ -1,4 +1,3 @@
-// StudentDetailPopup.styles.ts
 import styled from 'styled-components';
 
 export const PopupContainer = styled.div`
@@ -32,7 +31,7 @@ export const CloseButton = styled.button`
 	color: #000;
 `;
 
-export const DetailList = styled.ul`
+export const DetailList = styled.form`
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -40,7 +39,7 @@ export const DetailList = styled.ul`
 	overflow-y: auto;
 `;
 
-export const DetailItem = styled.li`
+export const DetailItem = styled.div`
 	margin-bottom: 10px;
 	font-size: ${({ theme }) => theme.textSize.medium};
 	color: ${({ theme }) => theme.colors.text};
