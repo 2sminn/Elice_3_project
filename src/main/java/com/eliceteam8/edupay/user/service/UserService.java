@@ -1,12 +1,15 @@
 package com.eliceteam8.edupay.user.service;
 
+import com.eliceteam8.edupay.academy_management.dto.response.AcademyCountDTO;
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
+import com.eliceteam8.edupay.academy_management.service.AcademyService;
 import com.eliceteam8.edupay.global.enums.ErrorMessage;
 import com.eliceteam8.edupay.global.mail.EmailMessage;
 import com.eliceteam8.edupay.global.mail.EmailSendService;
-import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
+import com.eliceteam8.edupay.user.dto.PasswordDTO;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
+import com.eliceteam8.edupay.user.dto.UserAcademyDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
 import com.eliceteam8.edupay.user.repository.UserRepository;
@@ -15,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +37,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AcademyRepository academyRepository;
+
+    private final AcademyService academyService;
     private final EmailSendService emailService;
     private final RedisTemplate<String, String> redisTemplate;
+
+    private final PasswordEncoder passwordEncoder;
 
     public static final int MAX_ATTEMPT = 5;
     public static final int BLOCK_TIME = 10 * 60;
@@ -52,11 +61,21 @@ public class UserService {
         return updateUserDTO;
     }
 
-    public UpdateUserDTO getUser(String email) {
-        User user = userRepository.findByEmail(email)
+    @Transactional(readOnly = true)
+    public UserAcademyDTO getUser() {
+        UserDTO userDTO = (UserDTO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(userDTO.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
-        UpdateUserDTO updateUserDTO = UpdateUserDTO.entityToDTO(user);
-        return updateUserDTO;
+
+        UserAcademyDTO userAcademyDTO = UserAcademyDTO.entityToDTO(user);
+
+        AcademyCountDTO studentAndLectureCount = academyService.getStudentAndLectureCount();
+
+        userAcademyDTO.setTotalPaidBill(studentAndLectureCount.getTotalPaidBill());
+        userAcademyDTO.setLectureCount(studentAndLectureCount.getLectureCount());
+        userAcademyDTO.setStudentCount(studentAndLectureCount.getStudentCount());
+
+        return userAcademyDTO;
     }
 
     //유저 정보 업데이트
@@ -174,5 +193,17 @@ public class UserService {
     }
 
 
+    @Transactional
+    public Long updatePassword(PasswordDTO passwordDTO) {
+        UserDTO user = (UserDTO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User findUser = userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
 
+            if(passwordEncoder.matches(passwordDTO.getPassword(),findUser.getPassword())){
+                throw new IllegalArgumentException("기존 비밀번호와 동일합니다.");
+            }
+            findUser.updatePassword(passwordEncoder.encode(passwordDTO.getPassword()));
+
+            return findUser.getId();
+    }
 }

@@ -21,14 +21,10 @@ import java.security.Principal;
 @RequestMapping("/academy")
 public class AcademyController {
 
-
     private final AcademyService academyService;
-    private final UserService userService;
     @GetMapping
-    public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount(Principal principal){
-        String email = principal.getName();
-        UpdateUserDTO currentUser = userService.getUser(email);
-        AcademyCountDTO studentAndLectureCount = academyService.getStudentAndLectureCount(currentUser.getAcademyId());
+    public ResponseEntity<AcademyCountDTO> getAcademyStudentLectureCount(){
+        AcademyCountDTO studentAndLectureCount = academyService.getStudentAndLectureCount();
         return ResponseEntity.ok(studentAndLectureCount);
     }
 }

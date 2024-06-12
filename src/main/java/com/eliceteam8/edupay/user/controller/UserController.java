@@ -1,8 +1,7 @@
 package com.eliceteam8.edupay.user.controller;
 
 
-import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
-import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
+import com.eliceteam8.edupay.user.dto.*;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -26,10 +25,9 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<UpdateUserDTO> getUser(Principal principal){
-        String email = principal.getName();
-        UpdateUserDTO updateUserDTO = userService.getUser(email);
-        return ResponseEntity.ok(updateUserDTO);
+    public ResponseEntity<UserAcademyDTO> getUser(){
+        UserAcademyDTO userAcademyDTO = userService.getUser();
+        return ResponseEntity.ok(userAcademyDTO);
     }
 
     
@@ -45,6 +43,17 @@ public class UserController {
     }
 
     //비밀번호변경
+    @PatchMapping("/password")
+    public ResponseEntity<BooleanResultDTO> updatePassword(@Valid @RequestBody PasswordDTO passwordDTO ) {
+        if(!passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())){
+           throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        Long id = userService.updatePassword(passwordDTO);
+        String message = "ID:"+id+" 님 비밀번호가 변경되었습니다.";
+        BooleanResultDTO result = BooleanResultDTO.builder().result(true).message(message).build();
+        return ResponseEntity.ok(result);
+
+    }
 
 
     @GetMapping("/test")
