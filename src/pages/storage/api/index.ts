@@ -1,8 +1,12 @@
 import axiosApi from '../../../api/axios';
 import { FilterSearchType, StorageResponseType } from '../type';
 
-export const getStorages = async (searchFilter: FilterSearchType): Promise<StorageResponseType> => {
-	const response = await axiosApi.get<StorageResponseType>(`payments?status=${searchFilter.isPaid}&page=1&size=10`);
+const SIZE = 10;
+
+export const getStorages = async (searchFilter: FilterSearchType, page: number): Promise<StorageResponseType> => {
+	const response = await axiosApi.get<StorageResponseType>(
+		`payments?status=${searchFilter.isPaid}&year=${searchFilter.year}&month=${searchFilter.month}&page=${page}&size=${SIZE}`,
+	);
 
 	return response.data;
 };
