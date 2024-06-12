@@ -6,3 +6,9 @@ export const getChargeHistory = async (): Promise<ChargeHistoryResponseType> => 
 
 	return response.data;
 };
+
+export const getUseHistory = async (): Promise<ChargeHistoryResponseType> => {
+	const response = await axiosApi.get<ChargeHistoryResponseType>('/point/use/log');
+
+	return response.data;
+};

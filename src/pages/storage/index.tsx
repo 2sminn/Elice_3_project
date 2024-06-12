@@ -24,7 +24,7 @@ const StoragePage = () => {
 		studentName: '',
 	});
 
-	const [page, setPage] = useState(0);
+	const [page, setPage] = useState(1);
 
 	const {
 		data: storageDatas,
