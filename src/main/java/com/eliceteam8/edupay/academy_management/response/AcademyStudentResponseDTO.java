@@ -23,7 +23,9 @@ public class AcademyStudentResponseDTO {
     private String schoolName;
     private String grade;
     private List<Lecture> Lectures;
-    private List<Bill> bills;
-    private List<BillLog> billLogs;
+    //private List<Bill> bills;
+    //private List<BillLog> billLogs;
+    private int beforePaymentCount;
+    private int paidPaymentCount;
 
 }

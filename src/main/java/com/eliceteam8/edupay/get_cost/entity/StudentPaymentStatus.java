@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.academy_management.entity.Lecture;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.payment.entity.PaymentHistory;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class StudentPaymentStatus {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonBackReference
     private AcademyStudent student;
 
     @ManyToOne(fetch = FetchType.LAZY)
