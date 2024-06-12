@@ -1,14 +1,14 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getChargeHistory } from '../api';
+import { getUseHistory } from '../api';
 import { ChargeHistoryResponseType } from '../type';
 
-export const useGetChargeHistoryQuery = () => {
-	const queryKey = ['chargeHistory'];
+export const useGetUseHistoryQuery = () => {
+	const queryKey = ['useHistory'];
 
 	const queryFn = async (): Promise<ChargeHistoryResponseType> => {
-		const chargeHistoryDatas = await getChargeHistory();
+		const useHistoryDatas = await getUseHistory();
 
-		return chargeHistoryDatas;
+		return useHistoryDatas;
 	};
 
 	const getNextPageParam = (lastPage: ChargeHistoryResponseType, allPages: ChargeHistoryResponseType[]) => {

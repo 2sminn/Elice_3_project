@@ -10,20 +10,40 @@ import {
 } from '../../styles/commonStyle';
 import * as S from './style';
 import { TabBox, TabMenu } from '../storage/style';
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useGetChargeHistoryQuery } from './hooks/useGetChargeHistoryQuery';
 import { formatNumber } from '../../utils/formatNumber';
 import profileImg from './assets/images/profile.jpeg';
 import { formatDate } from '../../utils/formatDate';
+import { useGetUseHistoryQuery } from './hooks/useGetUseHistoryQuery';
 
 const Mypage = () => {
+	const [page, setPage] = useState(1);
+	const [tab, setTab] = useState('충전');
+
 	const navigate = useNavigate();
 
 	const goToProfileEdit = () => {
 		navigate('/edit-profile');
 	};
 
-	const { data: chargeHistoryDatas, fetchNextPage, hasNextPage, isFetching } = useGetChargeHistoryQuery();
+	const {
+		data: chargeHistoryDatas,
+		fetchNextPage: chargeHistoryFetchNextPage,
+		hasNextPage: chargeHistoryHasNextPage,
+		isFetching: chargeHistoryIsFetching,
+	} = useGetChargeHistoryQuery();
+	const {
+		data: useHistoryDatas,
+		fetchNextPage: useHistoryFetchNextPage,
+		hasNextPage: useHistoryHasNextPage,
+		isFetching: useHistoryIsFetching,
+	} = useGetUseHistoryQuery();
+
+	const handleChangeTab = (e: React.MouseEvent<HTMLButtonElement>) => {
+		const target = e.target as HTMLButtonElement;
+		setTab(target.name);
+	};
 
 	const observerRef = useRef(null);
 
@@ -36,8 +56,8 @@ const Mypage = () => {
 
 		const handleIntersection: IntersectionObserverCallback = (entries) => {
 			entries.forEach((entry) => {
-				if (entry.isIntersecting && hasNextPage && !isFetching) {
-					fetchNextPage();
+				if (entry.isIntersecting && chargeHistoryHasNextPage && !chargeHistoryIsFetching) {
+					setPage((prevPage) => prevPage + 1);
 				}
 			});
 		};
@@ -53,9 +73,22 @@ const Mypage = () => {
 				observer.unobserve(observerRef.current);
 			}
 		};
-	}, [fetchNextPage, hasNextPage, isFetching]);
+	}, [
+		chargeHistoryFetchNextPage,
+		chargeHistoryHasNextPage,
+		chargeHistoryIsFetching,
+		useHistoryFetchNextPage,
+		useHistoryHasNextPage,
+		useHistoryIsFetching,
+	]);
 
-	console.log(chargeHistoryDatas);
+	useEffect(() => {
+		if (page > 0) {
+			chargeHistoryFetchNextPage();
+			useHistoryFetchNextPage();
+		}
+	}, [page, chargeHistoryFetchNextPage]);
+
 	return (
 		<Container>
 			<PageTitle>마이페이지</PageTitle>
@@ -84,8 +117,16 @@ const Mypage = () => {
 				</S.ProfileBtnContainer>
 			</S.MypageContainer>
 			<TabBox>
-				<TabMenu $active={true}>충전내역</TabMenu>
-				<TabMenu>사용내역</TabMenu>
+				<TabMenu $active={tab === '충전'}>
+					<button name="충전" onClick={handleChangeTab}>
+						충전내역
+					</button>
+				</TabMenu>
+				<TabMenu $active={tab === '사용'}>
+					<button name="사용" onClick={handleChangeTab}>
+						사용내역
+					</button>
+				</TabMenu>
 			</TabBox>
 			<S.MypageContainer>
 				<TableTitleBox>
@@ -101,21 +142,37 @@ const Mypage = () => {
 					<TableList $isTitle width="20%"></TableList>
 				</TableTitleBox>
 				<TableContentContainer>
-					{chargeHistoryDatas?.pages.map((page, index) => (
-						<Fragment key={index}>
-							{page?.content?.map((data) => (
-								<TableContentBox key={data.id}>
-									<TableList width="15%">{formatDate(data.createdAt)}</TableList>
-									<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
-									<TableList width="40%">O</TableList>
-									<TableList width="20%">
-										<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
-									</TableList>
-								</TableContentBox>
+					{tab === '충전'
+						? chargeHistoryDatas?.pages.map((page, index) => (
+								<Fragment key={index}>
+									{page?.content?.map((data) => (
+										<TableContentBox key={data.id}>
+											<TableList width="15%">{formatDate(data.createdAt)}</TableList>
+											<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
+											<TableList width="40%">O</TableList>
+											<TableList width="20%">
+												<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
+											</TableList>
+										</TableContentBox>
+									))}
+								</Fragment>
+							))
+						: useHistoryDatas?.pages.map((page, index) => (
+								<Fragment key={index}>
+									{page?.content?.map((data) => (
+										<TableContentBox key={data.id}>
+											<TableList width="15%">{formatDate(data.createdAt)}</TableList>
+											<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
+											<TableList width="40%">O</TableList>
+											<TableList width="20%">
+												<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
+											</TableList>
+										</TableContentBox>
+									))}
+								</Fragment>
 							))}
-						</Fragment>
-					))}
-					{isFetching && <div>Loading...</div>}
+					{chargeHistoryIsFetching && <div>Loading...</div>}
+					{useHistoryIsFetching && <div>Loading...</div>}
 					<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
 				</TableContentContainer>
 			</S.MypageContainer>
