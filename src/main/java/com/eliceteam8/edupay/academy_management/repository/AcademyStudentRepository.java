@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.academy_management.repository;
 
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
+import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,6 +35,7 @@ public interface AcademyStudentRepository extends JpaRepository<AcademyStudent, 
             @Param("phoneNumber") String phoneNumber,
             @Param("email") String email,
             @Param("schoolName") String schoolName);
+            //Pageable pageable);
 
     @Query("SELECT s FROM AcademyStudent s WHERE s.isDeleted = false")
     List<AcademyStudent> findAllActiveStudents();

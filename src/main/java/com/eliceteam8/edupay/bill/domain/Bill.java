@@ -66,6 +66,7 @@ public class Bill {
     private BillLog billLog;
 
     @OneToMany(mappedBy = "bill")
+    @JsonBackReference
     private List<StudentPaymentStatus> paymentStatuses = new ArrayList<>();
 
     // 청구서가 발행되었을 때 청구서 상태를 'COMPLETED'로 바꾸는 메서드
