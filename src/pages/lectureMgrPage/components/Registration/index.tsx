@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import {
 	PopupContainer,
@@ -12,53 +11,46 @@ import {
 	ScheduleContainer,
 	ScheduleInputGroup,
 	ScheduleRemoveButton,
+	PopupSelect,
 	PopupButton,
 } from './style';
-import { createStudent } from '../../api';
-import { StudentType, BillType } from '../../api';
+import { createLecture } from '../../api';
+import { LectureType } from '../../api';
 
-const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
-	const { register, handleSubmit, control, reset } = useForm<StudentType>({
+const daysOfWeek = [
+	{ value: 'Monday', label: '월요일' },
+	{ value: 'Tuesday', label: '화요일' },
+	{ value: 'Wednesday', label: '수요일' },
+	{ value: 'Thursday', label: '목요일' },
+	{ value: 'Friday', label: '금요일' },
+	{ value: 'Saturday', label: '토요일' },
+	{ value: 'Sunday', label: '일요일' },
+];
+
+const LectureRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
+	const { register, handleSubmit, control, reset } = useForm<LectureType>({
 		defaultValues: {
-			academyId: 1, // 기본 값 설정 (필요에 따라 수정)
-			academyName: '',
-			studentName: '',
-			birthdate: '',
-			email: '',
-			phoneNumber: '',
-			schoolName: '',
-			grade: '',
-			lectures: [{ id: Date.now(), lectureName: '', price: 0, teacherName: '', createdAt: '', updatedAt: '' }],
-			bills: [{ id: Date.now(), totalPrice: 0, dueDate: '', createdAt: '', updatedAt: '', status: '', message: '' }],
+			lectureName: '',
+			price: 0,
+			teacherName: '',
+			lectureStatus: 'OPEN',
+			lectureSchedules: [{ id: Date.now(), day: 'Monday', startTime: '', endTime: '' }],
 		},
 	});
 
-	const {
-		fields: lectureFields,
-		append: appendLecture,
-		remove: removeLecture,
-	} = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control,
-		name: 'lectures',
+		name: 'lectureSchedules',
 	});
 
-	const {
-		fields: billFields,
-		append: appendBill,
-		remove: removeBill,
-	} = useFieldArray({
-		control,
-		name: 'bills',
-	});
-
-	const onSubmit = async (data: StudentType) => {
+	const onSubmit = async (data: LectureType) => {
 		try {
-			await createStudent(data);
-			alert('원생이 성공적으로 등록되었습니다.');
+			await createLecture(data);
+			alert('강의가 성공적으로 등록되었습니다.');
 			onSuccess();
 			onClose();
 		} catch (error) {
-			alert('원생 등록에 실패했습니다.');
+			alert('강의 등록에 실패했습니다.');
 		}
 		reset();
 	};
@@ -66,71 +58,41 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 	return (
 		<PopupContainer>
 			<Header>
-				<Title>신규 원생 등록</Title>
+				<Title>신규 강의 등록</Title>
 				<CloseButton onClick={onClose}>×</CloseButton>
 			</Header>
 			<Form onSubmit={handleSubmit(onSubmit)}>
-				<Input {...register('academyName', { required: true })} placeholder="학원이름" />
-				<Input {...register('studentName', { required: true })} placeholder="원생명" />
-				<Input {...register('birthdate', { required: true })} type="date" placeholder="생년월일" />
-				<Input {...register('email', { required: true })} type="email" placeholder="이메일" />
-				<Input {...register('phoneNumber', { required: true })} placeholder="연락처" />
-				<Input {...register('grade', { required: true })} placeholder="학년" />
-				<Input {...register('schoolName', { required: true })} placeholder="학교명" />
-
-				<h4>강의 목록</h4>
-				{lectureFields.map((item, index) => (
+				<Input {...register('lectureName', { required: true })} placeholder="강의명" />
+				<Input {...register('price', { required: true })} type="number" placeholder="수강료" />
+				<Input {...register('teacherName', { required: true })} placeholder="담임명" />
+				<PopupSelect {...register('lectureStatus')}>
+					<option value="OPEN">OPEN</option>
+					<option value="CLOSE">CLOSE</option>
+				</PopupSelect>
+				{fields.map((item, index) => (
 					<ScheduleContainer key={item.id}>
 						<ScheduleInputGroup>
-							<Input {...register(`lectures.${index}.lectureName` as const)} placeholder="강의명" />
-							<Input {...register(`lectures.${index}.teacherName` as const)} placeholder="담임명" />
-							<Input {...register(`lectures.${index}.price` as const)} type="number" placeholder="수강료" />
+							<PopupSelect {...register(`lectureSchedules.${index}.day` as const)}>
+								{daysOfWeek.map((day) => (
+									<option key={day.value} value={day.value}>
+										{day.label}
+									</option>
+								))}
+							</PopupSelect>
+							<Input {...register(`lectureSchedules.${index}.startTime` as const)} type="time" />
+							<Input {...register(`lectureSchedules.${index}.endTime` as const)} type="time" />
 						</ScheduleInputGroup>
-						<ScheduleRemoveButton type="button" onClick={() => removeLecture(index)}>
+						<ScheduleRemoveButton type="button" onClick={() => remove(index)}>
 							제거
 						</ScheduleRemoveButton>
 					</ScheduleContainer>
 				))}
 				<PopupButton
 					type="button"
-					onClick={() =>
-						appendLecture({ id: Date.now(), lectureName: '', price: 0, teacherName: '', createdAt: '', updatedAt: '' })
-					}
+					onClick={() => append({ id: Date.now(), day: 'Monday', startTime: '', endTime: '' })}
 				>
-					강의 추가
+					일정 추가
 				</PopupButton>
-
-				<h4>청구 목록</h4>
-				{billFields.map((item, index) => (
-					<ScheduleContainer key={item.id}>
-						<ScheduleInputGroup>
-							<Input {...register(`bills.${index}.totalPrice` as const)} type="number" placeholder="청구 금액" />
-							<Input {...register(`bills.${index}.dueDate` as const)} type="date" placeholder="납부 기한" />
-							<Input {...register(`bills.${index}.status` as const)} placeholder="상태" />
-							<Input {...register(`bills.${index}.message` as const)} placeholder="메시지" />
-						</ScheduleInputGroup>
-						<ScheduleRemoveButton type="button" onClick={() => removeBill(index)}>
-							제거
-						</ScheduleRemoveButton>
-					</ScheduleContainer>
-				))}
-				<PopupButton
-					type="button"
-					onClick={() =>
-						appendBill({
-							id: Date.now(),
-							totalPrice: 0,
-							dueDate: '',
-							createdAt: '',
-							updatedAt: '',
-							status: '',
-							message: '',
-						})
-					}
-				>
-					청구 추가
-				</PopupButton>
-
 				<ButtonContainer>
 					<SaveButton type="submit">저장하기</SaveButton>
 				</ButtonContainer>
@@ -139,4 +101,4 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 	);
 };
 
-export default StudentRegistrationPopup;
+export default LectureRegistrationPopup;
