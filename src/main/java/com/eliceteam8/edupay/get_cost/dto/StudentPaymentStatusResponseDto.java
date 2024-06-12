@@ -19,6 +19,7 @@ public class StudentPaymentStatusResponseDto {
     private Status billStatus;
     private LocalDateTime updatedAt;
     private long totalPrice;
+    private String lectureName;
 
     public static StudentPaymentStatusResponseDto fromEntity(StudentPaymentStatus entity) {
         if (entity == null) return null;
@@ -33,6 +34,7 @@ public class StudentPaymentStatusResponseDto {
                 .billStatus(entity.getBill().getStatus())
                 .updatedAt(entity.getUpdatedAt())
                 .totalPrice(entity.getBill().getTotalPrice())
+                .lectureName(entity.getLecture().getLectureName())
                 .build();
     }
 }
