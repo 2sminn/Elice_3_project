@@ -25,4 +25,3 @@ public interface StudentPaymentStatusRepository extends JpaRepository<StudentPay
     Page<StudentPaymentStatus> findByBill_Status(Status status, Pageable pageable);
 
 }
-}
