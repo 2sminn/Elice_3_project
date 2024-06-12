@@ -10,6 +10,7 @@ import com.eliceteam8.edupay.academy_management.lecture.dto.request.UpdateStuden
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.academy_management.repository.AcademyStudentRepository;
 import com.eliceteam8.edupay.academy_management.response.AcademyStudentResponseDTO;
+import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,13 +63,14 @@ public class Academy {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "academy")
+    @JsonBackReference
     private List<Bill> bill = new ArrayList<>();
 
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AcademyStudent> academyStudents;
 
     @OneToMany(mappedBy = "academy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Lecture> lectures;
     //createAcademy
 

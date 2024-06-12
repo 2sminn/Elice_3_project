@@ -3,6 +3,8 @@ package com.eliceteam8.edupay.bill.domain;
 import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.entity.AcademyStudent;
 import com.eliceteam8.edupay.get_cost.entity.StudentPaymentStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,13 +53,16 @@ public class Bill {
 
     @ManyToOne
     @JoinColumn(name = "academy_id")
+    @JsonBackReference
     private Academy academy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonBackReference
     private AcademyStudent student;
 
     @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
+    @JsonBackReference
     private BillLog billLog;
 
     @OneToMany(mappedBy = "bill")
