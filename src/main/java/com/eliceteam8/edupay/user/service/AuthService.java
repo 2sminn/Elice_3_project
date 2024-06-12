@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.academy_management.entity.Academy;
 import com.eliceteam8.edupay.academy_management.repository.AcademyRepository;
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
+import com.eliceteam8.edupay.user.dto.PasswordDTO;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
@@ -80,4 +81,14 @@ public class AuthService implements UserDetailsService {
     }
 
 
+    @Transactional
+    public Long updatePassword(PasswordDTO passwordDTO) {
+        User user = userRepository.findUserByEmail(passwordDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+        String encodedPassword = passwordEncoder.encode(passwordDTO.getPassword());
+        user.updatePassword(encodedPassword);
+
+        return user.getId();
+    }
 }

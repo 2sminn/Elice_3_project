@@ -26,6 +26,8 @@ import java.util.Map;
 public class TokenController {
     private final RedisTemplate<String, String> redisTemplate;
 
+
+
     @RequestMapping("/token/refresh")
     public Map<String,Object> refresh(@RequestHeader("Authorization")String authHeader, @RequestBody CreateTokenDTO createTokenDTO){
 
@@ -47,22 +49,22 @@ public class TokenController {
         }
 
         Map<String, Object> claims = JwtProvider.validateToken(refreshToken);
-        String email = claims.get("email").toString();
+        String userId = claims.get("userId").toString();
+        String key= "token_"+userId;
 
-        String redisRefreshToken = redisTemplate.opsForValue().get(email);
+        String redisRefreshToken = redisTemplate.opsForValue().get(key);
         if(redisRefreshToken == null){
             throw new UsernameNotFoundException("해당유저의 refreshToken정보가 존재하지 않습니다.");
         }
 
-        String newAccessToken = JwtProvider.generateToken(claims,10);
-        //String newRefreshToken = checkTime((Integer)claims.get("exp")) == true? JwtProvider.generateToken(claims,60*12):redisRefreshToken;
+        String newAccessToken = JwtProvider.generateToken(claims,15);
 
         //refreshToken 기간이 60분 이하로 남았을 경우 새로운 refreshToken을 발급
         //아닐 경우 기존 refreshToken을 사용한다
         String newReToken;
         if(checkTime((Integer)claims.get("exp"))){
             newReToken=  JwtProvider.generateToken(claims,60*12);
-            redisTemplate.opsForValue().set(email,newReToken);
+            redisTemplate.opsForValue().set(key,newReToken);
         }else {
             newReToken = redisRefreshToken;
         }
