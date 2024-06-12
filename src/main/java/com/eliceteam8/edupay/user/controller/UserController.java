@@ -1,10 +1,7 @@
 package com.eliceteam8.edupay.user.controller;
 
 
-import com.eliceteam8.edupay.user.dto.BooleanResultDTO;
-import com.eliceteam8.edupay.user.dto.PasswordDTO;
-import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
-import com.eliceteam8.edupay.user.dto.UserIdResponseDTO;
+import com.eliceteam8.edupay.user.dto.*;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -28,10 +25,9 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<UpdateUserDTO> getUser(Principal principal){
-        String email = principal.getName();
-        UpdateUserDTO updateUserDTO = userService.getUser(email);
-        return ResponseEntity.ok(updateUserDTO);
+    public ResponseEntity<UserAcademyDTO> getUser(){
+        UserAcademyDTO userAcademyDTO = userService.getUser();
+        return ResponseEntity.ok(userAcademyDTO);
     }
 
     

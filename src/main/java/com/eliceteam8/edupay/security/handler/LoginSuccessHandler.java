@@ -25,6 +25,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private final RedisTemplate<String, String> redisTemplate;
+
+
+    private static final long EXPIRATION_THRESHOLD = 600L;
+    private static final long TOKEN_EXPIRATION_HOURS = 12L;
+
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -36,16 +42,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
-        String email = userDTO.getEmail();
+        String userId = userClaims.get("userId").toString();
         userClaims.remove("password");
         // JWT 토큰 생성
 
-        String accessToken = JwtProvider.generateToken(userClaims, 60*6);
+        String accessToken = JwtProvider.generateToken(userClaims, 15);
 
         String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
 
         // Redis에 저장
-       // refreshTokenSave(refreshToken, email);
+        refreshTokenSave(refreshToken, userId);
 
         userClaims.put("refreshToken", refreshToken);
         userClaims.put("accessToken", accessToken);
@@ -54,20 +60,22 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private boolean refreshTokenSave( String refreshToken, String email){
+    private boolean refreshTokenSave( String refreshToken, String userId){
         try {
-            //redis 키값이 존재하면 저장하지 않음
-            if(redisTemplate.getExpire(email) > 600){
+            String redisKey = "token_"+userId;
+            Long expire = redisTemplate.getExpire(redisKey);
+            // Redis 키가 존재하고, 만료 시간이 600초 이상인 경우 저장하지 않음
+            if(expire != null && expire > EXPIRATION_THRESHOLD){
                 return false;
             }
 
            redisTemplate.opsForValue().setIfAbsent(
-                    email,
+                   redisKey,
                     refreshToken,
-                    Duration.ofHours(12));
+                    Duration.ofHours(TOKEN_EXPIRATION_HOURS));
             return true;
         } catch (Exception e) {
-            log.error("Error saving refresh token to Redis : {}", e.getMessage());
+            log.error("Error saving refresh token to Redis : email: {}, {}", userId, e.getMessage());
             return false;
         }
     }
