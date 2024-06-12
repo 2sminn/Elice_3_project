@@ -100,7 +100,7 @@ const StudentMgrPage = () => {
 			</ButtonGroup>
 
 			<StudentTable
-				students={filteredStudents} // <== filteredStudents 사용
+				students={filteredStudents}
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}

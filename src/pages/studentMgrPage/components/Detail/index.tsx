@@ -34,6 +34,11 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 		setValue('email', student.email);
 		setValue('phoneNumber', student.phoneNumber);
 		setValue('grade', student.grade);
+		setValue('birthdate', student.birthdate);
+		setValue('schoolName', student.schoolName);
+		if (student.lectures) {
+			setValue('lectures', student.lectures);
+		}
 	}, [student, setValue]);
 
 	const handleEditClick = () => {
@@ -73,6 +78,28 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 				<DetailItem>
 					<strong>학년:</strong>
 					{isEditing ? <Input {...register('grade')} /> : student.grade}
+				</DetailItem>
+				<DetailItem>
+					<strong>생년월일:</strong>
+					{isEditing ? <Input {...register('birthdate')} type="date" /> : student.birthdate}
+				</DetailItem>
+				<DetailItem>
+					<strong>학교명:</strong>
+					{isEditing ? <Input {...register('schoolName')} /> : student.schoolName}
+				</DetailItem>
+				<DetailItem>
+					<strong>강의 목록:</strong>
+					{student.lectures && student.lectures.length > 0 ? (
+						<ul>
+							{student.lectures.map((lecture) => (
+								<li key={lecture.id}>
+									{lecture.lectureName} - {lecture.teacherName} - {lecture.price.toLocaleString()}원
+								</li>
+							))}
+						</ul>
+					) : (
+						<span>강의 없음</span>
+					)}
 				</DetailItem>
 				<ButtonContainer>
 					{isEditing ? (

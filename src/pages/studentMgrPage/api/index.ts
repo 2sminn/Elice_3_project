@@ -10,6 +10,15 @@ export interface BillType {
 	message: string;
 }
 
+export interface LectureType {
+	id: number;
+	lectureName: string;
+	price: number;
+	teacherName: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface StudentType {
 	academyId: number;
 	academyName: string;
@@ -20,6 +29,7 @@ export interface StudentType {
 	email: string;
 	schoolName: string;
 	grade: string;
+	lectures: LectureType[];
 	bills: BillType[];
 	selected?: boolean;
 }
@@ -32,6 +42,7 @@ export const fetchStudents = async (): Promise<StudentType[]> => {
 
 export const fetchStudent = async (studentId: number): Promise<StudentType> => {
 	const response = await axiosApi.get<StudentType>(`/academy-students/${studentId}`);
+	console.log('API Response:', response.data); // API 응답 확인
 	return response.data;
 };
 

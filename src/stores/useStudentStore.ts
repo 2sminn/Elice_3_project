@@ -46,6 +46,7 @@ const useStudentStore = create<StudentStore>((set) => ({
 		set({ loading: true, error: null });
 		try {
 			const student = await apiFetchStudent(studentId);
+			console.log('Fetched student:', student); // 데이터 확인
 			set({ student, loading: false });
 			return student;
 		} catch (error: any) {
