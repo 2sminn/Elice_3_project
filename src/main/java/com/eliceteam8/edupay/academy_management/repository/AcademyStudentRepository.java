@@ -43,6 +43,6 @@ public interface AcademyStudentRepository extends JpaRepository<AcademyStudent, 
     @Query("SELECT s FROM AcademyStudent s WHERE s.isDeleted = false AND s.id = :id")
     Optional<AcademyStudent> findByIdAndNotDeleted(@Param("id") Long id);
 
-    Page<AcademyStudent> findAll(Pageable pageable);
+    //Page<AcademyStudent> findAll(Pageable pageable);
 
 }

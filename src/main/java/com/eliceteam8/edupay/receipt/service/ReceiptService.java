@@ -30,12 +30,11 @@ public class ReceiptService {
     @Autowired
     private EmailService emailService;
 
-    public void createReceipt(ReceiptDto receiptDto){
-
+    public void createReceipt(Bill bill) {
         ReceiptEntity receiptEntity = new ReceiptEntity();
         receiptEntity.setReceiptDate(LocalDateTime.now());
-        receiptEntity.setBillId(receiptDto.getBillId());
-        receiptEntity.setStudentId(receiptDto.getStudentId());
+        receiptEntity.setBillId(bill.getId());
+        receiptEntity.setStudentId(bill.getStudent().getId());
         receiptRepository.save(receiptEntity);
     }
     public List<ReceiptDto> getReceiptsByInfo(Long studentId, String year, String month) {

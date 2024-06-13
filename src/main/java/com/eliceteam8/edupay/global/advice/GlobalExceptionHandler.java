@@ -4,21 +4,17 @@ import com.eliceteam8.edupay.academy_management.exception.ResourceNotFoundExcept
 import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.*;
 import com.eliceteam8.edupay.global.response.ErrorResponse;
-import jakarta.validation.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -111,13 +107,13 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(NotEnoughRemainingBillsException.class)
-    public ResponseEntity<ErrorResponse> handleNotEnoughRemainingBillsException(NotEnoughRemainingBillsException ex) {
-        log.error("---handleNotEnoughRemainingBillsException---");
+    @ExceptionHandler(NotEnoughPointsException.class)
+    public ResponseEntity<ErrorResponse> handleNotEnoughPointsException(NotEnoughPointsException ex) {
+        log.error("---handleNotEnoughPointsException---");
         final ErrorResponse response = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .code(ex.getCode())
-                .message("Not enough remaining bills")
+                .message("Not enough points")
                 .messageDetail(ex.getMessage())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

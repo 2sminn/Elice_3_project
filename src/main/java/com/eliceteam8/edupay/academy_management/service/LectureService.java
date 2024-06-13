@@ -83,9 +83,16 @@ public class LectureService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public Page<LectureDTO> getAllLectures(Pageable pageable) {
+    /*public Page<LectureDTO> getAllLectures(Pageable pageable) {
         Page<Lecture> lecturesPage = lectureRepository.findAll(pageable);
         return lecturesPage.map(lecture -> modelMapper.map(lecture, LectureDTO.class));
+    }*/
+
+    public List<LectureDTO> getAllLectures() {
+        List<Lecture> lectures = lectureRepository.findAll();
+        return lectures.stream()
+                .map(lecture -> modelMapper.map(lecture, LectureDTO.class))
+                .collect(Collectors.toList());
     }
 
     public Optional<Lecture> getLectureById(Long lectureId) {

@@ -10,6 +10,8 @@ import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
 import com.eliceteam8.edupay.payment.entity.PaymentHistory;
 import com.eliceteam8.edupay.payment.repository.PaymentHistoryRepository;
+import com.eliceteam8.edupay.receipt.dto.ReceiptDto;
+import com.eliceteam8.edupay.receipt.service.ReceiptService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -29,6 +31,7 @@ public class PaymentService {
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final BillRepository billRepository;
     private final IamportClient iamportClient;
+    private final ReceiptService receiptService;
 
     public PaymentInfoDTO createPaymentInfoDTO(Long billId) {
         Bill bill = billRepository.findById(billId)
@@ -56,6 +59,7 @@ public class PaymentService {
         }
 
         savePaymentHistory(request.getImpUid(), request.getBillId());
+        receiptService.createReceipt(bill);
     }
 
     private IamportResponse<Payment> getIamportResponse(CallbackRequestDTO request) throws IamportResponseException, IOException {
