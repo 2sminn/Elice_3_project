@@ -1,22 +1,21 @@
 //package com.eliceteam8.edupay.get_cost.service;
 //
-//import java.time.YearMonth;
-//import java.util.Optional;
-//
 //import com.eliceteam8.edupay.get_cost.dto.PaymentStatisticsDto;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.redis.core.RedisTemplate;
+//import com.eliceteam8.edupay.get_cost.repository.StudentPaymentStatusRepository;
+//import org.springframework.cache.annotation.Cacheable;
 //import org.springframework.stereotype.Service;
+//import lombok.RequiredArgsConstructor;
+//
+//import java.util.List;
 //
 //@Service
+//@RequiredArgsConstructor
 //public class PaymentStatisticsService {
 //
-//    @Autowired
-//    private RedisTemplate<String, PaymentStatisticsDto> redisTemplate;
+//    private final StudentPaymentStatusRepository studentPaymentStatusRepository;
 //
-//    public Optional<PaymentStatisticsDto> getStatistics(int year, int month) {
-//        YearMonth yearMonth = YearMonth.of(year, month);
-//        String key = "PaymentStatisticsDto:" + yearMonth;
-//        return Optional.ofNullable(redisTemplate.opsForValue().get(key));
+//    @Cacheable(value = "paymentStatistics", key = "#year + '-' + #month")
+//    public List<PaymentStatisticsDto> getStatistics(int year, int month) {
+//        return studentPaymentStatusRepository.findStatisticsByYearAndMonth(year, month);
 //    }
 //}

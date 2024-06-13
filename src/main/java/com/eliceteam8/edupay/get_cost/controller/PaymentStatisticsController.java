@@ -2,20 +2,25 @@
 //
 //import com.eliceteam8.edupay.get_cost.dto.PaymentStatisticsDto;
 //import com.eliceteam8.edupay.get_cost.service.PaymentStatisticsService;
-//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RequestParam;
 //import org.springframework.web.bind.annotation.RestController;
+//import lombok.RequiredArgsConstructor;
+//
+//import java.util.List;
 //
 //@RestController
+//@RequestMapping("/statistics")
+//@RequiredArgsConstructor
 //public class PaymentStatisticsController {
 //
-//    @Autowired
-//    private PaymentStatisticsService paymentStatisticsService;
+//    private final PaymentStatisticsService paymentStatisticsService;
 //
-//    @GetMapping("/payment-statistics")
-//    public ResponseEntity<PaymentStatisticsDto> getStatistics(@RequestParam int year, @RequestParam int month) {
-//        return ResponseEntity.of(paymentStatisticsService.getStatistics(year, month));
+//    @GetMapping
+//    public ResponseEntity<List<PaymentStatisticsDto>> getStatistics(
+//            @RequestParam(name = "year") int year, @RequestParam(name = "month") int month) {
+//        return ResponseEntity.ok(paymentStatisticsService.getStatistics(year, month));
 //    }
 //}
