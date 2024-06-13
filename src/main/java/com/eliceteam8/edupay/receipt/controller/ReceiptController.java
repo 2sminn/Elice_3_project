@@ -19,11 +19,11 @@ public class ReceiptController {
         this.receiptService=receiptService;
     }
 
-    @PostMapping
-    public ResponseEntity<ReceiptDto> addReceipt(@RequestBody ReceiptDto receiptDto){
-        receiptService.createReceipt(receiptDto);
-        return ResponseEntity.ok(receiptDto);
-    }
+//    @PostMapping
+//    public ResponseEntity<ReceiptDto> addReceipt(@RequestBody ReceiptDto receiptDto){
+//        receiptService.createReceipt(receiptDto);
+//        return ResponseEntity.ok(receiptDto);
+//    }
 
     @GetMapping
     public ResponseEntity<List<ReceiptDto>> getReceiptsByInfo(@RequestBody ReceiptRequestDto request) {
