@@ -1,4 +1,3 @@
-// pages/lectureMgrPage/LectureMgrPage.tsx
 import React, { useEffect, useState } from 'react';
 import {
 	Container,
@@ -49,7 +48,7 @@ const LectureMgrPage = () => {
 			alert('삭제할 강의를 선택하세요.');
 			return;
 		}
-		await Promise.all(selectedLectures.map((lecture) => deleteLecture(lecture.id)));
+		await Promise.all(selectedLectures.map((lecture) => deleteLecture(lecture.lectureId)));
 		alert('선택된 강의가 삭제되었습니다.');
 	};
 
@@ -60,7 +59,7 @@ const LectureMgrPage = () => {
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		lectures.forEach((lecture) => selectLecture(lecture.id));
+		lectures.forEach((lecture) => selectLecture(lecture.lectureId));
 	};
 
 	const handleSelectChange = (lectureId: number) => () => {
@@ -139,11 +138,11 @@ const LectureTable: React.FC<LectureTableProps> = ({
 			</thead>
 			<tbody>
 				{lectures.map((lecture) => (
-					<tr key={lecture.id}>
+					<tr key={lecture.lectureId}>
 						<Td>
-							<input type="checkbox" checked={lecture.selected || false} onChange={onSelectChange(lecture.id)} />
+							<input type="checkbox" checked={lecture.selected || false} onChange={onSelectChange(lecture.lectureId)} />
 						</Td>
-						<Td onClick={() => onLectureNameClick(lecture.id)} style={{ cursor: 'pointer', color: '#007bff' }}>
+						<Td onClick={() => onLectureNameClick(lecture.lectureId)} style={{ cursor: 'pointer', color: '#007bff' }}>
 							{lecture.lectureName}
 						</Td>
 						<Td>{lecture.teacherName}</Td>

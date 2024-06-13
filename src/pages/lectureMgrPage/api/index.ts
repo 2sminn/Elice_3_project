@@ -1,7 +1,7 @@
 import axiosApi from '../../../api/axios';
 
 export interface LectureType {
-	id: number;
+	lectureId: number;
 	lectureName: string;
 	price: number;
 	teacherName: string;
@@ -9,7 +9,7 @@ export interface LectureType {
 	updatedAt: string;
 	lectureStatus: string;
 	lectureSchedules: {
-		id: number;
+		lectureId: number;
 		day: string;
 		startTime: string;
 		endTime: string;
@@ -27,7 +27,7 @@ export const fetchLecture = async (lectureId: number): Promise<LectureType> => {
 	return response.data;
 };
 
-export const createLecture = async (lecture: Omit<LectureType, 'id'>): Promise<LectureType> => {
+export const createLecture = async (lecture: Omit<LectureType, 'lectureId'>): Promise<LectureType> => {
 	const response = await axiosApi.post<LectureType>('/lectures', lecture);
 	return response.data;
 };
