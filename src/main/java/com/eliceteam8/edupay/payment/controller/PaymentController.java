@@ -33,6 +33,6 @@ public class PaymentController {
     public ResponseEntity<Void> validationPayment(@RequestBody CallbackRequestDTO request) throws IOException, IamportResponseException {
         paymentService.validatePayment(request);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
