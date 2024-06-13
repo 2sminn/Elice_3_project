@@ -102,4 +102,8 @@ public class User {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void setPoint(Long point) {
+        this.point = point;
+    }
 }
