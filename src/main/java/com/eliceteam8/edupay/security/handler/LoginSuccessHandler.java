@@ -25,8 +25,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-
-
+    private final JwtProvider jwtProvider;
+    private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 12;
+    private static final int TOKEN_EXPIRATION_HOURS = 12;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -39,24 +40,20 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
+        Map<String, Object> refreshClaims = userDTO.getRefreshClaims();
         String userId = userClaims.get("userId").toString();
         userClaims.remove("password");
         // JWT 토큰 생성
+        String accessToken = JwtProvider.generateToken(userClaims,TOKEN_EXPIRATION_HOURS);
 
+        String refreshToken = JwtProvider.generateToken(refreshClaims, REFRESH_TOKEN_EXPIRATION_HOURS);
 
-        String accessToken = JwtProvider.generateToken(userClaims, 60);
-
-        String refreshToken = JwtProvider.generateToken(userClaims, 60*12);
-
-        // Redis에 저장
-        //refreshTokenSave(refreshToken, userId);
-
+        jwtProvider.refreshTokenSave(refreshToken, userId);
 
         userClaims.put("refreshToken", refreshToken);
         userClaims.put("accessToken", accessToken);
         // JSON 응답 작성
         response.getWriter().write(objectMapper.writeValueAsString(userClaims));
-
     }
 
 
