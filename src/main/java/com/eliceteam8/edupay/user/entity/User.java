@@ -85,7 +85,7 @@ public class User {
 
     public void usePoint(Long usedPoint) {
         if (this.point < usedPoint) {
-            throw new NotEnoughPointsException("포인트가 부족합니다.");
+            throw new NotEnoughPointsException("포인트가 부족합니다.", "NOT_ENOUGH_POINTS");
         }
         this.point -= usedPoint;
     }

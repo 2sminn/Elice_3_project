@@ -108,12 +108,12 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(NotEnoughPointsException.class)
-    public ResponseEntity<ErrorResponse> handleNotEnoughRemainingBillsException(NotEnoughPointsException ex) {
-        log.error("---handleNotEnoughRemainingBillsException---");
+    public ResponseEntity<ErrorResponse> handleNotEnoughPointsException(NotEnoughPointsException ex) {
+        log.error("---handleNotEnoughPointsException---");
         final ErrorResponse response = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .code(ex.getCode())
-                .message("Not enough remaining bills")
+                .message("Not enough points")
                 .messageDetail(ex.getMessage())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
