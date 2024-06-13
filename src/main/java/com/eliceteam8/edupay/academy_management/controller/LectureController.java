@@ -41,8 +41,13 @@ public class LectureController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LectureDTO>> getAllLectures(@PageableDefault(page = 1, size = 10) Pageable pageable) {
+    /*public ResponseEntity<Page<LectureDTO>> getAllLectures(@PageableDefault(page = 1, size = 10) Pageable pageable) {
         Page<LectureDTO> lectures = lectureService.getAllLectures(pageable);
+        return ResponseEntity.ok(lectures);
+    }*/
+
+    public ResponseEntity<List<LectureDTO>> getAllLectures() {
+        List<LectureDTO> lectures = lectureService.getAllLectures();
         return ResponseEntity.ok(lectures);
     }
 

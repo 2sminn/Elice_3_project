@@ -35,11 +35,11 @@ public class AcademyStudentController {
     private AcademyService academyService;
 
     @GetMapping
-    public ResponseEntity<Page<AcademyStudentResponseDTO>> getAllAcademyStudents(@PageableDefault(page = 1, size = 10) Pageable pageable) {
+    public ResponseEntity<List<AcademyStudentResponseDTO>> getAllAcademyStudents() {
             //@RequestParam(name = "page", defaultValue = "0") int page,
             //@RequestParam(name = "size", defaultValue = "10") int size) {
         //Pageable pageable = PageRequest.of(page, size);
-        Page<AcademyStudentResponseDTO> students = academyStudentService.getAllAcademyStudents(pageable);
+        List<AcademyStudentResponseDTO> students = academyStudentService.getAllAcademyStudents();
         return ResponseEntity.ok(students);
         //return academyStudentService.getAllAcademyStudents();
     }

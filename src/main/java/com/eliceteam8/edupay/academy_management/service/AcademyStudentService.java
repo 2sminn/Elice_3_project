@@ -51,7 +51,7 @@ public class AcademyStudentService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public Page<AcademyStudentResponseDTO> getAllAcademyStudents(Pageable pageable) {
+    /*public Page<AcademyStudentResponseDTO> getAllAcademyStudents(Pageable pageable) {
         Page<AcademyStudent> studentsPage = academyStudentRepository.findAll(pageable);
         //return studentsPage.map(student -> modelMapper.map(student, AcademyStudentResponseDTO.class));
 
@@ -76,6 +76,33 @@ public class AcademyStudentService {
 
         return new PageImpl<>(studentDTOs, pageable, studentsPage.getTotalElements());
 
+    }*/
+
+    public List<AcademyStudentResponseDTO> getAllAcademyStudents() {
+        List<AcademyStudent> students = academyStudentRepository.findAll();
+
+        // List<AcademyStudent>를 List<AcademyStudentResponseDTO>로 변환
+        List<AcademyStudentResponseDTO> studentDTOs = students.stream()
+                .map(student -> {
+                    AcademyStudentResponseDTO dto = modelMapper.map(student, AcademyStudentResponseDTO.class);
+
+                    // 청구서 상태별 건수 계산
+                    long beforeCount = student.getBills().stream()
+                            .filter(bill -> Status.BEFORE.equals(bill.getStatus()))
+                            .count();
+                    long paidCount = student.getBills().stream()
+                            .filter(bill -> Status.PAID.equals(bill.getStatus()))
+                            .count();
+
+                    // DTO에 상태별 건수 설정
+                    dto.setBeforePaymentCount((int) beforeCount);
+                    dto.setPaidPaymentCount((int) paidCount);
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return studentDTOs;
     }
 
     /*public AcademyStudentResponseDTO getStudentById(Long studentId) {
@@ -113,6 +140,7 @@ public class AcademyStudentService {
             throw new ResourceNotFoundException("해당 학생을 찾을 수 없습니다: " + studentId);
         }
     }
+
 
 
     public List<AcademyStudentResponseDTO> searchStudents(SearchStudentDTO criteria) {
