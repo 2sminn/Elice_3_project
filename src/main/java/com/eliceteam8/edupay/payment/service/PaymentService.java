@@ -41,15 +41,18 @@ public class PaymentService {
     }
 
     public void validatePayment(CallbackRequestDTO request) throws IamportResponseException, IOException {
-        savePaymentHistory(request.getImpUid(), request.getBillId());
-
         IamportResponse<Payment> iamportResponse = getIamportResponse(request);
         Bill bill = billRepository.findById(request.getBillId()).orElseThrow(NoSuchElementException::new);
         validatePaymentStatusAndPay(iamportResponse, bill);
 
         if (!Status.PAID.equals(bill.getStatus())) {
             bill.setStatusToPaid();
+            billRepository.save(bill);
+        } else {
+            throw new RuntimeException("결제 완료된 청구서입니다.");
         }
+
+        savePaymentHistory(request.getImpUid(), request.getBillId());
     }
 
     private IamportResponse<Payment> getIamportResponse(CallbackRequestDTO request) throws IamportResponseException, IOException {
@@ -60,14 +63,14 @@ public class PaymentService {
 
     private void validatePaymentStatusAndPay(IamportResponse<Payment> iamportResponse, Bill bill) {
         if (!iamportResponse.getResponse().getStatus().equals("paid")) {
-            throw new RuntimeException("결제 미완료");
+            throw new RuntimeException("결제가 미완료 상태입니다.");
         }
 
         Long totalPrice = bill.getTotalPrice();
         Long portOnePrice = iamportResponse.getResponse().getAmount().longValue();
 
         if (!Objects.equals(portOnePrice, totalPrice)) {
-            throw new RuntimeException("결제금액 불일치");
+            throw new RuntimeException("결제금액이 불일치합니다.");
         }
     }
 

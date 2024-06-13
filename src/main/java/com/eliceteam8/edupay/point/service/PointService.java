@@ -56,7 +56,7 @@ public class PointService {
         pointRechargeLogRepository.save(pointRechargeLog);
 
         User user = userRepository.findById(pointLogDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+                .orElseThrow(() -> new RuntimeException("사용자가 없습니다."));
 
         user.addPoint(pointLogDTO.getPoint());
 
@@ -71,7 +71,7 @@ public class PointService {
                 .build();
 
         User user = userRepository.findById(pointUseLog.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다."));
 
         validatePoint(user.getPoint(), pointLogDTO.getPoint());
 
@@ -85,7 +85,7 @@ public class PointService {
         IamportResponse<Payment> payment = iamportClient.paymentByImpUid(pointLogDTO.getImpUid());
         Long refundAmount = payment.getResponse().getAmount().longValue();
         User user = userRepository.findById(pointLogDTO.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다."));
 
         validatePoint(user.getPoint(), refundAmount);
 
@@ -98,7 +98,7 @@ public class PointService {
 
     private void validatePoint(Long currentPoint, Long point) {
         if (point > currentPoint) {
-            throw new RuntimeException("포인트 부족");
+            throw new RuntimeException("포인트가 부족합니다.");
         }
     }
 }
