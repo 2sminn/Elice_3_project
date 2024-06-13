@@ -3,6 +3,9 @@ package com.eliceteam8.edupay.payment.service;
 import com.eliceteam8.edupay.bill.domain.Bill;
 import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
+import com.eliceteam8.edupay.global.exception.BillAlreadyPaidException;
+import com.eliceteam8.edupay.global.exception.PaymentIncompleteException;
+import com.eliceteam8.edupay.global.exception.PaymentMismatchException;
 import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
 import com.eliceteam8.edupay.payment.entity.PaymentHistory;
@@ -49,7 +52,7 @@ public class PaymentService {
             bill.setStatusToPaid();
             billRepository.save(bill);
         } else {
-            throw new RuntimeException("결제 완료된 청구서입니다.");
+            throw new BillAlreadyPaidException("결제 완료된 청구서입니다.");
         }
 
         savePaymentHistory(request.getImpUid(), request.getBillId());
@@ -63,14 +66,14 @@ public class PaymentService {
 
     private void validatePaymentStatusAndPay(IamportResponse<Payment> iamportResponse, Bill bill) {
         if (!iamportResponse.getResponse().getStatus().equals("paid")) {
-            throw new RuntimeException("결제가 미완료 상태입니다.");
+            throw new PaymentIncompleteException("결제가 미완료 상태입니다.");
         }
 
         Long totalPrice = bill.getTotalPrice();
         Long portOnePrice = iamportResponse.getResponse().getAmount().longValue();
 
         if (!Objects.equals(portOnePrice, totalPrice)) {
-            throw new RuntimeException("결제금액이 불일치합니다.");
+            throw new PaymentMismatchException("결제금액이 불일치합니다.");
         }
     }
 

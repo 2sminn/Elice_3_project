@@ -47,7 +47,7 @@ public class PointController {
     public ResponseEntity<Void> createPoint(@RequestBody PointLogDTO request) throws JsonProcessingException {
         pointService.savePoint(request);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/use/log")
@@ -62,13 +62,13 @@ public class PointController {
     public ResponseEntity<Void> usePoint(@RequestBody PointLogDTO request) throws JsonProcessingException {
         pointService.usePoint(request);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/refund")
     public ResponseEntity<Void> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
         pointService.refundPoint(request);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

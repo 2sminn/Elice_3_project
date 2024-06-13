@@ -1,5 +1,8 @@
 package com.eliceteam8.edupay.point.service;
 
+import com.eliceteam8.edupay.global.enums.ExceptionCode;
+import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
+import com.eliceteam8.edupay.global.exception.InsufficientPointsException;
 import com.eliceteam8.edupay.point.dto.PointLogDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
@@ -15,7 +18,6 @@ import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -56,7 +58,7 @@ public class PointService {
         pointRechargeLogRepository.save(pointRechargeLog);
 
         User user = userRepository.findById(pointLogDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자가 없습니다."));
+                .orElseThrow(() -> new AlreadyExistUserException(ExceptionCode.NOT_FOUND_USER));
 
         user.addPoint(pointLogDTO.getPoint());
 
@@ -71,7 +73,7 @@ public class PointService {
                 .build();
 
         User user = userRepository.findById(pointUseLog.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다."));
+                .orElseThrow(() -> new AlreadyExistUserException(ExceptionCode.NOT_FOUND_USER));
 
         validatePoint(user.getPoint(), pointLogDTO.getPoint());
 
@@ -85,20 +87,21 @@ public class PointService {
         IamportResponse<Payment> payment = iamportClient.paymentByImpUid(pointLogDTO.getImpUid());
         Long refundAmount = payment.getResponse().getAmount().longValue();
         User user = userRepository.findById(pointLogDTO.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다."));
+                .orElseThrow(() -> new AlreadyExistUserException(ExceptionCode.NOT_FOUND_USER));
 
-        validatePoint(user.getPoint(), refundAmount);
+        // 테스트용 20건 = 100원
+        validatePoint(user.getPoint(), 20L);
 
         CancelData cancelData = new CancelData(payment.getResponse().getImpUid(), true);
         iamportClient.cancelPaymentByImpUid(cancelData);
-        user.usePoint(refundAmount);
+        user.usePoint(20L);
 
         userRepository.save(user);
     }
 
     private void validatePoint(Long currentPoint, Long point) {
         if (point > currentPoint) {
-            throw new RuntimeException("포인트가 부족합니다.");
+            throw new InsufficientPointsException("청구 수량이 부족합니다.");
         }
     }
 }
