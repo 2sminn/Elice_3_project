@@ -36,6 +36,6 @@ export interface ChargeHistoryResponseType {
 }
 
 export interface RefundRequestType {
-	user_id?: string;
+	user_id?: number;
 	imp_uid: string;
 }

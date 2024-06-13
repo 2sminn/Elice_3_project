@@ -45,7 +45,7 @@ const StoragePage = () => {
 	};
 
 	const handleFilterSearch = () => {
-		setPage(0);
+		setPage(1);
 		refetch();
 	};
 

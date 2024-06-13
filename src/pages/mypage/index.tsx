@@ -38,7 +38,7 @@ const Mypage = () => {
 
 	const handleRefund = (impUid: string) => () => {
 		const data = {
-			userId: userInfo && String(userInfo?.userId),
+			user_id: userInfo && Number(userInfo?.userId),
 			imp_uid: impUid,
 		};
 		refundMutate(data);
