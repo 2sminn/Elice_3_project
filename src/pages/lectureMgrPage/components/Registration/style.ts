@@ -93,14 +93,8 @@ export const ScheduleInputGroup = styled.div`
 	flex: 1;
 `;
 
-export const ScheduleRemoveButton = styled.button`
-	padding: 10px;
-	font-size: 16px;
+export const ScheduleRemoveButton = styled(SaveButton)`
 	background-color: ${({ theme }) => theme.colors.danger};
-	color: white;
-	border: none;
-	border-radius: ${({ theme }) => theme.radius.small};
-	cursor: pointer;
 
 	&:hover {
 		background-color: ${({ theme }) => theme.colors.accent};
@@ -140,3 +134,4 @@ export const PopupButtonContainer = styled.div`
 	text-align: center;
 	margin-top: 20px;
 `;
+
