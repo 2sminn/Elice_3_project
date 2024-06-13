@@ -132,7 +132,7 @@ const LectureDetailPopup: React.FC<LectureDetailPopupProps> = ({ lecture, onClos
 				{isEditing && (
 					<PopupButton
 						type="button"
-						onClick={() => append({ id: Date.now(), day: 'Monday', startTime: '', endTime: '' })}
+						onClick={() => append({ lectureId: lecture.id, day: 'Monday', startTime: '', endTime: '' })}
 					>
 						일정 추가
 					</PopupButton>

@@ -48,7 +48,13 @@ const LectureMgrPage = () => {
 			alert('삭제할 강의를 선택하세요.');
 			return;
 		}
-		await Promise.all(selectedLectures.map((lecture) => deleteLecture(lecture.lectureId)));
+		await Promise.all(
+			selectedLectures.map((lecture) => {
+				if (lecture.lectureId !== undefined) {
+					return deleteLecture(lecture.lectureId);
+				}
+			}),
+		);
 		alert('선택된 강의가 삭제되었습니다.');
 	};
 
@@ -59,17 +65,25 @@ const LectureMgrPage = () => {
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		lectures.forEach((lecture) => selectLecture(lecture.lectureId));
+		lectures.forEach((lecture) => {
+			if (lecture.lectureId !== undefined) {
+				selectLecture(lecture.lectureId);
+			}
+		});
 	};
 
-	const handleSelectChange = (lectureId: number) => () => {
-		selectLecture(lectureId);
+	const handleSelectChange = (lectureId: number | undefined) => () => {
+		if (lectureId !== undefined) {
+			selectLecture(lectureId);
+		}
 	};
 
-	const handleLectureNameClick = async (lectureId: number) => {
-		const lecture = await fetchLecture(lectureId);
-		if (lecture) {
-			openPopup(<LectureDetailPopup lecture={lecture} onClose={closePopup} />);
+	const handleLectureNameClick = async (lectureId: number | undefined) => {
+		if (lectureId !== undefined) {
+			const lecture = await fetchLecture(lectureId);
+			if (lecture) {
+				openPopup(<LectureDetailPopup lecture={lecture} onClose={closePopup} />);
+			}
 		}
 	};
 
@@ -112,8 +126,8 @@ interface LectureTableProps {
 	lectures: LectureType[];
 	selectAll: boolean;
 	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onSelectChange: (lectureId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onLectureNameClick: (lectureId: number) => void;
+	onSelectChange: (lectureId: number | undefined) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onLectureNameClick: (lectureId: number | undefined) => void;
 }
 
 const LectureTable: React.FC<LectureTableProps> = ({
