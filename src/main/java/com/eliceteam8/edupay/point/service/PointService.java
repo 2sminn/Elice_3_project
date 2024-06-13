@@ -4,6 +4,7 @@ import com.eliceteam8.edupay.global.enums.ExceptionCode;
 import com.eliceteam8.edupay.global.exception.AlreadyExistUserException;
 import com.eliceteam8.edupay.global.exception.InsufficientPointsException;
 import com.eliceteam8.edupay.point.dto.PointLogDTO;
+import com.eliceteam8.edupay.point.dto.RefundDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.repository.PointRechargeLogRepository;
@@ -81,6 +82,19 @@ public class PointService {
 
         pointUseLogRepository.save(pointUseLog);
         userRepository.save(user);
+    }
+
+    public RefundDTO isSuccessRefund(PointLogDTO pointLogDTO) {
+        RefundDTO.RefundDTOBuilder builder = RefundDTO.builder();
+
+        try {
+            refundPoint(pointLogDTO);
+            builder.success(true).message("환불이 성공적으로 처리되었습니다.");
+        } catch (Exception e) {
+            builder.success(false).message(e.getMessage());
+        }
+
+        return builder.build();
     }
 
     public void refundPoint(PointLogDTO pointLogDTO) throws IamportResponseException, IOException {

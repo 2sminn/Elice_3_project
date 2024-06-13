@@ -1,11 +1,11 @@
 package com.eliceteam8.edupay.point.controller;
 
 import com.eliceteam8.edupay.point.dto.PointLogDTO;
+import com.eliceteam8.edupay.point.dto.RefundDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.service.PointService;
 import com.eliceteam8.edupay.user.dto.UserDTO;
-import com.eliceteam8.edupay.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,6 @@ import java.io.IOException;
 @RequestMapping("/point")
 public class PointController {
     private final PointService pointService;
-    private final UserService userService;
 
     @GetMapping("/balance")
     public Long getUserPoint() {
@@ -66,9 +65,9 @@ public class PointController {
     }
 
     @PostMapping("/refund")
-    public ResponseEntity<Void> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
-        pointService.refundPoint(request);
+    public ResponseEntity<RefundDTO> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
+        RefundDTO refundDTO = pointService.isSuccessRefund(request);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(refundDTO, HttpStatus.OK);
     }
 }
