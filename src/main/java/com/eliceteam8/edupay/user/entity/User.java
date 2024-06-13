@@ -1,6 +1,7 @@
 package com.eliceteam8.edupay.user.entity;
 
 import com.eliceteam8.edupay.academy_management.entity.Academy;
+import com.eliceteam8.edupay.global.exception.NotEnoughPointsException;
 import com.eliceteam8.edupay.user.dto.SignUpDTO;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import jakarta.persistence.*;
@@ -83,6 +84,9 @@ public class User {
     }
 
     public void usePoint(Long usedPoint) {
+        if (this.point < usedPoint) {
+            throw new NotEnoughPointsException("포인트가 부족합니다.");
+        }
         this.point -= usedPoint;
     }
 
