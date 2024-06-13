@@ -1,5 +1,6 @@
 import axiosApi from '../../../../api/axios';
-import { BillType, StudentType } from '../type';
+import { StudentType } from '../../../../types';
+import { BillType, StudentSearchRequestType } from '../type';
 
 export interface SendBillResponse {
 	userId: number;
@@ -11,7 +12,7 @@ export const sendBill = async (billData: BillType): Promise<SendBillResponse> =>
 	return response.data;
 };
 
-export const getStudents = async () => {
-	const response = await axiosApi.get<StudentType[]>('/academy-students');
-	return response;
+export const studentSearch = async (data: StudentSearchRequestType) => {
+	const response = await axiosApi.post<StudentType[]>('/academy-students/search', data);
+	return response.data;
 };

@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import {
 	Container,
+	LoadingSpiner,
 	PageTitle,
 	TableContentBox,
 	TableContentContainer,
 	TableList,
 	TableTitleBox,
+	WarningMessage,
 } from '../../styles/commonStyle';
 import * as S from './style';
 import { TabBox, TabMenu } from '../storage/style';
@@ -16,15 +18,35 @@ import { formatNumber } from '../../utils/formatNumber';
 import profileImg from './assets/images/profile.jpeg';
 import { formatDate } from '../../utils/formatDate';
 import { useGetUseHistoryQuery } from './hooks/useGetUseHistoryQuery';
+import { useRefundMutation } from './hooks/useRefundMutation';
+import { useGetUserQuery } from '../../components/Header/hooks/useGetUserQuery';
+import { successAlert } from '../../utils/alert';
 
 const Mypage = () => {
 	const [page, setPage] = useState(1);
 	const [tab, setTab] = useState('충전');
+	const { mutate: refundMutate } = useRefundMutation();
+	const { data: userInfo, refetch } = useGetUserQuery();
+
+	console.log(userInfo);
 
 	const navigate = useNavigate();
 
 	const goToProfileEdit = () => {
 		navigate('/edit-profile');
+	};
+
+	const handleRefund = (impUid: string) => () => {
+		const data = {
+			user_id: userInfo && Number(userInfo?.userId),
+			imp_uid: impUid,
+		};
+		refundMutate(data);
+		refetch();
+	};
+
+	const handleSettle = () => {
+		successAlert('정산요청이 완료되었습니다.');
 	};
 
 	const {
@@ -95,7 +117,7 @@ const Mypage = () => {
 			<S.MypageContainer>
 				<S.ProfileContainer>
 					<S.ProfileImg style={{ backgroundImage: `url(${profileImg})` }} />
-					<S.ProfileName>에듀학원</S.ProfileName>
+					<S.ProfileName>{userInfo?.academyName}</S.ProfileName>
 				</S.ProfileContainer>
 				<S.ProfileInfoContainer>
 					<S.ProfileInfoBox>
@@ -112,7 +134,7 @@ const Mypage = () => {
 					</S.ProfileInfoBox>
 				</S.ProfileInfoContainer>
 				<S.ProfileBtnContainer>
-					<PrimaryButton text="정산 요청" width="200px" />
+					<PrimaryButton text="정산 요청" width="200px" onClick={handleSettle} />
 					<PrimaryButton text="회원정보수정" width="200px" onClick={goToProfileEdit} />
 				</S.ProfileBtnContainer>
 			</S.MypageContainer>
@@ -145,34 +167,48 @@ const Mypage = () => {
 					{tab === '충전'
 						? chargeHistoryDatas?.pages.map((page, index) => (
 								<Fragment key={index}>
-									{page?.content?.map((data) => (
-										<TableContentBox key={data.id}>
-											<TableList width="15%">{formatDate(data.createdAt)}</TableList>
-											<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
-											<TableList width="40%">O</TableList>
-											<TableList width="20%">
-												<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
-											</TableList>
-										</TableContentBox>
-									))}
+									{page?.content.length > 0 ? (
+										page?.content?.map((data) => (
+											<TableContentBox key={data.id}>
+												<TableList width="15%">{formatDate(data.createdAt)}</TableList>
+												<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
+												<TableList width="40%">O</TableList>
+												<TableList width="20%">
+													<PrimaryButton
+														text="환불신청"
+														width="90%"
+														textSize="13px"
+														isFill
+														onClick={handleRefund(data.paymentUid)}
+													/>
+												</TableList>
+											</TableContentBox>
+										))
+									) : (
+										<WarningMessage>충전내역이 존재하지 않습니다.</WarningMessage>
+									)}
 								</Fragment>
 							))
 						: useHistoryDatas?.pages.map((page, index) => (
 								<Fragment key={index}>
-									{page?.content?.map((data) => (
-										<TableContentBox key={data.id}>
-											<TableList width="15%">{formatDate(data.createdAt)}</TableList>
-											<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
-											<TableList width="40%">O</TableList>
-											<TableList width="20%">
-												<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
-											</TableList>
-										</TableContentBox>
-									))}
+									{page?.content.length > 0 ? (
+										page?.content?.map((data) => (
+											<TableContentBox key={data.id}>
+												<TableList width="15%">{formatDate(data.createdAt)}</TableList>
+												<TableList width="20%">{`${formatNumber(data.point)}개`}</TableList>
+												<TableList width="40%">O</TableList>
+												<TableList width="20%">
+													<PrimaryButton text="환불신청" width="90%" textSize="13px" isFill />
+												</TableList>
+											</TableContentBox>
+										))
+									) : (
+										<WarningMessage>사용내역이 존재하지 않습니다.</WarningMessage>
+									)}
 								</Fragment>
 							))}
-					{chargeHistoryIsFetching && <div>Loading...</div>}
-					{useHistoryIsFetching && <div>Loading...</div>}
+					{(chargeHistoryIsFetching || useHistoryIsFetching) && <LoadingSpiner />}
+
 					<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
 				</TableContentContainer>
 			</S.MypageContainer>

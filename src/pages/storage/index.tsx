@@ -4,11 +4,13 @@ import Select from '../../components/inputs/Select';
 import TextInput from '../../components/inputs/TextInput';
 import {
 	Container,
+	LoadingSpiner,
 	PageTitle,
 	TableContentBox,
 	TableContentContainer,
 	TableList,
 	TableTitleBox,
+	WarningMessage,
 } from '../../styles/commonStyle';
 import { storageYearOption, storageMonthOption, storageOXOption } from './constants/options';
 import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
@@ -43,7 +45,7 @@ const StoragePage = () => {
 	};
 
 	const handleFilterSearch = () => {
-		setPage(0);
+		setPage(1);
 		refetch();
 	};
 
@@ -83,7 +85,6 @@ const StoragePage = () => {
 		}
 	}, [page, fetchNextPage]);
 
-	console.log(storageDatas);
 	return (
 		<Container>
 			<S.StorageContainer>
@@ -128,23 +129,25 @@ const StoragePage = () => {
 					<TableContentContainer>
 						{storageDatas?.pages.map((page, index) => (
 							<React.Fragment key={index}>
-								{page.content.length > 0
-									? page.content.map((storage) => (
-											<TableContentBox key={storage.billId}>
-												<TableList width="15%">{storage.studentName}</TableList>
-												<TableList width="15%">{storage.birthDate}</TableList>
-												<TableList width="30%">수학, 과학</TableList>
-												<TableList width="10%">O</TableList>
-												<TableList width="15%">{formatDate(storage.updatedAt)}</TableList>
-												<TableList width="15%">
-													<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
-												</TableList>
-											</TableContentBox>
-										))
-									: '수납 내역이 존재하지 않습니다.'}
+								{page.content.length > 0 ? (
+									page.content.map((storage) => (
+										<TableContentBox key={storage.billId}>
+											<TableList width="15%">{storage.studentName}</TableList>
+											<TableList width="15%">{storage.birthDate}</TableList>
+											<TableList width="30%">수학, 과학</TableList>
+											<TableList width="10%">O</TableList>
+											<TableList width="15%">{formatDate(storage.updatedAt)}</TableList>
+											<TableList width="15%">
+												<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
+											</TableList>
+										</TableContentBox>
+									))
+								) : (
+									<WarningMessage>수납 내역이 존재하지 않습니다.</WarningMessage>
+								)}
 							</React.Fragment>
 						))}
-						{isFetching && <div>Loading...</div>}
+						{isFetching && <LoadingSpiner />}
 						<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
 					</TableContentContainer>
 				</S.StorageTable>

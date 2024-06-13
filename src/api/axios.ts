@@ -16,7 +16,7 @@ axiosApi.interceptors.request.use(
 		}
 		return config;
 	},
-	(error: AxiosError) => {
+	(error) => {
 		return Promise.reject(error);
 	},
 );
@@ -33,7 +33,7 @@ axiosApi.interceptors.response.use(
 			const { refreshToken, setTokens, clearTokens } = useTokenStore.getState();
 			if (refreshToken) {
 				try {
-					const refreshResponse: AxiosResponse<{ accessToken: string }> = await axiosApi.post('/token/refresh', {
+					const refreshResponse = await axiosApi.post('/token/refresh', {
 						refreshToken,
 					});
 
@@ -45,15 +45,8 @@ axiosApi.interceptors.response.use(
 					// 새로운 엑세스 토큰으로 이전 요청 재시도
 					originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 					return axiosApi(originalRequest);
-				} catch (refreshError: unknown) {
-					if (axios.isAxiosError(refreshError)) {
-						console.error('Error refreshing token:', refreshError);
-						if (refreshError.response) {
-							console.error('Refresh error response:', refreshError.response.data);
-						}
-					} else {
-						console.error('Unexpected error:', refreshError);
-					}
+				} catch (refreshError) {
+					console.error('Error refreshing token:', refreshError);
 					clearTokens();
 					return Promise.reject(refreshError);
 				}
