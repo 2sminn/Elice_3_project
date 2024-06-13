@@ -10,9 +10,9 @@ import * as Yup from 'yup';
 import { Controller, SubmitErrorHandler } from 'react-hook-form';
 import { useBillSendMutation } from './hooks/useBillSendMutation';
 import { errorAlert } from '../../../utils/alert';
-import { useGetStudentsQuery } from './hooks/useGetStudentsQuery';
 import { ChangeEvent, useState } from 'react';
-import { StudentType } from './type';
+import { useStudentSearchMutation } from './hooks/useStudentSearchMutation';
+import { StudentType } from '../../../types';
 
 const billFormSchema = Yup.object().shape({
 	studentId: Yup.number().required(''),
@@ -43,11 +43,12 @@ type SubmitHandler<TSubmitFieldValues extends FormValues> = (
 
 const BillPopup = () => {
 	const [studentName, setStudentName] = useState('');
+	const [searchStudents, setSearchStudents] = useState<StudentType[]>([]);
 
 	const { closePopup } = usePopup();
 	const { control, handleSubmit, reset, setValue } = useCustomForm<FormValues>(billFormSchema, 'onSubmit');
 	const { mutate: sendBillMutate } = useBillSendMutation();
-	const { data: students } = useGetStudentsQuery(studentName);
+	const { mutate: studentSearchMutate } = useStudentSearchMutation();
 
 	const addDays = (date: Date, days: number): Date => {
 		const result = new Date(date);
@@ -81,13 +82,25 @@ const BillPopup = () => {
 
 	const handleClickUserChoice = (student: StudentType) => () => {
 		console.log(student);
+		const subject = student.lectures.map((el) => el.lectureName).join(', ');
 		setValue('studentId', student.studentId);
 		setValue('studentName', student.studentName);
 		setValue('grade', student.grade);
 		setValue('tel', student.phoneNumber);
-		setValue('subject', student.lectureDetails || '수학');
+		setValue('subject', subject || '수학');
 		setValue('tuition', '10,000,000');
 		setValue('deadline', String(dateAfter14Days));
+	};
+
+	const handleSearchStudent = () => {
+		studentSearchMutate(
+			{ studentName },
+			{
+				onSuccess: (data) => {
+					setSearchStudents(data);
+				},
+			},
+		);
 	};
 
 	return (
@@ -101,13 +114,13 @@ const BillPopup = () => {
 			<S.BillForm onSubmit={handleSubmit(handleSubmitBill, handleSubmitError)}>
 				<S.UserSearchBox>
 					<TextInput placeholder="원생명을 입력해주세요." onChange={handleChangeStudentName} />
-					<S.SearchBtn type="button">
+					<S.SearchBtn type="button" onClick={handleSearchStudent}>
 						<IoSearchOutline size={30} />
 					</S.SearchBtn>
 				</S.UserSearchBox>
 				<S.UserListBox>
 					<S.UserList>
-						{students?.map((student) => (
+						{searchStudents?.map((student) => (
 							<li key={student.studentId}>
 								<S.UserInfo>
 									<span>{student.studentName}</span> / {student.birthdate} / {student.phoneNumber}
