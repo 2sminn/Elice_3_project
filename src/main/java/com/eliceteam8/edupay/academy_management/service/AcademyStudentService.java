@@ -200,11 +200,11 @@ public class AcademyStudentService {
 
         academyStudent.setAcademy(academy);
 
-        if (academyStudentRepository.existsByEmail(academyStudent.getPhoneNumber())) {
+        if (academyStudentRepository.existsByPhoneNumber(academyStudent.getPhoneNumber())) {
             throw new IllegalArgumentException("존재하는 휴대폰 번호입니다: " + academyStudent.getPhoneNumber());
         }
 
-        if (academyStudentRepository.existsByPhoneNumber(academyStudent.getEmail())) {
+        if (academyStudentRepository.existsByEmail(academyStudent.getEmail())) {
             throw new IllegalArgumentException("존재하는 이메일 주소입니다: " + academyStudent.getEmail());
         }
 
