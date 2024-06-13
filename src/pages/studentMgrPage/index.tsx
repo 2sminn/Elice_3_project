@@ -14,24 +14,17 @@ import {
 	Th,
 	Td,
 } from './style';
+import useStudentStore from '../../stores/useStudentStore';
+import { StudentType } from './api/student';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Registration';
 import StudentDetailPopup from './components/Detail';
-import useStudentStore from '../../stores/useStudentStore';
-import { StudentType } from './api';
 
 const StudentMgrPage = () => {
-	const { students, fetchStudents, fetchStudent, deleteStudent, updateStudent, searchStudents, filterStudents } =
+	const { students, filteredStudents, fetchStudents, deleteStudent, searchStudents, selectStudent, fetchStudent } =
 		useStudentStore();
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [filters, setFilters] = useState<Partial<StudentType>>({
-		studentName: '',
-		schoolName: '',
-		grade: '',
-		group: '',
-		class: '',
-		teacher: '',
-	});
+	const [searchField, setSearchField] = useState<keyof StudentType>('studentName');
 	const [selectAll, setSelectAll] = useState<boolean>(false);
 	const { openPopup, closePopup } = usePopup();
 
@@ -41,59 +34,40 @@ const StudentMgrPage = () => {
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-	const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFilters((prevFilters) => ({
-			...prevFilters,
-			[name]: value,
-		}));
-	};
+	const handleSearchFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+		setSearchField(e.target.value as keyof StudentType);
 
 	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		searchStudents(searchTerm);
-	};
-
-	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		filterStudents(filters);
+		searchStudents(searchTerm, searchField);
 	};
 
 	const handleDeleteClick = async () => {
-		const selectedStudents = students.filter((student) => student.selected);
+		const selectedStudents = filteredStudents.filter((student) => student.selected);
 		if (selectedStudents.length === 0) {
 			alert('삭제할 원생을 선택하세요.');
 			return;
 		}
 		await Promise.all(selectedStudents.map((student) => deleteStudent(student.studentId)));
 		alert('선택된 원생이 삭제되었습니다.');
+		fetchStudents(); // 삭제 후 데이터 갱신
 	};
 
 	const handleAddNewClick = () => {
-		openPopup(<StudentRegistrationPopup onClose={handleNewStudentClose} />);
-	};
-
-	const handleNewStudentClose = () => {
-		closePopup();
-		fetchStudents(); // 학생 목록을 새로 불러오기
+		openPopup(<StudentRegistrationPopup onClose={closePopup} onSuccess={fetchStudents} />);
 	};
 
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		students.forEach((student) => updateStudent(student.studentId, { selected: checked }));
+		filteredStudents.forEach((student) => selectStudent(student.studentId));
 	};
 
-	const handleSelectChange = (studentId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { checked } = e.target;
-		updateStudent(studentId, { selected: checked });
+	const handleSelectChange = (studentId: number) => () => {
+		selectStudent(studentId);
 	};
 
-	const handleStudentNameClick = async (studentId: string) => {
-		if (!studentId) {
-			console.error('No studentId provided for student click handler');
-			return;
-		}
+	const handleStudentNameClick = async (studentId: number) => {
 		const student = await fetchStudent(studentId);
 		if (student) {
 			openPopup(<StudentDetailPopup student={student} onClose={closePopup} />);
@@ -108,51 +82,15 @@ const StudentMgrPage = () => {
 				<SearchTitle>통합검색</SearchTitle>
 				<SearchForm onSubmit={handleSearchSubmit}>
 					<InputGroup>
-						<Select>
-							<option>원생명</option>
+						<Select value={searchField} onChange={handleSearchFieldChange}>
+							<option value="studentName">원생명</option>
+							<option value="grade">학년</option>
+							<option value="email">이메일</option>
+							<option value="phoneNumber">연락처</option>
 						</Select>
 						<Input placeholder="검색어 입력" value={searchTerm} onChange={handleSearchChange} />
 						<Button type="submit">검색</Button>
 					</InputGroup>
-				</SearchForm>
-			</SearchSection>
-
-			<SearchSection>
-				<SearchTitle>조건검색</SearchTitle>
-				<SearchForm onSubmit={handleFilterSubmit}>
-					<InputGroup>
-						<Input
-							name="studentName"
-							placeholder="원생명 입력"
-							value={filters.studentName}
-							onChange={handleFilterChange}
-						/>
-						<Input
-							name="schoolName"
-							placeholder="학교명 입력"
-							value={filters.schoolName}
-							onChange={handleFilterChange}
-						/>
-						<Input name="grade" placeholder="학년명 입력" value={filters.grade} onChange={handleFilterChange} />
-					</InputGroup>
-					<InputGroup>
-						<Select name="group" value={filters.group} onChange={handleFilterChange}>
-							<option value="">그룹선택</option>
-							<option value="그룹1">그룹1</option>
-							<option value="그룹2">그룹2</option>
-						</Select>
-						<Select name="class" value={filters.class} onChange={handleFilterChange}>
-							<option value="">반선택</option>
-							<option value="초등 5반">초등 5반</option>
-							<option value="초등 6반">초등 6반</option>
-						</Select>
-						<Select name="teacher" value={filters.teacher} onChange={handleFilterChange}>
-							<option value="">주담임선택</option>
-							<option value="선생님1">선생님1</option>
-							<option value="선생님2">선생님2</option>
-						</Select>
-					</InputGroup>
-					<Button type="submit">검색</Button>
 				</SearchForm>
 			</SearchSection>
 
@@ -162,7 +100,7 @@ const StudentMgrPage = () => {
 			</ButtonGroup>
 
 			<StudentTable
-				students={students}
+				students={filteredStudents}
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}
@@ -176,8 +114,8 @@ interface StudentTableProps {
 	students: StudentType[];
 	selectAll: boolean;
 	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onSelectChange: (studentId: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onStudentNameClick: (studentId: string) => void;
+	onSelectChange: (studentId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onStudentNameClick: (studentId: number) => void;
 }
 
 const StudentTable: React.FC<StudentTableProps> = ({
@@ -195,12 +133,8 @@ const StudentTable: React.FC<StudentTableProps> = ({
 						<input type="checkbox" checked={selectAll} onChange={onSelectAllChange} />
 					</Th>
 					<Th>원생명</Th>
-					<Th>학교명</Th>
-					<Th>학년명</Th>
-					<Th>그룹</Th>
-					<Th>수강반 정보</Th>
-					<Th>주담임</Th>
-					<Th>수납정보</Th>
+					<Th>학년</Th>
+					<Th>이메일</Th>
 					<Th>연락처</Th>
 				</tr>
 			</thead>
@@ -211,19 +145,11 @@ const StudentTable: React.FC<StudentTableProps> = ({
 							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(student.studentId)} />
 						</Td>
 						<Td onClick={() => onStudentNameClick(student.studentId)} style={{ cursor: 'pointer', color: '#007bff' }}>
-							{student.studentName}
+							{student.studentName || 'N/A'}
 						</Td>
-						<Td>{student.schoolName}</Td>
-						<Td>{student.grade}</Td>
-						<Td>{student.group}</Td>
-						<Td>{student.class}</Td>
-						<Td>{student.teacher}</Td>
-						<Td>
-							{student.paymentInfo
-								? `${student.paymentInfo.outstanding} 건 / ${student.paymentInfo.upcoming} 건`
-								: 'N/A'}
-						</Td>
-						<Td>{student.phoneNumber}</Td>
+						<Td>{student.grade || 'N/A'}</Td>
+						<Td>{student.email || 'N/A'}</Td>
+						<Td>{student.phoneNumber || 'N/A'}</Td>
 					</tr>
 				))}
 			</tbody>

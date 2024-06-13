@@ -1,59 +1,88 @@
-import { useForm } from 'react-hook-form';
+import React from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import {
+	PopupContainer,
+	Header,
+	Title,
+	CloseButton,
+	Form,
+	Input,
+	ButtonContainer,
+	SaveButton,
+	ScheduleContainer,
+	ScheduleInputGroup,
+	ScheduleRemoveButton,
+	PopupButton,
+} from './style';
 import { createStudent } from '../../api';
 import { StudentType } from '../../api';
 
-const StudentRegistrationPopup = ({ onClose }: { onClose: () => void }) => {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<Omit<StudentType, 'studentId' | 'paymentInfo'>>();
+const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
+	const { register, handleSubmit, control, reset } = useForm<StudentType>({
+		defaultValues: {
+			studentName: '',
+			birthdate: '',
+			email: '',
+			phoneNumber: '',
+			grade: '',
+			schoolName: '',
+			lectures: [{ id: Date.now(), lectureName: '', price: 0, teacherName: '' }],
+		},
+	});
 
-	const onSubmit = async (data: Omit<StudentType, 'studentId' | 'paymentInfo'>) => {
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'lectures',
+	});
+
+	const onSubmit = async (data: StudentType) => {
 		try {
 			await createStudent(data);
-			alert('Student created successfully');
+			alert('원생이 성공적으로 등록되었습니다.');
+			onSuccess();
 			onClose();
 		} catch (error) {
-			console.error('Error creating student:', error);
-			alert('Error creating student. Please check the console for more details.');
+			alert('원생 등록에 실패했습니다.');
 		}
+		reset();
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
-			<input {...register('studentName', { required: true })} placeholder="Student Name" />
-			{errors.studentName && <span>This field is required</span>}
-
-			<input {...register('birthDate', { required: true })} placeholder="Birth Date" />
-			{errors.birthDate && <span>This field is required</span>}
-
-			<input {...register('contact', { required: true })} placeholder="Contact" />
-			{errors.contact && <span>This field is required</span>}
-
-			<input {...register('email', { required: true })} placeholder="Email" />
-			{errors.email && <span>This field is required</span>}
-
-			<input {...register('schoolName', { required: true })} placeholder="School Name" />
-			{errors.schoolName && <span>This field is required</span>}
-
-			<input {...register('grade', { required: true })} placeholder="Grade" />
-			{errors.grade && <span>This field is required</span>}
-
-			<input {...register('group', { required: true })} placeholder="Group" />
-			{errors.group && <span>This field is required</span>}
-
-			<input {...register('class', { required: true })} placeholder="Class" />
-			{errors.class && <span>This field is required</span>}
-
-			<input {...register('teacher', { required: true })} placeholder="Teacher" />
-			{errors.teacher && <span>This field is required</span>}
-
-			<input {...register('phoneNumber', { required: true })} placeholder="Phone Number" />
-			{errors.phoneNumber && <span>This field is required</span>}
-
-			<button type="submit">Create Student</button>
-		</form>
+		<PopupContainer>
+			<Header>
+				<Title>신규 원생 등록</Title>
+				<CloseButton onClick={onClose}>×</CloseButton>
+			</Header>
+			<Form onSubmit={handleSubmit(onSubmit)}>
+				<Input {...register('studentName', { required: true })} placeholder="원생명" />
+				<Input {...register('birthdate', { required: true })} type="date" placeholder="생년월일" />
+				<Input {...register('email', { required: true })} type="email" placeholder="이메일" />
+				<Input {...register('phoneNumber', { required: true })} placeholder="연락처" />
+				<Input {...register('grade', { required: true })} placeholder="학년" />
+				<Input {...register('schoolName', { required: true })} placeholder="학교명" />
+				{fields.map((item, index) => (
+					<ScheduleContainer key={item.id}>
+						<ScheduleInputGroup>
+							<Input {...register(`lectures.${index}.lectureName` as const)} placeholder="강의명" />
+							<Input {...register(`lectures.${index}.teacherName` as const)} placeholder="담임명" />
+							<Input {...register(`lectures.${index}.price` as const)} type="number" placeholder="수강료" />
+						</ScheduleInputGroup>
+						<ScheduleRemoveButton type="button" onClick={() => remove(index)}>
+							제거
+						</ScheduleRemoveButton>
+					</ScheduleContainer>
+				))}
+				<PopupButton
+					type="button"
+					onClick={() => append({ id: Date.now(), lectureName: '', price: 0, teacherName: '' })}
+				>
+					강의 추가
+				</PopupButton>
+				<ButtonContainer>
+					<SaveButton type="submit">저장하기</SaveButton>
+				</ButtonContainer>
+			</Form>
+		</PopupContainer>
 	);
 };
 
