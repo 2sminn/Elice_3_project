@@ -6,7 +6,6 @@ import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.payment.dto.CallbackRequestDTO;
 import com.eliceteam8.edupay.payment.dto.PaymentInfoDTO;
 import com.eliceteam8.edupay.payment.entity.PaymentHistory;
-import com.eliceteam8.edupay.payment.enumeration.PaymentHistoryType;
 import com.eliceteam8.edupay.payment.repository.PaymentHistoryRepository;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
