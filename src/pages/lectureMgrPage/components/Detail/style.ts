@@ -102,9 +102,9 @@ export const ScheduleInputGroup = styled.div`
 `;
 
 export const ScheduleRemoveButton = styled.button`
-	padding: 10px;
+	padding: 10px 20px;
 	font-size: 16px;
-	background-color: ${({ theme }) => theme.colors.danger};
+	background-color: ${({ theme }) => theme.colors.success};
 	color: white;
 	border: none;
 	border-radius: ${({ theme }) => theme.radius.small};

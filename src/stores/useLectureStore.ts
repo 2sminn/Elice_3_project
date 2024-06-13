@@ -1,4 +1,3 @@
-// stores/useLectureStore.ts
 import { create } from 'zustand';
 import {
 	fetchLectures as apiFetchLectures,
@@ -17,7 +16,7 @@ interface LectureStore {
 	error: string | null;
 	fetchLectures: () => Promise<void>;
 	fetchLecture: (lectureId: number) => Promise<LectureType | null>;
-	createLecture: (lecture: Omit<LectureType, 'id'>) => Promise<void>;
+	createLecture: (lecture: Omit<LectureType, 'lectureId'>) => Promise<void>;
 	updateLecture: (lectureId: number, lecture: Partial<LectureType>) => Promise<void>;
 	deleteLecture: (lectureId: number) => Promise<void>;
 	searchLectures: (term: string, field: keyof LectureType) => void;
@@ -72,8 +71,8 @@ const useLectureStore = create<LectureStore>((set) => ({
 		try {
 			const updatedLecture = await apiUpdateLecture(lectureId, lecture);
 			set((state) => ({
-				lectures: state.lectures.map((l) => (l.id === lectureId ? updatedLecture : l)),
-				filteredLectures: state.filteredLectures.map((l) => (l.id === lectureId ? updatedLecture : l)),
+				lectures: state.lectures.map((l) => (l.lectureId === lectureId ? updatedLecture : l)),
+				filteredLectures: state.filteredLectures.map((l) => (l.lectureId === lectureId ? updatedLecture : l)),
 				loading: false,
 			}));
 		} catch (error: any) {
@@ -86,8 +85,8 @@ const useLectureStore = create<LectureStore>((set) => ({
 		try {
 			await apiDeleteLecture(lectureId);
 			set((state) => ({
-				lectures: state.lectures.filter((l) => l.id !== lectureId),
-				filteredLectures: state.filteredLectures.filter((l) => l.id !== lectureId),
+				lectures: state.lectures.filter((l) => l.lectureId !== lectureId),
+				filteredLectures: state.filteredLectures.filter((l) => l.lectureId !== lectureId),
 				loading: false,
 			}));
 		} catch (error: any) {
@@ -106,10 +105,10 @@ const useLectureStore = create<LectureStore>((set) => ({
 	selectLecture: (lectureId: number) => {
 		set((state) => ({
 			lectures: state.lectures.map((lecture) =>
-				lecture.id === lectureId ? { ...lecture, selected: !lecture.selected } : lecture,
+				lecture.lectureId === lectureId ? { ...lecture, selected: !lecture.selected } : lecture,
 			),
 			filteredLectures: state.filteredLectures.map((lecture) =>
-				lecture.id === lectureId ? { ...lecture, selected: !lecture.selected } : lecture,
+				lecture.lectureId === lectureId ? { ...lecture, selected: !lecture.selected } : lecture,
 			),
 		}));
 	},

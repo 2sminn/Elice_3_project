@@ -34,7 +34,7 @@ const LectureRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 			price: 0,
 			teacherName: '',
 			lectureStatus: 'OPEN',
-			lectureSchedules: [{ id: Date.now(), day: 'Monday', startTime: '', endTime: '' }],
+			lectureSchedules: [{ lectureId: Date.now(), day: 'Monday', startTime: '', endTime: '' }],
 		},
 	});
 
@@ -70,7 +70,7 @@ const LectureRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 					<option value="CLOSE">CLOSE</option>
 				</PopupSelect>
 				{fields.map((item, index) => (
-					<ScheduleContainer key={item.id}>
+					<ScheduleContainer key={item.lectureId}>
 						<ScheduleInputGroup>
 							<PopupSelect {...register(`lectureSchedules.${index}.day` as const)}>
 								{daysOfWeek.map((day) => (
@@ -89,7 +89,7 @@ const LectureRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 				))}
 				<PopupButton
 					type="button"
-					onClick={() => append({ id: Date.now(), day: 'Monday', startTime: '', endTime: '' })}
+					onClick={() => append({ lectureId: Date.now(), day: 'Monday', startTime: '', endTime: '' })}
 				>
 					일정 추가
 				</PopupButton>

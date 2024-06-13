@@ -1,20 +1,21 @@
 import axiosApi from '../../../api/axios';
 
+export interface LectureScheduleType {
+	lectureId: number;
+	day: string;
+	startTime: string;
+	endTime: string;
+}
+
 export interface LectureType {
 	id: number;
+	lectureId?: number; // Optional in case it's not always present
 	lectureName: string;
 	price: number;
 	teacherName: string;
-	createdAt: string;
-	updatedAt: string;
-	lectureStatus: string;
-	lectureSchedules: {
-		id: number;
-		day: string;
-		startTime: string;
-		endTime: string;
-	}[];
-	selected?: boolean;
+	lectureStatus: 'OPEN' | 'CLOSE';
+	lectureSchedules: LectureScheduleType[];
+	selected?: boolean; // Optional to handle cases where it's not used
 }
 
 export const fetchLectures = async (): Promise<LectureType[]> => {
@@ -27,7 +28,7 @@ export const fetchLecture = async (lectureId: number): Promise<LectureType> => {
 	return response.data;
 };
 
-export const createLecture = async (lecture: Omit<LectureType, 'id'>): Promise<LectureType> => {
+export const createLecture = async (lecture: Omit<LectureType, 'lectureId'>): Promise<LectureType> => {
 	const response = await axiosApi.post<LectureType>('/lectures', lecture);
 	return response.data;
 };
