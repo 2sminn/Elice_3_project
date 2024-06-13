@@ -1,4 +1,4 @@
-package com.eliceteam8.edupay.payment.config;
+package com.eliceteam8.edupay.config;
 
 import com.siot.IamportRestClient.IamportClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PaymentConfig {
+public class PortOneConfig {
 
     @Value("${imp.api.key}")
     private String apiKey;

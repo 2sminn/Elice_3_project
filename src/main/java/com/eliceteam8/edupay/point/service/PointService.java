@@ -29,8 +29,7 @@ public class PointService {
     private final UserRepository userRepository;
     private final PointRechargeLogRepository pointRechargeLogRepository;
     private final PointUseLogRepository pointUseLogRepository;
-
-    private IamportClient iamportClient;
+    private final IamportClient iamportClient;
 
     public Long getPoint(Long userId) {
         Optional<User> user = userRepository.findById(userId);

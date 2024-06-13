@@ -41,9 +41,6 @@ dependencies {
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	//Spring Batch
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-
 	implementation 'org.modelmapper:modelmapper:2.3.8'
 
 

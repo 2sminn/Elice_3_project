@@ -11,8 +11,10 @@ import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +35,11 @@ public class AcademyStudentController {
     private AcademyService academyService;
 
     @GetMapping
-    public ResponseEntity<List<AcademyStudentResponseDTO>> getAllAcademyStudents(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<AcademyStudentResponseDTO> students = academyStudentService.getAllAcademyStudents(pageable);
+    public ResponseEntity<Page<AcademyStudentResponseDTO>> getAllAcademyStudents(@PageableDefault(page = 1, size = 10) Pageable pageable) {
+            //@RequestParam(name = "page", defaultValue = "0") int page,
+            //@RequestParam(name = "size", defaultValue = "10") int size) {
+        //Pageable pageable = PageRequest.of(page, size);
+        Page<AcademyStudentResponseDTO> students = academyStudentService.getAllAcademyStudents(pageable);
         return ResponseEntity.ok(students);
         //return academyStudentService.getAllAcademyStudents();
     }
@@ -51,8 +53,12 @@ public class AcademyStudentController {
 
 
     @PostMapping("/search")
-    public ResponseEntity<List<AcademyStudent>> searchStudents(@RequestBody SearchStudentDTO criteria) {
-        List<AcademyStudent> students = academyStudentService.searchStudents(criteria);
+    public ResponseEntity<List<AcademyStudentResponseDTO>> searchStudents(
+            /*@RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,*/
+            @RequestBody SearchStudentDTO criteria) {
+        //Pageable pageable = PageRequest.of(page, size);
+        List<AcademyStudentResponseDTO> students = academyStudentService.searchStudents(criteria);
         return ResponseEntity.ok(students);
     }
 

@@ -17,7 +17,7 @@ public class LectureDTO {
     private int price;
     private String teacherName;
     private LectureStatus lectureStatus;
-    private LectureSchedule lectureSchedules;
+    private List<LectureSchedule> lectureSchedules;
     private List<Long> studentId;
     // private Long AcademyId;
 }
