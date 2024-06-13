@@ -24,11 +24,8 @@ import java.util.Map;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final RedisTemplate<String, String> redisTemplate;
 
 
-    private static final long EXPIRATION_THRESHOLD = 600L;
-    private static final long TOKEN_EXPIRATION_HOURS = 12L;
 
 
     @Override
@@ -62,23 +59,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private boolean refreshTokenSave( String refreshToken, String userId){
-        try {
-            String redisKey = "token_"+userId;
-            Long expire = redisTemplate.getExpire(redisKey);
-            // Redis 키가 존재하고, 만료 시간이 600초 이상인 경우 저장하지 않음
-            if(expire != null && expire > EXPIRATION_THRESHOLD){
-                return false;
-            }
 
-           redisTemplate.opsForValue().setIfAbsent(
-                   redisKey,
-                    refreshToken,
-                    Duration.ofHours(TOKEN_EXPIRATION_HOURS));
-            return true;
-        } catch (Exception e) {
-            log.error("Error saving refresh token to Redis : email: {}, {}", userId, e.getMessage());
-            return false;
-        }
-    }
 }
