@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         List<String> errors = fieldErrors.stream()
-                .map(fieldError ->  fieldError.getDefaultMessage())
+                .map(fieldError -> fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
         final ErrorResponse response =
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAlreadyExistUserException(AlreadyExistUserException ex) {
         log.error("---handleAlreadyExistUserException---");
         final ErrorResponse response = ErrorResponse.of(ex.getExceptionCode());
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -64,10 +64,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("---handleIllegalArgumentException---");
         final ErrorResponse response =
-        ErrorResponse.of(ExceptionCode.INVALID_REQUEST_VALUE, ex.getMessage());
+                ErrorResponse.of(ExceptionCode.INVALID_REQUEST_VALUE, ex.getMessage());
 
-        return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
         log.error("---handleIllegalStateException---");
@@ -128,6 +129,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         log.error("---handleMissingServletRequestParameterException---");
@@ -150,5 +152,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(InsufficientPointsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInsufficientPointsException(InsufficientPointsException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(BillAlreadyPaidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleBillAlreadyPaidException(BillAlreadyPaidException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentIncompleteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handlePaymentIncompleteException(PaymentIncompleteException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handlePaymentMismatchException(PaymentMismatchException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }
