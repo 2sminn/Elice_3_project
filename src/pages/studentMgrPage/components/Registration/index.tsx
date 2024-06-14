@@ -75,7 +75,7 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 			</Header>
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Input {...register('studentName', { required: true })} placeholder="원생명" />
-				<Input {...register('birthdate', { required: true })} type="date" placeholder="생년월일" />
+				<Input {...register('birthDate', { required: true })} type="date" placeholder="생년월일" />
 				<Input {...register('email', { required: true })} type="email" placeholder="이메일" />
 				<Input {...register('phoneNumber', { required: true })} placeholder="연락처" />
 				<Input {...register('grade', { required: true })} placeholder="학년" />
