@@ -9,6 +9,7 @@ import com.eliceteam8.edupay.bill.domain.BillLog;
 import com.eliceteam8.edupay.bill.domain.Status;
 import com.eliceteam8.edupay.bill.dto.request.CreateMultipleBillsRequest;
 import com.eliceteam8.edupay.bill.dto.request.CreateSingleBillRequest;
+import com.eliceteam8.edupay.bill.dto.response.BillDetailResponse;
 import com.eliceteam8.edupay.bill.dto.response.BillInfoResponse;
 import com.eliceteam8.edupay.bill.dto.response.BillLogResponse;
 import com.eliceteam8.edupay.bill.repository.BillLogRepository;
@@ -114,6 +115,19 @@ public class BillService {
         emailService.sendSimpleMessage(student.getEmail(), subject, text);
 
         return billInfoResponse;
+    }
+
+    @Transactional(readOnly = true)
+    public BillDetailResponse getBillDetail(Long id) {
+        Bill bill = billRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ID가 " + id + "인 청구서를 찾을 수 없습니다."));
+
+        BillDetailResponse response = new BillDetailResponse();
+        response.setAcademyName(bill.getAcademy().getAcademyName());
+        response.setReason("학원비"); // 발급 사유 고정
+        response.setTotalPrice(bill.getTotalPrice());
+
+        return response;
     }
 
     @Transactional
