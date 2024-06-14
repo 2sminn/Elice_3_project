@@ -4,6 +4,7 @@ export interface ChargeHistoryType {
 	point: number;
 	paymentUid: string;
 	createdAt: string;
+	canRefund: boolean;
 }
 
 export interface ChargeHistoryResponseType {

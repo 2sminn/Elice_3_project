@@ -11,6 +11,9 @@ export interface UserType {
 	addressDetail: string;
 	landlineNumber: string;
 	point: number;
+	totalPaidBill: number;
+	lectureCount: number;
+	studentCount: number;
 }
 
 export interface LectureSchedulesType {

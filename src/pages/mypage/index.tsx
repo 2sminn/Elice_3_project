@@ -27,6 +27,19 @@ const Mypage = () => {
 	const [tab, setTab] = useState('충전');
 	const { mutate: refundMutate } = useRefundMutation();
 	const { data: userInfo, refetch } = useGetUserQuery();
+	const {
+		data: chargeHistoryDatas,
+		fetchNextPage: chargeHistoryFetchNextPage,
+		hasNextPage: chargeHistoryHasNextPage,
+		isFetching: chargeHistoryIsFetching,
+		refetch: chargeHistoryRefetch,
+	} = useGetChargeHistoryQuery();
+	const {
+		data: useHistoryDatas,
+		fetchNextPage: useHistoryFetchNextPage,
+		hasNextPage: useHistoryHasNextPage,
+		isFetching: useHistoryIsFetching,
+	} = useGetUseHistoryQuery();
 
 	console.log(userInfo);
 
@@ -43,24 +56,12 @@ const Mypage = () => {
 		};
 		refundMutate(data);
 		refetch();
+		chargeHistoryRefetch();
 	};
 
 	const handleSettle = () => {
 		successAlert('정산요청이 완료되었습니다.');
 	};
-
-	const {
-		data: chargeHistoryDatas,
-		fetchNextPage: chargeHistoryFetchNextPage,
-		hasNextPage: chargeHistoryHasNextPage,
-		isFetching: chargeHistoryIsFetching,
-	} = useGetChargeHistoryQuery();
-	const {
-		data: useHistoryDatas,
-		fetchNextPage: useHistoryFetchNextPage,
-		hasNextPage: useHistoryHasNextPage,
-		isFetching: useHistoryIsFetching,
-	} = useGetUseHistoryQuery();
 
 	const handleChangeTab = (e: React.MouseEvent<HTMLButtonElement>) => {
 		const target = e.target as HTMLButtonElement;
@@ -122,15 +123,15 @@ const Mypage = () => {
 				<S.ProfileInfoContainer>
 					<S.ProfileInfoBox>
 						<h4>원생 수:</h4>
-						<p>10명</p>
+						<p>{userInfo?.studentCount}명</p>
 					</S.ProfileInfoBox>
 					<S.ProfileInfoBox>
 						<h4>과목 수:</h4>
-						<p>10명</p>
+						<p>{userInfo?.lectureCount}명</p>
 					</S.ProfileInfoBox>
 					<S.ProfileInfoBox>
 						<h4>정산예정금액:</h4>
-						<p>340,000,000원</p>
+						<p>{formatNumber(userInfo?.totalPaidBill)}원</p>
 					</S.ProfileInfoBox>
 				</S.ProfileInfoContainer>
 				<S.ProfileBtnContainer>
@@ -180,6 +181,7 @@ const Mypage = () => {
 														textSize="13px"
 														isFill
 														onClick={handleRefund(data.paymentUid)}
+														disabled={data.canRefund === false}
 													/>
 												</TableList>
 											</TableContentBox>
