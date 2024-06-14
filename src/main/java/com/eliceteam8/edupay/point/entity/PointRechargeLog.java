@@ -22,12 +22,18 @@ public class PointRechargeLog {
     private Long point;
     private String paymentUid;
     private Instant createdAt;
+    private boolean canRefund;
 
     @Builder
-    public PointRechargeLog(Long userId, Long point, String paymentUid, Instant createdAt) {
-        this.userId = userId;
+    public PointRechargeLog(Long point, Long userId, String paymentUid, Instant createdAt) {
         this.point = point;
+        this.userId = userId;
         this.paymentUid = paymentUid;
         this.createdAt = createdAt;
+        this.canRefund = true;
+    }
+
+    public void setRefunded() {
+        this.canRefund = false;
     }
 }

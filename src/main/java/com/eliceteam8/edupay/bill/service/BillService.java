@@ -15,7 +15,11 @@ import com.eliceteam8.edupay.bill.repository.BillLogRepository;
 import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.global.exception.EntityNotFoundException;
 import com.eliceteam8.edupay.global.exception.MessageTooLongException;
+import com.eliceteam8.edupay.global.exception.NotEnoughPointsException;
+import com.eliceteam8.edupay.user.entity.User;
+import com.eliceteam8.edupay.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -30,7 +34,6 @@ import java.util.stream.Collectors;
 public class BillService {
     private static final int MAX_MESSAGE_LENGTH = 255;
     private static final String DEFAULT_MESSAGE = "청구서를 기한 내에 납부해 주세요.";
-    private static final long INITIAL_REMAINING_BILLS = 10L;
 
     @Autowired
     private BillRepository billRepository;
@@ -46,16 +49,11 @@ public class BillService {
 
     @Transactional
     public BillInfoResponse createBill(CreateSingleBillRequest request) {
-        Optional<BillLog> optionalBillLog = billLogRepository.findFirstByOrderByCreatedAtDesc();
-        BillLog billLog;
+        BillLog billLog = billLogRepository.findFirstByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new EntityNotFoundException("청구서 로그가 존재하지 않습니다."));
 
-        if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() <= 0) {
-            billLog = new BillLog();
-            billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
-            billLog.setCreatedAt(LocalDateTime.now());
-            billLogRepository.save(billLog);
-        } else {
-            billLog = optionalBillLog.get();
+        if (billLog.getRemainingBills() <= 0) {
+            throw new NotEnoughPointsException("청구서를 발송할 수 있는 개수가 부족합니다.", "NOT_ENOUGH_BILLS");
         }
 
         if (request.getMessage().length() > MAX_MESSAGE_LENGTH) {
@@ -93,12 +91,10 @@ public class BillService {
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
-        billLog.setRemainingBills(billLog.getRemainingBills() - 1);
-        billLogRepository.save(billLog);
-
+        // 새로운 BillLog를 생성하여 저장합니다. 새로 보낸 청구서의 remaining_bills만 줄입니다.
         BillLog newBillLog = new BillLog();
         newBillLog.setBill(bill);
-        newBillLog.setRemainingBills(billLog.getRemainingBills());
+        newBillLog.setRemainingBills(billLog.getRemainingBills() - 1);
         newBillLog.setCreatedAt(LocalDateTime.now());
         billLogRepository.save(newBillLog);
 
@@ -122,31 +118,20 @@ public class BillService {
 
     @Transactional
     public List<BillInfoResponse> createMultipleBills(CreateMultipleBillsRequest request) {
-        Optional<BillLog> optionalBillLog = billLogRepository.findFirstByOrderByCreatedAtDesc();
-        BillLog billLog;
-
-        if (optionalBillLog.isEmpty() || optionalBillLog.get().getRemainingBills() < request.getStudentIds().size()) {
-            billLog = new BillLog();
-            billLog.setRemainingBills(INITIAL_REMAINING_BILLS);
-            billLog.setCreatedAt(LocalDateTime.now());
-            billLogRepository.save(billLog);
-        } else {
-            billLog = optionalBillLog.get();
-        }
-
-        String message = DEFAULT_MESSAGE;
-
         List<BillInfoResponse> responses = request.getStudentIds().stream()
-                .map(studentId -> createBillForStudent(studentId, message))
+                .map(this::createBillForStudent)
                 .collect(Collectors.toList());
-
-        billLog.setRemainingBills(billLog.getRemainingBills() - request.getStudentIds().size());
-        billLogRepository.save(billLog);
-
         return responses;
     }
 
-    private BillInfoResponse createBillForStudent(Long studentId, String message) {
+    private BillInfoResponse createBillForStudent(Long studentId) {
+        BillLog billLog = billLogRepository.findFirstByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new EntityNotFoundException("청구서 로그가 존재하지 않습니다."));
+
+        if (billLog.getRemainingBills() <= 0) {
+            throw new NotEnoughPointsException("청구서를 발송할 수 있는 개수가 부족합니다.", "NOT_ENOUGH_BILLS");
+        }
+
         AcademyStudent student = academyStudentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("ID가 " + studentId + "인 학생을 찾을 수 없습니다."));
 
@@ -171,17 +156,17 @@ public class BillService {
 
         Bill bill = new Bill();
         bill.setDueDate(dueDate);
-        bill.setMessage(message);
+        bill.setMessage(DEFAULT_MESSAGE);
         bill.setStatus(Status.BEFORE);
         bill.setStudent(student);
         bill.setAcademy(academy);
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
-
+        // 새로운 BillLog를 생성하여 저장합니다. 새로 보낸 청구서의 remaining_bills만 줄입니다.
         BillLog newBillLog = new BillLog();
         newBillLog.setBill(bill);
-        newBillLog.setRemainingBills(billLogRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new IllegalStateException("No BillLog found")).getRemainingBills());
+        newBillLog.setRemainingBills(billLog.getRemainingBills() - 1);
         newBillLog.setCreatedAt(LocalDateTime.now());
         billLogRepository.save(newBillLog);
 
@@ -193,7 +178,7 @@ public class BillService {
         billInfoResponse.setLectureNames(lectureNames);
         billInfoResponse.setTotalPrice(totalPrice);
         billInfoResponse.setDueDate(dueDate);
-        billInfoResponse.setMessage(message);
+        billInfoResponse.setMessage(DEFAULT_MESSAGE);
 
         // 이메일 보내기
         String subject = "청구서 안내";
