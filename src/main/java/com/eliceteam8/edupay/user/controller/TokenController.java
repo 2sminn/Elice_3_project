@@ -5,17 +5,9 @@ import com.eliceteam8.edupay.global.exception.CustomJWTException;
 import com.eliceteam8.edupay.global.exception.NotFoundRefreshTokenException;
 import com.eliceteam8.edupay.security.config.jwt.JwtProvider;
 import com.eliceteam8.edupay.user.dto.CreateTokenDTO;
-import com.eliceteam8.edupay.user.entity.RefreshToken;
-import com.eliceteam8.edupay.user.entity.User;
-import com.eliceteam8.edupay.user.repository.UserRepository;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;

@@ -11,7 +11,9 @@ import com.eliceteam8.edupay.user.dto.PasswordDTO;
 import com.eliceteam8.edupay.user.dto.UpdateUserDTO;
 import com.eliceteam8.edupay.user.dto.UserAcademyDTO;
 import com.eliceteam8.edupay.user.dto.UserDTO;
+import com.eliceteam8.edupay.user.entity.PasswordToken;
 import com.eliceteam8.edupay.user.entity.User;
+import com.eliceteam8.edupay.user.repository.PasswordTokenRepository;
 import com.eliceteam8.edupay.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,19 +39,16 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AcademyRepository academyRepository;
-
     private final AcademyService academyService;
     private final EmailSendService emailService;
-    private final RedisTemplate<String, String> redisTemplate;
 
+    private final PasswordTokenRepository passwordTokenRepository;
     private final PasswordEncoder passwordEncoder;
-
     public static final int MAX_ATTEMPT = 5;
     public static final int BLOCK_TIME = 10 * 60;
 
-    public static final String ATTEMPT_KEY = "pw_attempt_";
-    public static final String BLOCK_KEY = "pw_block_";
-    public static final String USER_KEY = "pw_";
+    public static final int TTL = 60 * 5;
+
 
     //업데이트할 유저 정보 가져오기
     public UpdateUserDTO getUserById(Long userId) {
@@ -92,7 +91,6 @@ public class UserService {
         academy.setUser(user);
 
         return user.getId();
-
     }
 
     public boolean isEmailDuplicate(String email) {
@@ -104,56 +102,40 @@ public class UserService {
         User user = userRepository.findUserByEmailAndUsername(email,username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
 
-        String userId = user.getId().toString();
-        String attemptsKey = ATTEMPT_KEY + userId;
-        String blockKey = BLOCK_KEY + userId;
+        String userId =  user.getId().toString();
+
+        PasswordToken passwordToken = passwordTokenRepository.findById(userId).orElse(new PasswordToken(userId));
+        long currentTime = Instant.now().getEpochSecond();
 
         //블록된 유저인지 확인
-        if(redisTemplate.hasKey(blockKey)){
-            throw new IllegalStateException("비밀번호 찾기 시도 횟수 초과로 30분간 이용이 제한됩니다.");
+        if(passwordToken.getBlock() > currentTime){
+            throw new IllegalStateException("비밀번호 찾기 시도가 많아 30분간 이용이 제한됩니다.");
         }
-
 
         //몇번째 시도인지 확인
-        String attemptsCountStr = redisTemplate.opsForValue().get(attemptsKey);
-        int attemptsCount = attemptsCountStr != null ? Integer.parseInt(attemptsCountStr) : 0;
-
         //시도횟수 초과시 30분간 이용 제한
-        if(attemptsCount >= MAX_ATTEMPT){
-            redisTemplate.opsForValue().set(blockKey,
-                    String.valueOf(Instant.now().getEpochSecond() + BLOCK_TIME), BLOCK_TIME, TimeUnit.SECONDS);
-            redisTemplate.delete(attemptsKey);
-
-            throw new IllegalStateException("비밀번호 찾기 시도 횟수 초과로 30분간 이용이 제한됩니다.");
-
+        if(passwordToken.getAttempt() >= MAX_ATTEMPT){
+            passwordToken.setBlock(currentTime + BLOCK_TIME);
+            passwordToken.setAttempt(0);
+            passwordToken.setExpiration(BLOCK_TIME);
+            passwordTokenRepository.save(passwordToken);
+            throw new IllegalStateException("비밀번호 찾기 시도가 많아 30분간 이용이 제한됩니다.");
         }
 
-        redisTemplate.opsForValue().increment(attemptsKey);
-        redisTemplate.expire(attemptsKey, BLOCK_TIME, TimeUnit.SECONDS);
 
         String token = UUID.randomUUID().toString().substring(0, 5);
-        boolean result = passwordTokenSave(userId, token);
+        passwordToken.setAttempt(passwordToken.getAttempt() + 1);
+        passwordToken.setUserId(userId);
+        passwordToken.setToken(token);
+        passwordToken.setExpiration(TTL);
+        passwordTokenRepository.save(passwordToken);
+
+
+      // boolean result = passwordTokenSave(userId, token);
 
         sendEmail(email,token);
-        return result;
+        return true;
     }
-
-    private boolean passwordTokenSave(String userId, String token){
-        String userKey = USER_KEY + userId;
-        try {
-            if(redisTemplate.hasKey(userId)){
-                return true;
-            }
-             redisTemplate.opsForValue().setIfAbsent(userKey,
-                    token,
-                    Duration.ofMinutes(5));
-            return true;
-        } catch (Exception e) {
-            log.error("Error saving refresh token to Redis");
-            throw e;
-        }
-    }
-
 
 
     public void sendEmail(String email, String token) {
@@ -179,16 +161,15 @@ public class UserService {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.NOT_FOUND_USER));
 
-        String userId = USER_KEY+ user.getId().toString();
-        String savedToken = redisTemplate.opsForValue().get(userId);
-        if(savedToken == null){
-            throw new IllegalStateException("인증번호가 만료되었습니다.");
-        }
-        if(!savedToken.equals(token)){
+        String userId = user.getId().toString();
+        PasswordToken passwordToken = passwordTokenRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("인증번호가 만료되었습니다.")
+        );
+
+        if(!passwordToken.getToken().equals(token)){
             throw new IllegalStateException("인증번호가 일치하지 않습니다.");
         }
-
-        redisTemplate.delete(userId);
+        passwordTokenRepository.delete(passwordToken);
         return true;
     }
 
