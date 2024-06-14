@@ -1,11 +1,13 @@
 package com.eliceteam8.edupay.bill.controller;
 
 import com.eliceteam8.edupay.bill.dto.request.CreateMultipleBillsRequest;
+import com.eliceteam8.edupay.bill.dto.response.BillDetailResponse;
 import com.eliceteam8.edupay.bill.dto.response.BillInfoResponse;
 import com.eliceteam8.edupay.bill.dto.request.CreateSingleBillRequest;
 import com.eliceteam8.edupay.bill.dto.response.BillLogResponse;
 import com.eliceteam8.edupay.bill.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,12 @@ public class BillController {
     @PostMapping("")
     public BillInfoResponse createBill(@RequestBody CreateSingleBillRequest request) {
         return billService.createBill(request);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BillDetailResponse> getBillInfo(@PathVariable Long id) {
+        BillDetailResponse response = billService.getBillDetail(id);
+        return ResponseEntity.ok(response);
     }
 
     // 다중 청구서 생성 및 반환 API
