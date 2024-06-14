@@ -41,12 +41,10 @@ public class UserService {
     private final AcademyRepository academyRepository;
     private final AcademyService academyService;
     private final EmailSendService emailService;
-
     private final PasswordTokenRepository passwordTokenRepository;
     private final PasswordEncoder passwordEncoder;
     public static final int MAX_ATTEMPT = 5;
     public static final int BLOCK_TIME = 10 * 60;
-
     public static final int TTL = 60 * 5;
 
 
@@ -122,16 +120,12 @@ public class UserService {
             throw new IllegalStateException("비밀번호 찾기 시도가 많아 30분간 이용이 제한됩니다.");
         }
 
-
         String token = UUID.randomUUID().toString().substring(0, 5);
         passwordToken.setAttempt(passwordToken.getAttempt() + 1);
         passwordToken.setUserId(userId);
         passwordToken.setToken(token);
         passwordToken.setExpiration(TTL);
         passwordTokenRepository.save(passwordToken);
-
-
-      // boolean result = passwordTokenSave(userId, token);
 
         sendEmail(email,token);
         return true;
