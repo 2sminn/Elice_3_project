@@ -5,7 +5,6 @@ import {
 	createStudent as apiCreateStudent,
 	updateStudent as apiUpdateStudent,
 	deleteStudent as apiDeleteStudent,
-	searchStudents as apiSearchStudents,
 	StudentType,
 } from '../pages/studentMgrPage/api';
 

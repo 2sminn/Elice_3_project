@@ -64,3 +64,8 @@ export const searchStudents = async (term: string, field: keyof StudentType): Pr
 	const response = await axiosApi.post<StudentType[]>('/academy-students/search', { term, field });
 	return response.data;
 };
+
+export const fetchLectures = async (): Promise<LectureType[]> => {
+	const response = await axiosApi.get<LectureType[]>('/lectures');
+	return response.data;
+};

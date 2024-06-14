@@ -15,9 +15,7 @@ import {
 	PopupSelect,
 	PopupButton,
 } from './style';
-import { createStudent } from '../../api'; // 올바른 경로로 수정
-import { fetchLectures } from '../../../lectureMgrPage/api'; // 강의 정보를 불러오는 API
-import { StudentType, LectureType } from '../../api';
+import { createStudent, fetchLectures, StudentType, LectureType } from '../../api';
 
 const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
 	const { register, handleSubmit, control, reset, setValue } = useForm<StudentType>({
@@ -63,7 +61,10 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 		const lectureId = parseInt(event.target.value, 10);
 		const lecture = lectures.find((lec) => lec.id === lectureId);
 		if (lecture) {
-			setValue(`lectures.${index}`, lecture);
+			setValue(`lectures.${index}.id`, lecture.id); // lectureId -> id로 변경
+			setValue(`lectures.${index}.lectureName`, lecture.lectureName);
+			setValue(`lectures.${index}.price`, lecture.price);
+			setValue(`lectures.${index}.teacherName`, lecture.teacherName);
 		}
 	};
 
@@ -99,7 +100,9 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 				))}
 				<PopupButton
 					type="button"
-					onClick={() => append({ id: Date.now(), lectureName: '', price: 0, teacherName: '' })}
+					onClick={() =>
+						append({ id: Date.now(), lectureName: '', price: 0, teacherName: '', createdAt: '', updatedAt: '' })
+					}
 				>
 					강의 추가
 				</PopupButton>

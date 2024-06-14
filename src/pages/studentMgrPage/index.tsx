@@ -15,13 +15,13 @@ import {
 	Td,
 } from './style';
 import useStudentStore from '../../stores/useStudentStore';
-import { StudentType } from './api/student';
+import { StudentType } from './api';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Registration';
 import StudentDetailPopup from './components/Detail';
 
 const StudentMgrPage = () => {
-	const { students, filteredStudents, fetchStudents, deleteStudent, searchStudents, selectStudent, fetchStudent } =
+	const { filteredStudents, fetchStudents, deleteStudent, searchStudents, selectStudent, fetchStudent } =
 		useStudentStore();
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [searchField, setSearchField] = useState<keyof StudentType>('studentName');
@@ -82,7 +82,7 @@ const StudentMgrPage = () => {
 				<SearchTitle>통합검색</SearchTitle>
 				<SearchForm onSubmit={handleSearchSubmit}>
 					<InputGroup>
-						<Select value={searchField} onChange={handleSearchFieldChange}>
+						<Select value={searchField as string} onChange={handleSearchFieldChange}>
 							<option value="studentName">원생명</option>
 							<option value="grade">학년</option>
 							<option value="email">이메일</option>
