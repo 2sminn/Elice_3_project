@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import {
 	PopupContainer,
@@ -12,21 +12,21 @@ import {
 	ScheduleContainer,
 	ScheduleInputGroup,
 	ScheduleRemoveButton,
+	PopupSelect,
 	PopupButton,
 } from './style';
-import { createStudent } from '../../api';
-import { StudentType } from '../../api';
+import { createStudent, fetchLectures, StudentType, LectureType } from '../../api';
 
 const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
-	const { register, handleSubmit, control, reset } = useForm<StudentType>({
+	const { register, handleSubmit, control, reset, setValue } = useForm<StudentType>({
 		defaultValues: {
 			studentName: '',
-			birthdate: '',
+			birthDate: '',
 			email: '',
 			phoneNumber: '',
 			grade: '',
 			schoolName: '',
-			lectures: [{ id: Date.now(), lectureName: '', price: 0, teacherName: '' }],
+			lectures: [],
 		},
 	});
 
@@ -34,6 +34,16 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 		control,
 		name: 'lectures',
 	});
+
+	const [lectures, setLectures] = useState<LectureType[]>([]);
+
+	useEffect(() => {
+		const loadLectures = async () => {
+			const lectureList = await fetchLectures();
+			setLectures(lectureList);
+		};
+		loadLectures();
+	}, []);
 
 	const onSubmit = async (data: StudentType) => {
 		try {
@@ -47,6 +57,17 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 		reset();
 	};
 
+	const handleLectureChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
+		const lectureId = parseInt(event.target.value, 10);
+		const lecture = lectures.find((lec) => lec.id === lectureId);
+		if (lecture) {
+			setValue(`lectures.${index}.id`, lecture.id); // lectureId -> id로 변경
+			setValue(`lectures.${index}.lectureName`, lecture.lectureName);
+			setValue(`lectures.${index}.price`, lecture.price);
+			setValue(`lectures.${index}.teacherName`, lecture.teacherName);
+		}
+	};
+
 	return (
 		<PopupContainer>
 			<Header>
@@ -55,7 +76,7 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 			</Header>
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Input {...register('studentName', { required: true })} placeholder="원생명" />
-				<Input {...register('birthdate', { required: true })} type="date" placeholder="생년월일" />
+				<Input {...register('birthDate', { required: true })} type="date" placeholder="생년월일" />
 				<Input {...register('email', { required: true })} type="email" placeholder="이메일" />
 				<Input {...register('phoneNumber', { required: true })} placeholder="연락처" />
 				<Input {...register('grade', { required: true })} placeholder="학년" />
@@ -63,9 +84,14 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 				{fields.map((item, index) => (
 					<ScheduleContainer key={item.id}>
 						<ScheduleInputGroup>
-							<Input {...register(`lectures.${index}.lectureName` as const)} placeholder="강의명" />
-							<Input {...register(`lectures.${index}.teacherName` as const)} placeholder="담임명" />
-							<Input {...register(`lectures.${index}.price` as const)} type="number" placeholder="수강료" />
+							<PopupSelect onChange={(event) => handleLectureChange(index, event)} defaultValue="">
+								<option value="">강의 선택</option>
+								{lectures.map((lecture) => (
+									<option key={lecture.id} value={lecture.id}>
+										{lecture.lectureName} - {lecture.teacherName} - {lecture.price.toLocaleString()}원
+									</option>
+								))}
+							</PopupSelect>
 						</ScheduleInputGroup>
 						<ScheduleRemoveButton type="button" onClick={() => remove(index)}>
 							제거
@@ -74,7 +100,9 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 				))}
 				<PopupButton
 					type="button"
-					onClick={() => append({ id: Date.now(), lectureName: '', price: 0, teacherName: '' })}
+					onClick={() =>
+						append({ id: Date.now(), lectureName: '', price: 0, teacherName: '', createdAt: '', updatedAt: '' })
+					}
 				>
 					강의 추가
 				</PopupButton>

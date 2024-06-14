@@ -24,7 +24,7 @@ export interface StudentType {
 	academyName: string;
 	studentId: number;
 	studentName: string;
-	birthdate: string;
+	birthDate: string;
 	phoneNumber: string;
 	email: string;
 	schoolName: string;
@@ -62,5 +62,10 @@ export const deleteStudent = async (studentId: number): Promise<void> => {
 
 export const searchStudents = async (term: string, field: keyof StudentType): Promise<StudentType[]> => {
 	const response = await axiosApi.post<StudentType[]>('/academy-students/search', { term, field });
+	return response.data;
+};
+
+export const fetchLectures = async (): Promise<LectureType[]> => {
+	const response = await axiosApi.get<LectureType[]>('/lectures');
 	return response.data;
 };

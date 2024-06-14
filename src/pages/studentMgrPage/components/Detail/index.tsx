@@ -10,8 +10,6 @@ import {
 	EditButton,
 	Input,
 	SaveButton,
-	PopupSelect,
-	PopupButton,
 } from './style';
 import useStudentStore from '../../../../stores/useStudentStore';
 import { StudentType } from '../../api';
@@ -34,7 +32,7 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 		setValue('email', student.email);
 		setValue('phoneNumber', student.phoneNumber);
 		setValue('grade', student.grade);
-		setValue('birthdate', student.birthdate);
+		setValue('birthDate', student.birthDate); // 수정된 부분
 		setValue('schoolName', student.schoolName);
 		if (student.lectures) {
 			setValue('lectures', student.lectures);
@@ -81,7 +79,7 @@ const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClos
 				</DetailItem>
 				<DetailItem>
 					<strong>생년월일:</strong>
-					{isEditing ? <Input {...register('birthdate')} type="date" /> : student.birthdate}
+					{isEditing ? <Input {...register('birthDate')} type="date" /> : student.birthDate} {/* 수정된 부분 */}
 				</DetailItem>
 				<DetailItem>
 					<strong>학교명:</strong>
