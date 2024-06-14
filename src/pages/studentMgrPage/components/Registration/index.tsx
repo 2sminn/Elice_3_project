@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import {
 	PopupContainer,
@@ -12,13 +12,15 @@ import {
 	ScheduleContainer,
 	ScheduleInputGroup,
 	ScheduleRemoveButton,
+	PopupSelect,
 	PopupButton,
 } from './style';
-import { createStudent } from '../../api';
-import { StudentType } from '../../api';
+import { createStudent } from '../../api'; // 올바른 경로로 수정
+import { fetchLectures } from '../../../lectureMgrPage/api'; // 강의 정보를 불러오는 API
+import { StudentType, LectureType } from '../../api';
 
 const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
-	const { register, handleSubmit, control, reset } = useForm<StudentType>({
+	const { register, handleSubmit, control, reset, setValue } = useForm<StudentType>({
 		defaultValues: {
 			studentName: '',
 			birthDate: '',
@@ -26,7 +28,7 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 			phoneNumber: '',
 			grade: '',
 			schoolName: '',
-			lectures: [{ id: Date.now(), lectureName: '', price: 0, teacherName: '' }],
+			lectures: [],
 		},
 	});
 
@@ -34,6 +36,16 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 		control,
 		name: 'lectures',
 	});
+
+	const [lectures, setLectures] = useState<LectureType[]>([]);
+
+	useEffect(() => {
+		const loadLectures = async () => {
+			const lectureList = await fetchLectures();
+			setLectures(lectureList);
+		};
+		loadLectures();
+	}, []);
 
 	const onSubmit = async (data: StudentType) => {
 		try {
@@ -45,6 +57,14 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 			alert('원생 등록에 실패했습니다.');
 		}
 		reset();
+	};
+
+	const handleLectureChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
+		const lectureId = parseInt(event.target.value, 10);
+		const lecture = lectures.find((lec) => lec.id === lectureId);
+		if (lecture) {
+			setValue(`lectures.${index}`, lecture);
+		}
 	};
 
 	return (
@@ -63,9 +83,14 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 				{fields.map((item, index) => (
 					<ScheduleContainer key={item.id}>
 						<ScheduleInputGroup>
-							<Input {...register(`lectures.${index}.lectureName` as const)} placeholder="강의명" />
-							<Input {...register(`lectures.${index}.teacherName` as const)} placeholder="담임명" />
-							<Input {...register(`lectures.${index}.price` as const)} type="number" placeholder="수강료" />
+							<PopupSelect onChange={(event) => handleLectureChange(index, event)} defaultValue="">
+								<option value="">강의 선택</option>
+								{lectures.map((lecture) => (
+									<option key={lecture.id} value={lecture.id}>
+										{lecture.lectureName} - {lecture.teacherName} - {lecture.price.toLocaleString()}원
+									</option>
+								))}
+							</PopupSelect>
 						</ScheduleInputGroup>
 						<ScheduleRemoveButton type="button" onClick={() => remove(index)}>
 							제거
