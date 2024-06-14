@@ -32,4 +32,8 @@ export const StyledButton = styled.button.withConfig({
 		opacity: 0.85;
 		transition: 0.3s;
 	}
+
+	&:disabled {
+		background-color: #dfdfdf;
+	}
 `;

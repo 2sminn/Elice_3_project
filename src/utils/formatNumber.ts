@@ -1,3 +1,3 @@
-export const formatNumber = (number: number) => {
-	return number.toLocaleString('ko-KR');
+export const formatNumber = (number: number | undefined) => {
+	return number?.toLocaleString('ko-KR');
 };
