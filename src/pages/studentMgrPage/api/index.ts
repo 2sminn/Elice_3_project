@@ -24,7 +24,7 @@ export interface StudentType {
 	academyName: string;
 	studentId: number;
 	studentName: string;
-	birthdate: string;
+	birthDate: string;
 	phoneNumber: string;
 	email: string;
 	schoolName: string;

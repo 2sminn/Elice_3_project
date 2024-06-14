@@ -21,7 +21,7 @@ const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void;
 	const { register, handleSubmit, control, reset } = useForm<StudentType>({
 		defaultValues: {
 			studentName: '',
-			birthdate: '',
+			birthDate: '',
 			email: '',
 			phoneNumber: '',
 			grade: '',
