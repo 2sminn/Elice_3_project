@@ -6,16 +6,40 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtProvider {
 
+    private final RedisTemplate<String, String> redisTemplate;
+    private static final long TOKEN_EXPIRATION_HOURS = 12L;
+    private static final String REFRESH_TOKEN_PREFIX = "refreshToken_";
+
+
+    public boolean refreshTokenSave(String refreshToken, String userId) {
+        try {
+            String key = REFRESH_TOKEN_PREFIX + userId;
+            redisTemplate.opsForValue().set(
+                    key,
+                    refreshToken,
+                    Duration.ofHours(TOKEN_EXPIRATION_HOURS));
+            return true;
+        } catch (Exception e) {
+            log.error("Error saving refresh token to Redis :  {}", e.getMessage());
+            return false;
+        }
+    }
 
     public static String generateToken(Map<String,Object> valueMap, int min){
         SecretKey key = null;
@@ -38,8 +62,6 @@ public class JwtProvider {
         }catch (Exception e){
             throw new CustomJWTException(ExceptionCode.TOKEN_CREATION_ERROR);
         }
-
-
 
         return jwtStr;
     }

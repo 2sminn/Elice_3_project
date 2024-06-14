@@ -1,7 +1,6 @@
 package com.eliceteam8.edupay.point.controller;
 
 import com.eliceteam8.edupay.point.dto.PointLogDTO;
-import com.eliceteam8.edupay.point.dto.RefundDTO;
 import com.eliceteam8.edupay.point.entity.PointRechargeLog;
 import com.eliceteam8.edupay.point.entity.PointUseLog;
 import com.eliceteam8.edupay.point.service.PointService;
@@ -65,9 +64,10 @@ public class PointController {
     }
 
     @PostMapping("/refund")
-    public ResponseEntity<RefundDTO> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
-        RefundDTO refundDTO = pointService.isSuccessRefund(request);
+    public ResponseEntity<Void> refundPoint(@RequestBody PointLogDTO request) throws IOException, IamportResponseException {
+        pointService.refundPoint(request);
 
-        return new ResponseEntity<>(refundDTO, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

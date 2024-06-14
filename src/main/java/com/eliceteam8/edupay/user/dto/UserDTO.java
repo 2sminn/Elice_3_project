@@ -50,6 +50,10 @@ public class UserDTO extends User {
         dataMap.put("password", password);
         return dataMap;
     }
-
+    public Map<String, Object> getRefreshClaims() {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("userId", userId);
+        return dataMap;
+    }
 
 }
