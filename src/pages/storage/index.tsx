@@ -17,6 +17,8 @@ import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
 import * as S from './style';
 import { IoSearchOutline } from 'react-icons/io5';
 import { formatDate } from '../../utils/formatDate';
+import { useSendReceiptMutation } from './hooks/useSendReceiptMutation';
+import { invoiceType } from './type';
 
 const StoragePage = () => {
 	const [searchFilter, setSearchFilter] = useState({
@@ -36,6 +38,8 @@ const StoragePage = () => {
 		refetch,
 	} = useGetStoragesQuery(searchFilter, page);
 
+	const { mutate: sendReceiptMutate } = useSendReceiptMutation();
+
 	const handleChangeFilter: ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
 		const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
 		setSearchFilter((prev) => ({
@@ -47,6 +51,20 @@ const StoragePage = () => {
 	const handleFilterSearch = () => {
 		setPage(1);
 		refetch();
+	};
+
+	const handleSendReceipt = (data: invoiceType) => () => {
+		const paymentDate = data.updatedAt;
+		const year = Number(paymentDate.split('-')[0]);
+		const month = Number(paymentDate.split('-')[1]);
+
+		const receiptData = {
+			studentId: Number(data.studentId),
+			year,
+			month,
+		};
+
+		sendReceiptMutate(receiptData);
 	};
 
 	const observerRef = useRef(null);
@@ -138,7 +156,13 @@ const StoragePage = () => {
 											<TableList width="10%">O</TableList>
 											<TableList width="15%">{formatDate(storage.updatedAt)}</TableList>
 											<TableList width="15%">
-												<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
+												<PrimaryButton
+													text="영수증 발급"
+													width="90%"
+													textSize="13px"
+													isFill
+													onClick={handleSendReceipt(storage)}
+												/>
 											</TableList>
 										</TableContentBox>
 									))
