@@ -109,11 +109,11 @@ const AddBillCountPopup = () => {
 			<S.SubTitleBox>
 				<S.SubTitle>
 					<span>현재보유수량</span>
-					<p>100건</p>
+					<p>{userInfo?.point}건</p>
 				</S.SubTitle>
 				<S.SubTitle>
 					<span>충전 후 잔여수량</span>
-					<p className="active">{eduData ? 100 + eduData?.edu : 100}건</p>
+					<p className="active">{eduData && userInfo ? userInfo?.point + eduData?.edu : userInfo?.point}건</p>
 				</S.SubTitle>
 			</S.SubTitleBox>
 			<S.AddBillBox>

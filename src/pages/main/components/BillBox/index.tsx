@@ -1,4 +1,3 @@
-import PrimaryButton from '../../../../components/buttons/PrimaryButton';
 import { formatNumber } from '../../../../utils/formatNumber';
 import * as S from './style';
 
@@ -26,9 +25,6 @@ const BillBox = ({ title, content1, content2, price, count }: BillBoxProps) => {
 					<p>{formatNumber(price)}원</p>
 				</S.BillContentBox>
 			</S.BillContentContainer>
-			<S.BillDetailLinkBtn to="/">
-				<PrimaryButton text="자세히 보러 가기" isFill textSize="15px" />
-			</S.BillDetailLinkBtn>
 		</S.Container>
 	);
 };
