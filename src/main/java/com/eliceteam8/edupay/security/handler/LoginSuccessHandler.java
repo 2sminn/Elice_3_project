@@ -23,8 +23,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private final JwtProvider jwtProvider;
-    private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 720;
-    private static final int TOKEN_EXPIRATION_HOURS = 720;
+    private static final int REFRESH_TOKEN_EXPIRATION = 60*60*24;
+    private static final int TOKEN_EXPIRATION = 60*60*12;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -37,13 +37,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 응답에 포함할 데이터 생성
         Map<String, Object> userClaims = userDTO.getClaims();
-        Map<String, Object> refreshClaims = userDTO.getRefreshClaims();
         String userId = userClaims.get("userId").toString();
         userClaims.remove("password");
         // JWT 토큰 생성
-        String accessToken = JwtProvider.generateToken(userClaims,TOKEN_EXPIRATION_HOURS);
+        String accessToken = JwtProvider.generateToken(userClaims,TOKEN_EXPIRATION);
 
-        String refreshToken = JwtProvider.generateToken(refreshClaims, REFRESH_TOKEN_EXPIRATION_HOURS);
+        String refreshToken = JwtProvider.generateToken(userClaims, REFRESH_TOKEN_EXPIRATION);
 
         jwtProvider.refreshTokenSave(refreshToken, userId);
 
