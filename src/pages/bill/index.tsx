@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import { formatNumber } from '../../utils/formatNumber';
 import * as S from './style';
 import { errorAlert, successAlert } from '../../utils/alert';
 import { usePaymentErrorStore, usePaymentSuccessStore } from '../../stores/paymentStore';
+import { useGetBillQuery } from './hooks/useGetBillQuery';
 
 declare global {
 	interface Window {
@@ -18,6 +19,10 @@ const BillPage = () => {
 	const { setSuccessRes } = usePaymentSuccessStore();
 	const { setErrorRes } = usePaymentErrorStore();
 
+	const { id } = useParams();
+
+	const { data: billData } = useGetBillQuery(Number(id));
+
 	const requestPay = () => {
 		const { IMP } = window;
 		IMP.init(IMP_CODE); // 'your_imp_uid'를 실제 가맹점 식별코드로 변경
@@ -28,10 +33,10 @@ const BillPage = () => {
 				pay_method: 'card', // 결제수단
 				merchant_uid: `merchant_${new Date().getTime()}`, // 주문번호
 				name: '학원비 결제', // 주문명
-				amount: 100, // 금액
+				amount: billData?.totalPrice, // 금액
 				buyer_email: 'iamport@siot.do',
-				buyer_name: '조정택',
-				buyer_tel: '010-1234-5678',
+				buyer_name: 'TEST',
+				buyer_tel: '010-0000-0000',
 				buyer_addr: '서울특별시 강남구 삼성동',
 				buyer_postcode: '123-456',
 			},
@@ -68,7 +73,7 @@ const BillPage = () => {
 					<S.InfoBox>
 						<S.InfoContainer>
 							<h4>발급처</h4>
-							<p>에듀페이</p>
+							<p>{billData?.academyName}</p>
 						</S.InfoContainer>
 						<S.InfoContainer>
 							<h4>발급사유</h4>
@@ -76,7 +81,7 @@ const BillPage = () => {
 						</S.InfoContainer>
 						<S.InfoContainer>
 							<h4>청구금액</h4>
-							<S.BillPrice>{formatNumber(10000000)}원</S.BillPrice>
+							<S.BillPrice>{formatNumber(billData?.totalPrice)}원</S.BillPrice>
 						</S.InfoContainer>
 					</S.InfoBox>
 					<PrimaryButton text="결제하기" isFill onClick={requestPay} />

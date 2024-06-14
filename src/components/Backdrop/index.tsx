@@ -7,14 +7,9 @@ interface BackdropProps {
 	handleClick: MouseEventHandler<HTMLDivElement>;
 }
 
-const Backdrop = ({ children, isView, handleClick }: BackdropProps) => {
+const Backdrop = ({ children, isView }: BackdropProps) => {
 	return (
-		<Container
-			onClick={handleClick}
-			initial={{ opacity: 0 }}
-			animate={{ opacity: isView ? 1 : 0 }}
-			transition={{ duration: 0.5 }}
-		>
+		<Container initial={{ opacity: 0 }} animate={{ opacity: isView ? 1 : 0 }} transition={{ duration: 0.5 }}>
 			{children}
 		</Container>
 	);
