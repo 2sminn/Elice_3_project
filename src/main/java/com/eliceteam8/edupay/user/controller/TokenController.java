@@ -19,7 +19,7 @@ import java.util.Map;
 public class TokenController {
     private final RedisTemplate<String, String> redisTemplate;
     private static final String REFRESH_TOKEN_PREFIX = "refreshToken_";
-    private static final int ACCESS_TOKEN_EXPIRATION = 15;
+    private static final int ACCESS_TOKEN_EXPIRATION = 720;
     private static final int REFRESH_TOKEN_EXPIRATION = 60 * 12;
     private static final int REFRESH_TOKEN_RENEW_THRESHOLD = 60;
 

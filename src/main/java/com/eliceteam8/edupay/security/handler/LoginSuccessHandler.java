@@ -23,8 +23,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private final JwtProvider jwtProvider;
-    private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 12;
-    private static final int TOKEN_EXPIRATION_HOURS = 12;
+    private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 720;
+    private static final int TOKEN_EXPIRATION_HOURS = 720;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
