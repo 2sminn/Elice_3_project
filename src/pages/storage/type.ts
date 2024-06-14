@@ -45,3 +45,9 @@ export interface FilterSearchType {
 	isPaid: string;
 	studentName: string;
 }
+
+export interface ReceiptRequestType {
+	studentId: number;
+	month: number;
+	year: number;
+}
