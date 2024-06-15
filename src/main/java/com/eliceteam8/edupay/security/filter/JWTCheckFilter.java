@@ -35,6 +35,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
+        //test
+        if(path.startsWith("/bill/")){
+            return true;
+        }
+
         return false;
     }
 
