@@ -17,6 +17,7 @@ import com.eliceteam8.edupay.bill.repository.BillRepository;
 import com.eliceteam8.edupay.global.exception.EntityNotFoundException;
 import com.eliceteam8.edupay.global.exception.MessageTooLongException;
 import com.eliceteam8.edupay.global.exception.NotEnoughPointsException;
+import com.eliceteam8.edupay.user.dto.UserDTO;
 import com.eliceteam8.edupay.user.entity.User;
 import com.eliceteam8.edupay.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,15 +48,17 @@ public class BillService {
     private AcademyStudentRepository academyStudentRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private EmailService emailService;
 
     @Transactional
     public BillInfoResponse createBill(CreateSingleBillRequest request) {
-        BillLog billLog = billLogRepository.findFirstByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new EntityNotFoundException("청구서 로그가 존재하지 않습니다."));
+        User currentUser = getCurrentUser();
 
-        if (billLog.getRemainingBills() <= 0) {
-            throw new NotEnoughPointsException("청구서를 발송할 수 있는 개수가 부족합니다.", "NOT_ENOUGH_BILLS");
+        if (currentUser.getPoint() <= 0) {
+            throw new NotEnoughPointsException("포인트가 부족합니다.", "NOT_ENOUGH_POINTS");
         }
 
         if (request.getMessage().length() > MAX_MESSAGE_LENGTH) {
@@ -92,10 +96,14 @@ public class BillService {
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
-        // 새로운 BillLog를 생성하여 저장합니다. 새로 보낸 청구서의 remaining_bills만 줄입니다.
+        // 포인트 차감
+        currentUser.usePoint(1L);
+        userRepository.save(currentUser);
+
+        // 새로운 BillLog를 생성하여 저장합니다.
         BillLog newBillLog = new BillLog();
         newBillLog.setBill(bill);
-        newBillLog.setRemainingBills(billLog.getRemainingBills() - 1);
+        newBillLog.setRemainingBills(currentUser.getPoint());
         newBillLog.setCreatedAt(LocalDateTime.now());
         billLogRepository.save(newBillLog);
 
@@ -132,19 +140,37 @@ public class BillService {
 
     @Transactional
     public List<BillInfoResponse> createMultipleBills(CreateMultipleBillsRequest request) {
-        List<BillInfoResponse> responses = request.getStudentIds().stream()
-                .map(this::createBillForStudent)
-                .collect(Collectors.toList());
+        User currentUser = getCurrentUser();
+        if (currentUser.getPoint() < request.getStudentIds().size()) {
+            throw new NotEnoughPointsException("포인트가 부족합니다.", "NOT_ENOUGH_POINTS");
+        }
+
+        List<BillInfoResponse> responses = new ArrayList<>();
+        for (Long studentId : request.getStudentIds()) {
+            BillInfoResponse response = createBillForStudent(studentId);
+
+            // 포인트 차감 및 업데이트를 각 청구서 생성 후 바로 반영
+            currentUser.usePoint(1L);
+            userRepository.save(currentUser);
+
+            // 새로운 BillLog를 생성하여 저장
+            Bill bill = billRepository.findById(response.getBillId())
+                    .orElseThrow(() -> new EntityNotFoundException("ID가 " + response.getBillId() + "인 청구서를 찾을 수 없습니다."));
+
+            BillLog newBillLog = new BillLog();
+            newBillLog.setBill(bill);
+            newBillLog.setRemainingBills(currentUser.getPoint());
+            newBillLog.setCreatedAt(LocalDateTime.now());
+            billLogRepository.save(newBillLog);
+
+            responses.add(response);
+        }
+
         return responses;
     }
 
     private BillInfoResponse createBillForStudent(Long studentId) {
-        BillLog billLog = billLogRepository.findFirstByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new EntityNotFoundException("청구서 로그가 존재하지 않습니다."));
-
-        if (billLog.getRemainingBills() <= 0) {
-            throw new NotEnoughPointsException("청구서를 발송할 수 있는 개수가 부족합니다.", "NOT_ENOUGH_BILLS");
-        }
+        User currentUser = getCurrentUser();
 
         AcademyStudent student = academyStudentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("ID가 " + studentId + "인 학생을 찾을 수 없습니다."));
@@ -177,13 +203,6 @@ public class BillService {
         bill.setTotalPrice(totalPrice);
         billRepository.save(bill);
 
-        // 새로운 BillLog를 생성하여 저장합니다. 새로 보낸 청구서의 remaining_bills만 줄입니다.
-        BillLog newBillLog = new BillLog();
-        newBillLog.setBill(bill);
-        newBillLog.setRemainingBills(billLog.getRemainingBills() - 1);
-        newBillLog.setCreatedAt(LocalDateTime.now());
-        billLogRepository.save(newBillLog);
-
         BillInfoResponse billInfoResponse = new BillInfoResponse();
         billInfoResponse.setAcademyName(academy.getAcademyName());
         billInfoResponse.setStudentName(student.getStudentName());
@@ -193,6 +212,7 @@ public class BillService {
         billInfoResponse.setTotalPrice(totalPrice);
         billInfoResponse.setDueDate(dueDate);
         billInfoResponse.setMessage(DEFAULT_MESSAGE);
+        billInfoResponse.setBillId(bill.getId()); // Bill ID 설정
 
         // 이메일 보내기
         String subject = "청구서 안내";
@@ -202,6 +222,18 @@ public class BillService {
         return billInfoResponse;
     }
 
+    private User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDTO) {
+            String email = ((UserDTO) principal).getEmail();
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("로그인한 사용자를 찾을 수 없습니다."));
+        } else {
+            throw new IllegalStateException("인증된 사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Page<BillLogResponse> getBillLogs(Pageable pageable) {
         Page<BillLog> billLogs = billLogRepository.findAll(pageable);
         if (billLogs.isEmpty()) {

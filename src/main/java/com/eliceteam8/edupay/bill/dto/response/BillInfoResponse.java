@@ -17,4 +17,5 @@ public class BillInfoResponse {
     private long totalPrice;
     private LocalDateTime dueDate;
     private String message;
+    private Long billId; // Bill ID 추가
 }
