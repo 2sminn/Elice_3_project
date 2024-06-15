@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.regex.Pattern;
+
 
 @Slf4j
 @RestController
@@ -19,6 +21,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+
+    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
 
 
     @PostMapping("/sign-up")
@@ -34,6 +38,9 @@ public class AuthController {
 
     @GetMapping("/check-email")
     public ResponseEntity<BooleanResultDTO> checkEmailDuplicate(@RequestParam String email) {
+        if(!isValidEmail(email)){
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
         boolean isDuplicate = userService.isEmailDuplicate(email);
         BooleanResultDTO result = BooleanResultDTO.builder().result(isDuplicate).build();
         return ResponseEntity.ok(result);
@@ -83,6 +90,10 @@ public class AuthController {
     }
 
 
+    private boolean isValidEmail(String email) {
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        return pattern.matcher(email).matches();
+    }
 
 
 }
