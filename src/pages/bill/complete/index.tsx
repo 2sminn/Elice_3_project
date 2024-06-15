@@ -38,7 +38,7 @@ const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
 						</S.InfoContainer>
 						<S.InfoContainer>
 							<h4>{isSuccess ? '청구금액(VAT 포함)' : '사유'}</h4>
-							<p>{isSuccess ? <span>{formatNumber(100000000)}원</span> : errorRes?.error_msg}</p>
+							<p>{isSuccess ? <span>{formatNumber(successRes?.paid_amount)}원</span> : errorRes?.error_msg}</p>
 						</S.InfoContainer>
 					</S.InfoBox>
 				</S.ContentContainer>
