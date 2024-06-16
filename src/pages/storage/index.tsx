@@ -4,17 +4,21 @@ import Select from '../../components/inputs/Select';
 import TextInput from '../../components/inputs/TextInput';
 import {
 	Container,
+	LoadingSpiner,
 	PageTitle,
 	TableContentBox,
 	TableContentContainer,
 	TableList,
 	TableTitleBox,
+	WarningMessage,
 } from '../../styles/commonStyle';
 import { storageYearOption, storageMonthOption, storageOXOption } from './constants/options';
 import { useGetStoragesQuery } from './hooks/useGetStoragesQuery';
 import * as S from './style';
 import { IoSearchOutline } from 'react-icons/io5';
 import { formatDate } from '../../utils/formatDate';
+import { useSendReceiptMutation } from './hooks/useSendReceiptMutation';
+import { invoiceType } from './type';
 
 const StoragePage = () => {
 	const [searchFilter, setSearchFilter] = useState({
@@ -24,9 +28,17 @@ const StoragePage = () => {
 		studentName: '',
 	});
 
-	console.log(searchFilter);
+	const [page, setPage] = useState(1);
 
-	const { data: storageDatas, fetchNextPage, hasNextPage, isFetching } = useGetStoragesQuery(searchFilter);
+	const {
+		data: storageDatas,
+		fetchNextPage,
+		hasNextPage,
+		isFetching,
+		refetch,
+	} = useGetStoragesQuery(searchFilter, page);
+
+	const { mutate: sendReceiptMutate } = useSendReceiptMutation();
 
 	const handleChangeFilter: ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
 		const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
@@ -34,6 +46,25 @@ const StoragePage = () => {
 			...prev,
 			[name]: value,
 		}));
+	};
+
+	const handleFilterSearch = () => {
+		setPage(1);
+		refetch();
+	};
+
+	const handleSendReceipt = (data: invoiceType) => () => {
+		const paymentDate = data.updatedAt;
+		const year = Number(paymentDate.split('-')[0]);
+		const month = Number(paymentDate.split('-')[1]);
+
+		const receiptData = {
+			studentId: Number(data.studentId),
+			year,
+			month,
+		};
+
+		sendReceiptMutate(receiptData);
 	};
 
 	const observerRef = useRef(null);
@@ -48,7 +79,7 @@ const StoragePage = () => {
 		const handleIntersection: IntersectionObserverCallback = (entries) => {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting && hasNextPage && !isFetching) {
-					fetchNextPage();
+					setPage((prevPage) => prevPage + 1);
 				}
 			});
 		};
@@ -65,15 +96,20 @@ const StoragePage = () => {
 			}
 		};
 	}, [fetchNextPage, hasNextPage, isFetching]);
+
+	useEffect(() => {
+		if (page > 0) {
+			fetchNextPage();
+		}
+	}, [page, fetchNextPage]);
+
 	return (
 		<Container>
 			<S.StorageContainer>
 				<PageTitle>수납관리</PageTitle>
-				<S.TabBox>
+				{/* <S.TabBox>
 					<S.TabMenu $active={true}>전체</S.TabMenu>
-					<S.TabMenu>수납내역</S.TabMenu>
-					<S.TabMenu>미수납내역</S.TabMenu>
-				</S.TabBox>
+				</S.TabBox> */}
 				<S.SearchContainer>
 					<S.SearchTitle>
 						<IoSearchOutline color="#fff" size={25} />
@@ -86,7 +122,7 @@ const StoragePage = () => {
 							<Select title="ox-select" options={storageOXOption} name="isPaid" onChange={handleChangeFilter} />
 							<TextInput placeholder="원생이름" name="studentName" onChange={handleChangeFilter} />
 						</S.SelectTopBox>
-						<PrimaryButton type="button" text="검색" />
+						<PrimaryButton type="button" text="검색" onClick={handleFilterSearch} />
 					</S.SearchBox>
 				</S.SearchContainer>
 				<S.StorageTable>
@@ -111,23 +147,31 @@ const StoragePage = () => {
 					<TableContentContainer>
 						{storageDatas?.pages.map((page, index) => (
 							<React.Fragment key={index}>
-								{page.content.length > 0
-									? page.content.map((storage) => (
-											<TableContentBox key={storage.order_id}>
-												<TableList width="15%">{storage.student_name}</TableList>
-												<TableList width="15%">1997.07.08</TableList>
-												<TableList width="30%">{storage.lecture_info.lecture_name}</TableList>
-												<TableList width="10%">O</TableList>
-												<TableList width="15%">{formatDate(storage.due_date)}</TableList>
-												<TableList width="15%">
-													<PrimaryButton text="영수증 발급" width="90%" textSize="13px" isFill />
-												</TableList>
-											</TableContentBox>
-										))
-									: '수납 내역이 존재하지 않습니다.'}
+								{page.content.length > 0 ? (
+									page.content.map((storage) => (
+										<TableContentBox key={storage.billId}>
+											<TableList width="15%">{storage.studentName}</TableList>
+											<TableList width="15%">{storage.birthDate}</TableList>
+											<TableList width="30%">수학, 과학</TableList>
+											<TableList width="10%">O</TableList>
+											<TableList width="15%">{formatDate(storage.updatedAt)}</TableList>
+											<TableList width="15%">
+												<PrimaryButton
+													text="영수증 발급"
+													width="90%"
+													textSize="13px"
+													isFill
+													onClick={handleSendReceipt(storage)}
+												/>
+											</TableList>
+										</TableContentBox>
+									))
+								) : (
+									<WarningMessage>수납 내역이 존재하지 않습니다.</WarningMessage>
+								)}
 							</React.Fragment>
 						))}
-						{isFetching && <div>Loading...</div>}
+						{isFetching && <LoadingSpiner />}
 						<div ref={observerRef} style={{ height: '10px', background: 'transparent' }} />
 					</TableContentContainer>
 				</S.StorageTable>

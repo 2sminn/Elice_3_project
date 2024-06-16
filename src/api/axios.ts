@@ -53,7 +53,6 @@ axiosApi.interceptors.response.use(
 			} else {
 				// 리프레시 토큰이 없는 경우 로그인 페이지로 리다이렉트 또는 다른 처리를 수행할 수 있습니다.
 				console.error('Refresh token is missing');
-				clearTokens();
 				return Promise.reject(error);
 			}
 		}

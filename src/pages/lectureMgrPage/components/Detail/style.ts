@@ -39,7 +39,7 @@ export const DetailList = styled.form`
 	overflow-y: auto;
 `;
 
-export const DetailItem = styled.div`
+export const DetailItem = styled.li`
 	margin-bottom: 10px;
 	font-size: ${({ theme }) => theme.textSize.medium};
 	color: ${({ theme }) => theme.colors.text};
@@ -85,4 +85,61 @@ export const Input = styled.input`
 	border: 1px solid #ccc;
 	border-radius: ${({ theme }) => theme.radius.small};
 	width: 100%;
+`;
+
+export const ScheduleContainer = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+	gap: 10px;
+`;
+
+export const ScheduleInputGroup = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+`;
+
+export const ScheduleRemoveButton = styled.button`
+	padding: 10px 20px;
+	font-size: 16px;
+	background-color: ${({ theme }) => theme.colors.success};
+	color: white;
+	border: none;
+	border-radius: ${({ theme }) => theme.radius.small};
+	cursor: pointer;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.accent};
+	}
+`;
+
+export const PopupSelect = styled.select`
+	margin-bottom: 15px;
+	padding: 10px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: ${({ theme }) => theme.radius.small};
+	flex: 1;
+`;
+
+export const ScheduleItem = styled.li`
+	margin-bottom: 10px;
+	font-size: ${({ theme }) => theme.textSize.medium};
+	color: ${({ theme }) => theme.colors.text};
+`;
+
+export const PopupButton = styled.button`
+	padding: 10px;
+	font-size: 16px;
+	background-color: ${({ theme }) => theme.colors.success};
+	color: white;
+	border: none;
+	border-radius: ${({ theme }) => theme.radius.small};
+	cursor: pointer;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.accent};
+	}
 `;

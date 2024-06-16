@@ -14,23 +14,17 @@ import {
 	Th,
 	Td,
 } from './style';
+import useStudentStore from '../../stores/useStudentStore';
+import { StudentType } from './api';
 import usePopup from '../../hooks/usePopup';
 import StudentRegistrationPopup from './components/Registration';
 import StudentDetailPopup from './components/Detail';
-import useStudentStore from '../../stores/useStudentStore';
-import { StudentType } from './api';
 
 const StudentMgrPage = () => {
-	const { students, fetchStudents, createStudent, updateStudent, deleteStudent } = useStudentStore();
+	const { filteredStudents, fetchStudents, deleteStudent, searchStudents, selectStudent, fetchStudent } =
+		useStudentStore();
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [filters, setFilters] = useState<Partial<StudentType>>({
-		name: '',
-		school: '',
-		grade: '',
-		group: '',
-		class: '',
-		teacher: '',
-	});
+	const [searchField, setSearchField] = useState<keyof StudentType>('studentName');
 	const [selectAll, setSelectAll] = useState<boolean>(false);
 	const { openPopup, closePopup } = usePopup();
 
@@ -40,83 +34,44 @@ const StudentMgrPage = () => {
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-	const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFilters((prevFilters) => ({
-			...prevFilters,
-			[name]: value,
-		}));
-	};
-
-	const filterStudents = (students: StudentType[], filters: Partial<StudentType>) => {
-		return students.filter((student) => {
-			return Object.keys(filters).every((key) => {
-				const value = student[key as keyof StudentType];
-				return typeof value === 'string' && value.includes(filters[key as keyof Partial<StudentType>]);
-			});
-		});
-	};
+	const handleSearchFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+		setSearchField(e.target.value as keyof StudentType);
 
 	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// setStudents(filterStudents(studentsData, { name: searchTerm, ...filters }));
+		searchStudents(searchTerm, searchField);
 	};
 
-	const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		// setStudents(filterStudents(studentsData, filters));
-	};
-
-	const handleDeleteClick = () => {
-		const selectedStudents = students.filter((student) => student.selected);
+	const handleDeleteClick = async () => {
+		const selectedStudents = filteredStudents.filter((student) => student.selected);
 		if (selectedStudents.length === 0) {
 			alert('삭제할 원생을 선택하세요.');
 			return;
 		}
-		selectedStudents.forEach((student) => deleteStudent(student.id));
+		await Promise.all(selectedStudents.map((student) => deleteStudent(student.studentId)));
 		alert('선택된 원생이 삭제되었습니다.');
+		fetchStudents(); // 삭제 후 데이터 갱신
 	};
 
 	const handleAddNewClick = () => {
-		openPopup(<StudentRegistrationPopup onClose={handleNewStudentClose} />);
-	};
-
-	const handleNewStudentClose = () => {
-		closePopup();
-		fetchStudents(); // 학생 목록을 새로 불러오기
+		openPopup(<StudentRegistrationPopup onClose={closePopup} onSuccess={fetchStudents} />);
 	};
 
 	const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
 		setSelectAll(checked);
-		students.forEach((student) => updateStudent(student.id, { selected: checked }));
+		filteredStudents.forEach((student) => selectStudent(student.studentId));
 	};
 
-	const handleSelectChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { checked } = e.target;
-		const student = students[index];
-		updateStudent(student.id, { selected: checked });
+	const handleSelectChange = (studentId: number) => () => {
+		selectStudent(studentId);
 	};
 
-	const handleStudentNameClick = (student: StudentType) => {
-		openPopup(
-			<StudentDetailPopup
-				student={{
-					name: student.name,
-					birthDate: '2014-01-01',
-					contact: student.contact,
-					email: 'abc@gmail.com',
-					school: student.school,
-					grade: student.grade,
-					classes: ['초등 5반', '단과수학반'],
-					paymentInfo: {
-						outstanding: 0,
-						upcoming: 1,
-					},
-				}}
-				onClose={closePopup}
-			/>,
-		);
+	const handleStudentNameClick = async (studentId: number) => {
+		const student = await fetchStudent(studentId);
+		if (student) {
+			openPopup(<StudentDetailPopup student={student} onClose={closePopup} />);
+		}
 	};
 
 	return (
@@ -127,41 +82,15 @@ const StudentMgrPage = () => {
 				<SearchTitle>통합검색</SearchTitle>
 				<SearchForm onSubmit={handleSearchSubmit}>
 					<InputGroup>
-						<Select>
-							<option>원생명</option>
+						<Select value={searchField as string} onChange={handleSearchFieldChange}>
+							<option value="studentName">원생명</option>
+							<option value="grade">학년</option>
+							<option value="email">이메일</option>
+							<option value="phoneNumber">연락처</option>
 						</Select>
 						<Input placeholder="검색어 입력" value={searchTerm} onChange={handleSearchChange} />
 						<Button type="submit">검색</Button>
 					</InputGroup>
-				</SearchForm>
-			</SearchSection>
-
-			<SearchSection>
-				<SearchTitle>조건검색</SearchTitle>
-				<SearchForm onSubmit={handleFilterSubmit}>
-					<InputGroup>
-						<Input name="name" placeholder="원생명 입력" value={filters.name} onChange={handleFilterChange} />
-						<Input name="school" placeholder="학교명 입력" value={filters.school} onChange={handleFilterChange} />
-						<Input name="grade" placeholder="학년명 입력" value={filters.grade} onChange={handleFilterChange} />
-					</InputGroup>
-					<InputGroup>
-						<Select name="group" value={filters.group} onChange={handleFilterChange}>
-							<option value="">그룹선택</option>
-							<option value="그룹1">그룹1</option>
-							<option value="그룹2">그룹2</option>
-						</Select>
-						<Select name="class" value={filters.class} onChange={handleFilterChange}>
-							<option value="">반선택</option>
-							<option value="초등 5반">초등 5반</option>
-							<option value="초등 6반">초등 6반</option>
-						</Select>
-						<Select name="teacher" value={filters.teacher} onChange={handleFilterChange}>
-							<option value="">주담임선택</option>
-							<option value="선생님1">선생님1</option>
-							<option value="선생님2">선생님2</option>
-						</Select>
-					</InputGroup>
-					<Button type="submit">검색</Button>
 				</SearchForm>
 			</SearchSection>
 
@@ -171,7 +100,7 @@ const StudentMgrPage = () => {
 			</ButtonGroup>
 
 			<StudentTable
-				students={students}
+				students={filteredStudents}
 				selectAll={selectAll}
 				onSelectAllChange={handleSelectAllChange}
 				onSelectChange={handleSelectChange}
@@ -185,8 +114,8 @@ interface StudentTableProps {
 	students: StudentType[];
 	selectAll: boolean;
 	onSelectAllChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onSelectChange: (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onStudentNameClick: (student: StudentType) => void;
+	onSelectChange: (studentId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onStudentNameClick: (studentId: number) => void;
 }
 
 const StudentTable: React.FC<StudentTableProps> = ({
@@ -204,31 +133,23 @@ const StudentTable: React.FC<StudentTableProps> = ({
 						<input type="checkbox" checked={selectAll} onChange={onSelectAllChange} />
 					</Th>
 					<Th>원생명</Th>
-					<Th>학교명</Th>
-					<Th>학년명</Th>
-					<Th>그룹</Th>
-					<Th>수강반 정보</Th>
-					<Th>주담임</Th>
-					<Th>수납정보</Th>
+					<Th>학년</Th>
+					<Th>이메일</Th>
 					<Th>연락처</Th>
 				</tr>
 			</thead>
 			<tbody>
-				{students.map((student, index) => (
-					<tr key={index}>
+				{students.map((student) => (
+					<tr key={student.studentId}>
 						<Td>
-							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(index)} />
+							<input type="checkbox" checked={student.selected || false} onChange={onSelectChange(student.studentId)} />
 						</Td>
-						<Td onClick={() => onStudentNameClick(student)} style={{ cursor: 'pointer', color: '#007bff' }}>
-							{student.name}
+						<Td onClick={() => onStudentNameClick(student.studentId)} style={{ cursor: 'pointer', color: '#007bff' }}>
+							{student.studentName || 'N/A'}
 						</Td>
-						<Td>{student.school}</Td>
-						<Td>{student.grade}</Td>
-						<Td>{student.group}</Td>
-						<Td>{student.class}</Td>
-						<Td>{student.teacher}</Td>
-						<Td>{student.paymentInfo}</Td>
-						<Td>{student.contact}</Td>
+						<Td>{student.grade || 'N/A'}</Td>
+						<Td>{student.email || 'N/A'}</Td>
+						<Td>{student.phoneNumber || 'N/A'}</Td>
 					</tr>
 				))}
 			</tbody>

@@ -21,17 +21,24 @@ export const TabMenu = styled.li<TabMenuProps>`
 	border-top-left-radius: ${({ theme }) => theme.radius.small};
 	border-top-right-radius: ${({ theme }) => theme.radius.small};
 	background-color: ${({ $active, theme }) => ($active ? theme.colors.primary : '#fff')};
-	padding: 5px 10px;
-	font-size: ${({ theme }) => theme.textSize.little};
-	font-weight: ${({ $active }) => ($active ? '700' : '400')};
-	color: ${({ $active }) => ($active ? '#fff' : '#000')};
 	border-bottom: ${({ $active, theme }) => ($active ? `1px solid ${theme.colors.primary}` : '1px solid #fff')};
 	cursor: pointer;
+	overflow: hidden;
 
-	&:hover {
-		background-color: ${({ theme }) => theme.colors.primary};
-		color: #fff;
-		font-weight: 700;
+	button {
+		display: block;
+		width: 100%;
+		height: 100%;
+		font-size: ${({ theme }) => theme.textSize.little};
+		font-weight: ${({ $active }) => ($active ? '700' : '400')};
+		color: ${({ $active }) => ($active ? '#fff' : '#000')};
+		padding: 5px 10px;
+
+		&:hover {
+			background-color: ${({ theme }) => theme.colors.primary};
+			color: #fff;
+			font-weight: 700;
+		}
 	}
 
 	&.active {

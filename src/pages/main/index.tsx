@@ -1,13 +1,16 @@
+import { useGetUserQuery } from '../../components/Header/hooks/useGetUserQuery';
 import { Container } from '../../styles/commonStyle';
 import BillBox from './components/BillBox';
 import LineChart from './components/SalesLineChart';
 import * as S from './style';
 
 const MainPage = () => {
+	const { data: userInfo } = useGetUserQuery();
+
 	return (
 		<Container>
 			<S.Introduce>
-				<span>조정택</span>님, 안녕하세요.
+				<span>{userInfo?.academyName}</span>님, 안녕하세요.
 			</S.Introduce>
 			<S.ContentContainer>
 				<S.MiddleContent>

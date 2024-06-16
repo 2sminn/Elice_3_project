@@ -31,18 +31,19 @@ export const CloseButton = styled.button`
 	color: #000;
 `;
 
-export const DetailList = styled.form`
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	flex: 1;
-	overflow-y: auto;
+export const Form = styled.form`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 `;
 
-export const DetailItem = styled.div`
+export const Input = styled.input`
 	margin-bottom: 10px;
-	font-size: ${({ theme }) => theme.textSize.medium};
-	color: ${({ theme }) => theme.colors.text};
+	padding: 8px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: ${({ theme }) => theme.radius.small};
+	width: 100%;
 `;
 
 export const ButtonContainer = styled.div`
@@ -78,11 +79,59 @@ export const SaveButton = styled.button`
 	}
 `;
 
-export const Input = styled.input`
-	margin-bottom: 10px;
-	padding: 8px;
+export const ScheduleContainer = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+	gap: 10px;
+`;
+
+export const ScheduleInputGroup = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+`;
+
+export const ScheduleRemoveButton = styled(SaveButton)`
+	background-color: ${({ theme }) => theme.colors.danger};
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.accent};
+	}
+`;
+
+export const PopupSelect = styled.select`
+	margin-bottom: 15px;
+	padding: 10px;
 	font-size: 16px;
 	border: 1px solid #ccc;
 	border-radius: ${({ theme }) => theme.radius.small};
-	width: 100%;
+	flex: 1;
 `;
+
+export const ScheduleItem = styled.li`
+	margin-bottom: 10px;
+	font-size: ${({ theme }) => theme.textSize.medium};
+	color: ${({ theme }) => theme.colors.text};
+`;
+
+export const PopupButton = styled.button`
+	padding: 10px;
+	font-size: 16px;
+	background-color: ${({ theme }) => theme.colors.success};
+	color: white;
+	border: none;
+	border-radius: ${({ theme }) => theme.radius.small};
+	cursor: pointer;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.accent};
+	}
+`;
+
+export const PopupButtonContainer = styled.div`
+	text-align: center;
+	margin-top: 20px;
+`;
+

@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { BillType } from '../type';
 import { sendBill } from '../api';
 import usePopup from '../../../../hooks/usePopup';
-import { successAlert } from '../../../../utils/alert';
+import { errorAlert, successAlert } from '../../../../utils/alert';
 
 export const useBillSendMutation = () => {
 	const { closePopup } = usePopup();
@@ -16,8 +16,9 @@ export const useBillSendMutation = () => {
 		closePopup();
 	};
 
-	const onError = (error: Error) => {
-		console.error(error.message);
+	const onError = (error: any) => {
+		console.log(error);
+		errorAlert(error.response.data.messageDetail);
 	};
 
 	return useMutation({ mutationFn, onSuccess, onError });

@@ -118,11 +118,11 @@ export const storageOXOption = [
 	{
 		id: 1,
 		name: '수납',
-		value: 'paid',
+		value: 'PAID',
 	},
 	{
 		id: 2,
 		name: '미수납',
-		value: 'unpaid',
+		value: 'BEFORE',
 	},
 ];

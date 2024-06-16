@@ -1,60 +1,115 @@
-import React, { useState } from 'react';
-import { PopupContainer, PopupTitle, PopupForm, PopupInput, PopupButton, PopupButtonContainer } from './style';
-import useStudentStore from '../../../../stores/useStudentStore';
+import React, { useState, useEffect } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import {
+	PopupContainer,
+	Header,
+	Title,
+	CloseButton,
+	Form,
+	Input,
+	ButtonContainer,
+	SaveButton,
+	ScheduleContainer,
+	ScheduleInputGroup,
+	ScheduleRemoveButton,
+	PopupSelect,
+	PopupButton,
+} from './style';
+import { createStudent, fetchLectures, StudentType, LectureType } from '../../api';
 
-interface StudentRegistrationPopupProps {
-	onClose: () => void;
-}
-
-const StudentRegistrationPopup: React.FC<StudentRegistrationPopupProps> = ({ onClose }) => {
-	const { createStudent } = useStudentStore();
-	const [student, setStudent] = useState({
-		name: '',
-		birthday: '',
-		contact: '',
-		email: '',
-		school: '',
-		grade: '',
-		courseCode: '',
+const StudentRegistrationPopup = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
+	const { register, handleSubmit, control, reset, setValue } = useForm<StudentType>({
+		defaultValues: {
+			studentName: '',
+			birthDate: '',
+			email: '',
+			phoneNumber: '',
+			grade: '',
+			schoolName: '',
+			lectures: [],
+		},
 	});
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setStudent((prevStudent) => ({
-			...prevStudent,
-			[name]: value,
-		}));
-	};
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'lectures',
+	});
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const [lectures, setLectures] = useState<LectureType[]>([]);
+
+	useEffect(() => {
+		const loadLectures = async () => {
+			const lectureList = await fetchLectures();
+			setLectures(lectureList);
+		};
+		loadLectures();
+	}, []);
+
+	const onSubmit = async (data: StudentType) => {
 		try {
-			await createStudent(student);
-			alert('새 원생이 등록되었습니다.');
+			await createStudent(data);
+			alert('원생이 성공적으로 등록되었습니다.');
+			onSuccess();
 			onClose();
 		} catch (error) {
-			alert('원생 등록에 실패했습니다. 다시 시도해주세요.');
+			alert('원생 등록에 실패했습니다.');
+		}
+		reset();
+	};
+
+	const handleLectureChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
+		const lectureId = parseInt(event.target.value, 10);
+		const lecture = lectures.find((lec) => lec.id === lectureId);
+		if (lecture) {
+			setValue(`lectures.${index}.id`, lecture.id); // lectureId -> id로 변경
+			setValue(`lectures.${index}.lectureName`, lecture.lectureName);
+			setValue(`lectures.${index}.price`, lecture.price);
+			setValue(`lectures.${index}.teacherName`, lecture.teacherName);
 		}
 	};
 
 	return (
 		<PopupContainer>
-			<PopupTitle>신규 원생 등록</PopupTitle>
-			<PopupForm onSubmit={handleSubmit}>
-				<PopupInput name="name" placeholder="원생명" value={student.name} onChange={handleChange} />
-				<PopupInput name="birthday" placeholder="생년월일" value={student.birthday} onChange={handleChange} />
-				<PopupInput name="contact" placeholder="연락처" value={student.contact} onChange={handleChange} />
-				<PopupInput name="email" placeholder="이메일" value={student.email} onChange={handleChange} />
-				<PopupInput name="school" placeholder="학교" value={student.school} onChange={handleChange} />
-				<PopupInput name="grade" placeholder="학년" value={student.grade} onChange={handleChange} />
-				<PopupInput name="courseCode" placeholder="수강강의코드" value={student.courseCode} onChange={handleChange} />
-				<PopupButtonContainer>
-					<PopupButton type="submit">등록</PopupButton>
-					<PopupButton type="button" onClick={onClose}>
-						취소
-					</PopupButton>
-				</PopupButtonContainer>
-			</PopupForm>
+			<Header>
+				<Title>신규 원생 등록</Title>
+				<CloseButton onClick={onClose}>×</CloseButton>
+			</Header>
+			<Form onSubmit={handleSubmit(onSubmit)}>
+				<Input {...register('studentName', { required: true })} placeholder="원생명" />
+				<Input {...register('birthDate', { required: true })} type="date" placeholder="생년월일" />
+				<Input {...register('email', { required: true })} type="email" placeholder="이메일" />
+				<Input {...register('phoneNumber', { required: true })} placeholder="연락처" />
+				<Input {...register('grade', { required: true })} placeholder="학년" />
+				<Input {...register('schoolName', { required: true })} placeholder="학교명" />
+				{fields.map((item, index) => (
+					<ScheduleContainer key={item.id}>
+						<ScheduleInputGroup>
+							<PopupSelect onChange={(event) => handleLectureChange(index, event)} defaultValue="">
+								<option value="">강의 선택</option>
+								{lectures.map((lecture) => (
+									<option key={lecture.id} value={lecture.id}>
+										{lecture.lectureName} - {lecture.teacherName} - {lecture.price.toLocaleString()}원
+									</option>
+								))}
+							</PopupSelect>
+						</ScheduleInputGroup>
+						<ScheduleRemoveButton type="button" onClick={() => remove(index)}>
+							제거
+						</ScheduleRemoveButton>
+					</ScheduleContainer>
+				))}
+				<PopupButton
+					type="button"
+					onClick={() =>
+						append({ id: Date.now(), lectureName: '', price: 0, teacherName: '', createdAt: '', updatedAt: '' })
+					}
+				>
+					강의 추가
+				</PopupButton>
+				<ButtonContainer>
+					<SaveButton type="submit">저장하기</SaveButton>
+				</ButtonContainer>
+			</Form>
 		</PopupContainer>
 	);
 };

@@ -7,6 +7,7 @@ const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
 	const { errorRes } = usePaymentErrorStore();
 
 	console.log(successRes);
+	console.log(errorRes);
 
 	return (
 		<S.Wrap>
@@ -32,16 +33,12 @@ const BillCompletePage = ({ isSuccess }: { isSuccess?: boolean }) => {
 					<S.ContentTitle>{isSuccess ? '납부내역' : '납부실패'}</S.ContentTitle>
 					<S.InfoBox>
 						<S.InfoContainer>
-							<h4>발급처</h4>
-							<p>에듀페이</p>
-						</S.InfoContainer>
-						<S.InfoContainer>
 							<h4>청구내역</h4>
 							<p>학원비</p>
 						</S.InfoContainer>
 						<S.InfoContainer>
 							<h4>{isSuccess ? '청구금액(VAT 포함)' : '사유'}</h4>
-							<p>{isSuccess ? <span>{formatNumber(100000000)}원</span> : errorRes?.error_msg}</p>
+							<p>{isSuccess ? <span>{formatNumber(successRes?.paid_amount)}원</span> : errorRes?.error_msg}</p>
 						</S.InfoContainer>
 					</S.InfoBox>
 				</S.ContentContainer>

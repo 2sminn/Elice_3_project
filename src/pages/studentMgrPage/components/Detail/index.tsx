@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	PopupContainer,
 	Header,
@@ -11,120 +11,104 @@ import {
 	Input,
 	SaveButton,
 } from './style';
+import useStudentStore from '../../../../stores/useStudentStore';
+import { StudentType } from '../../api';
+import { useForm } from 'react-hook-form';
 
 interface StudentDetailPopupProps {
-	student: {
-		name: string;
-		birthDate: string;
-		contact: string;
-		email: string;
-		school: string;
-		grade: string;
-		classes: string[];
-		paymentInfo: {
-			outstanding: number;
-			upcoming: number;
-		};
-	};
+	student: StudentType;
 	onClose: () => void;
 }
 
 const StudentDetailPopup: React.FC<StudentDetailPopupProps> = ({ student, onClose }) => {
 	const [isEditing, setIsEditing] = useState(false);
-	const [editedStudent, setEditedStudent] = useState(student);
+	const { updateStudent } = useStudentStore();
+	const { register, handleSubmit, setValue } = useForm<StudentType>({
+		defaultValues: { ...student },
+	});
+
+	useEffect(() => {
+		setValue('studentName', student.studentName);
+		setValue('email', student.email);
+		setValue('phoneNumber', student.phoneNumber);
+		setValue('grade', student.grade);
+		setValue('birthDate', student.birthDate); // 수정된 부분
+		setValue('schoolName', student.schoolName);
+		if (student.lectures) {
+			setValue('lectures', student.lectures);
+		}
+	}, [student, setValue]);
 
 	const handleEditClick = () => {
 		setIsEditing(true);
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setEditedStudent((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	const handleSaveClick = () => {
-		console.log('저장된 데이터:', editedStudent);
-		// 실제 저장 로직을 추가할 수 있는 부분
+	const onSubmit = async (data: StudentType) => {
+		try {
+			await updateStudent(data.studentId, data);
+			alert('원생 정보가 업데이트 되었습니다.');
+			onClose(); // 원생 정보 업데이트 후 팝업창 닫기
+		} catch (error) {
+			alert('원생 정보 업데이트에 실패했습니다.');
+		}
 		setIsEditing(false);
 	};
 
 	return (
 		<PopupContainer>
 			<Header>
-				<Title>원생정보</Title>
+				<Title>원생 정보</Title>
 				<CloseButton onClick={onClose}>×</CloseButton>
 			</Header>
-			<DetailList>
+			<DetailList as="form" onSubmit={handleSubmit(onSubmit)}>
 				<DetailItem>
-					<strong>이름:</strong>
-					{isEditing ? <Input name="name" value={editedStudent.name} onChange={handleInputChange} /> : student.name}
-				</DetailItem>
-				<DetailItem>
-					<strong>생년월일:</strong>
-					{isEditing ? (
-						<Input name="birthDate" value={editedStudent.birthDate} onChange={handleInputChange} />
-					) : (
-						student.birthDate
-					)}
-				</DetailItem>
-				<DetailItem>
-					<strong>연락처:</strong>
-					{isEditing ? (
-						<Input name="contact" value={editedStudent.contact} onChange={handleInputChange} />
-					) : (
-						student.contact
-					)}
+					<strong>원생명:</strong>
+					{isEditing ? <Input {...register('studentName')} /> : student.studentName}
 				</DetailItem>
 				<DetailItem>
 					<strong>이메일:</strong>
-					{isEditing ? <Input name="email" value={editedStudent.email} onChange={handleInputChange} /> : student.email}
+					{isEditing ? <Input {...register('email')} /> : student.email}
 				</DetailItem>
 				<DetailItem>
-					<strong>학교:</strong>
-					{isEditing ? (
-						<Input name="school" value={editedStudent.school} onChange={handleInputChange} />
-					) : (
-						student.school
-					)}
+					<strong>연락처:</strong>
+					{isEditing ? <Input {...register('phoneNumber')} /> : student.phoneNumber}
 				</DetailItem>
 				<DetailItem>
 					<strong>학년:</strong>
-					{isEditing ? <Input name="grade" value={editedStudent.grade} onChange={handleInputChange} /> : student.grade}
+					{isEditing ? <Input {...register('grade')} /> : student.grade}
 				</DetailItem>
 				<DetailItem>
-					<strong>수강반:</strong>
-					{isEditing ? (
-						<Input
-							name="classes"
-							value={editedStudent.classes.join(', ')}
-							onChange={(e) =>
-								setEditedStudent((prev) => ({
-									...prev,
-									classes: e.target.value.split(',').map((cls) => cls.trim()),
-								}))
-							}
-						/>
+					<strong>생년월일:</strong>
+					{isEditing ? <Input {...register('birthDate')} type="date" /> : student.birthDate} {/* 수정된 부분 */}
+				</DetailItem>
+				<DetailItem>
+					<strong>학교명:</strong>
+					{isEditing ? <Input {...register('schoolName')} /> : student.schoolName}
+				</DetailItem>
+				<DetailItem>
+					<strong>강의 목록:</strong>
+					{student.lectures && student.lectures.length > 0 ? (
+						<ul>
+							{student.lectures.map((lecture) => (
+								<li key={lecture.id}>
+									{lecture.lectureName} - {lecture.teacherName} - {lecture.price.toLocaleString()}원
+								</li>
+							))}
+						</ul>
 					) : (
-						student.classes.join(', ')
+						<span>강의 없음</span>
 					)}
 				</DetailItem>
-				<DetailItem>
-					<strong>미납:</strong> {student.paymentInfo.outstanding} 건
-				</DetailItem>
-				<DetailItem>
-					<strong>납부예정:</strong> {student.paymentInfo.upcoming} 건
-				</DetailItem>
+				<ButtonContainer>
+					{isEditing ? (
+						<SaveButton type="submit">저장하기</SaveButton>
+					) : (
+						<EditButton type="button" onClick={handleEditClick}>
+							수정하기
+						</EditButton>
+					)}
+				</ButtonContainer>
 			</DetailList>
-			<ButtonContainer>
-				{isEditing ? (
-					<SaveButton onClick={handleSaveClick}>저장하기</SaveButton>
-				) : (
-					<EditButton onClick={handleEditClick}>수정하기</EditButton>
-				)}
-			</ButtonContainer>
 		</PopupContainer>
 	);
 };

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from '/assets/images/logo.svg';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import TextInput from '../../components/inputs/TextInput';
@@ -67,6 +67,8 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 	const { control, handleSubmit, errors, setValue, getValues } = useCustomForm<FormValues>(schema, 'onChange');
 	const { mutate: signUpMutate } = useSignUpMutation();
 
+	const navigate = useNavigate();
+
 	const handleCheckboxChange = (name: string, checked: boolean) => {
 		setAgreements((prev) => {
 			const newAgreements = { ...prev, [name]: checked };
@@ -124,6 +126,13 @@ const Signup = ({ isEdit }: { isEdit?: boolean }) => {
 		console.log(confirmPassword);
 		signUpMutate(formData);
 	};
+
+	useEffect(() => {
+		if (isEdit) {
+			errorAlert('준비중인 기능입니다.');
+			navigate('/');
+		}
+	}, []);
 
 	return (
 		<Container>
